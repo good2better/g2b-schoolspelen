@@ -82,6 +82,7 @@ padding:14px;margin-top:14px;text-align:center}
 <main>
 
 <div id="scherm-home">
+<div id="naam-zone"></div>
 <p class="sub2">Kies je niveau en oefen. De app kijkt mee: waar je fouten maakt, oefen je extra — met trucs erbij. 🔊 staat aan: Schoolspelen spreekt Nederlands.</p>
 <div id="niveau-lijst"></div>
 </div>
@@ -166,6 +167,7 @@ staat.sterren=staat.sterren||0;
 staat.fouten=staat.fouten||{};   // vak -> aantal fouten
 staat.goed=staat.goed||{};       // vak -> aantal goed
 staat.zwak=staat.zwak||{};       // specifieke sommen/woorden die moeilijk zijn
+function wie(){return staat.naam||"";}
 function bewaar(){localStorage.setItem("g2b_playlearn",JSON.stringify(staat));
  document.getElementById("sterren").textContent="⭐ "+staat.sterren;}
 
@@ -214,6 +216,12 @@ function toon(id){
 function naarHome(){speechSynthesis.cancel();bouwHome();toon("scherm-home");}
 
 function bouwHome(){
+ var nz=document.getElementById("naam-zone");
+ if(wie()){nz.innerHTML='<p class="sub2">👋 Hoi <b>'+wie()+"</b>! Klaar om te spelen?</p>";}
+ else{nz.innerHTML='<div class="card" style="max-width:340px;margin:0 auto 14px">'+
+  '<b>Hoe heet jij?</b><br><input class="invoer" id="naam-in" style="width:160px" maxlength="20"> '+
+  '<button class="pill" onclick="zetNaam()">▶ start</button><br>'+
+  '<small class="sub2">De app praat dan met jouw naam!</small></div>';}
  var el=document.getElementById("niveau-lijst");el.innerHTML="";
  NIVEAUS.forEach(function(n){
   var kop=document.createElement("div");kop.className="niveau";
@@ -243,6 +251,10 @@ function shuffle(a){a.sort(function(){return Math.random()-0.5});return a;}
 
 var pauzeStart=0,pauzeGedaan=false;
 function pauzeMs(){return ["g12","g34"].indexOf(huidigNiv)>=0?10*60*1000:15*60*1000;}
+function zetNaam(){
+ var v=document.getElementById("naam-in").value.trim();if(!v)return;
+ staat.naam=v;bewaar();zeg("Hoi "+v+"! Welkom bij Schoolspelen — kies een spel!");
+ bouwHome();}
 function startOefening(niv,vak){
  huidigNiv=niv.id;huidigVak=vak;vraagNr=0;goedTeller=0;
  pauzeStart=Date.now();pauzeGedaan=false;
@@ -298,13 +310,13 @@ function check(goed,knop,a,laatOK){
  var key=huidigNiv+":"+huidigVak;
  var fb=document.getElementById("feedback");
  if(goed){
-  knop.classList.add("goed");fb.textContent="🎉 Goed zo!";fb.classList.add("goed");
+  knop.classList.add("goed");fb.textContent="🎉 Goed zo"+(wie()?", "+wie():"")+"!";fb.classList.add("goed");
   staat.goed[key]=(staat.goed[key]||0)+1;staat.sterren++;goedTeller++;
   var lv=document.getElementById("levend");if(lv)lv.classList.add("leeft");
-  zeg("Goed zo!");
+  zeg("Goed zo"+(wie()?", "+wie():"")+"!");
   setTimeout(volgendeVraag,900);
  }else{
-  knop.classList.add("fout");fb.textContent="Bijna! Samen kijken we even…";fb.classList.add("fout");
+  knop.classList.add("fout");fb.textContent="Bijna"+(wie()?", "+wie():"")+"! Samen kijken we even…";fb.classList.add("fout");
   staat.fouten[key]=(staat.fouten[key]||0)+1;
   toonLesje();
   if(!laatOK)knop.disabled=true;
@@ -323,7 +335,8 @@ function eindRonde(){
  document.getElementById("klaar-tekst").textContent=
   goedTeller+" van de "+RONDE+" goed — dat is "+pct+"%. "+
   (pct<80?"De moeilijke stukjes oefenen we straks extra.":"Lekker tempo — klaar voor meer!");
- zeg(pct>=80?"Super gedaan, gefeliciteerd!":"Goed gedaan — probeer het gewoon nog eens!");
+ var nm=wie()?", "+wie():"";
+ zeg(pct>=80?"Super gedaan"+nm+", gefeliciteerd!":"Goed gedaan"+nm+" — probeer het gewoon nog eens!");
  toon("scherm-klaar");
  if(pct>=50)feestConfetti(pct>=80?60:30);
  else document.getElementById("medal-ic").innerHTML='💪 <span class="klap">👏</span>';
@@ -337,10 +350,10 @@ function toonUitdager(){
  speelDrum();
  var u=document.getElementById("uitdager");
  u.innerHTML='<div class="uitdager">🧒 <b>Klasgenootje zegt:</b><br>'+
-  UITDAAGS[rnd(0,UITDAAGS.length-1)]+'<br><br>'+
+  (wie()?"Hé "+wie()+"! ":"")+UITDAAGS[rnd(0,UITDAAGS.length-1)]+'<br><br>'+
   '<button class="pill" onclick="durfAan()">💪 Ja — waag het!</button> '+
   '<button class="pill grijs" onclick="this.parentNode.remove()">nee, later</button></div>';
- zeg("Hé! Durf je een moeilijker level? Wie niet waagt, wie niet wint!");}
+ zeg("Hé"+(wie()?" "+wie():"")+"! Durf je een moeilijker level? Wie niet waagt, wie niet wint!");}
 function durfAan(){
  var idx=-1;NIVEAUS.forEach(function(n,i){if(n.id===huidigNiv)idx=i;});
  var volg=NIVEAUS[Math.min(idx+1,NIVEAUS.length-1)];
