@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>G2B PlayLearn — lezen & rekenen, van groep 1 tot genius</title>
+<meta name="description" content="Speels leren: rekenen en lezen voor kinderen — van basisschool tot genius. De app leert van je fouten. Gratis en van G2B.">
+<style>
+:root{--zee:#0E6BA8;--zeed:#084E7C;--zand:#FFF8EC;--goud:#F5A623;--koraal:#FF7F50;--tint:#E8F4FB;--groen:#4CAF50;--rood:#E74C3C}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Trebuchet MS',Verdana,sans-serif;background:var(--zand);color:#123;min-height:100vh}
+header{background:linear-gradient(135deg,var(--zeed),var(--zee));color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:1.35rem}
+header .sub{opacity:.85;font-size:.85rem}
+#sterren{margin-left:auto;font-size:1.1rem;color:var(--goud)}
+main{max-width:860px;margin:0 auto;padding:18px}
+h2{color:var(--zeed);margin-bottom:6px}
+.sub2{color:#567;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.card{background:#fff;border-radius:14px;padding:16px 14px;text-align:center;cursor:pointer;border:3px solid transparent;box-shadow:0 2px 10px rgba(8,78,124,.08);transition:.15s}
+.card:hover{border-color:var(--goud);transform:translateY(-2px)}
+.card .ic{font-size:2rem;display:block;margin-bottom:6px}
+.card b{display:block;color:var(--zeed);font-size:.95rem}
+.card small{color:#789;display:block;margin-top:3px;font-size:.75rem}
+.card .balkje{height:6px;background:var(--tint);border-radius:4px;margin-top:8px;overflow:hidden}
+.card .balkje i{display:block;height:100%;background:var(--groen)}
+.niveau{margin:18px 0 8px;font-weight:700;color:var(--zeed)}
+.niveau .tag{font-size:.7rem;background:var(--tint);color:var(--zeed);border-radius:8px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+.vraag{background:#fff;border-radius:16px;padding:22px;box-shadow:0 4px 18px rgba(8,78,124,.10);text-align:center;margin-top:6px}
+.vraag .big{font-size:2.6rem;font-weight:700;color:var(--zeed);margin:10px 0}
+.vraag .plaatjes{font-size:2rem;letter-spacing:4px;margin:6px 0}
+.knoppen{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.optie{min-width:74px;padding:12px 18px;font-size:1.5rem;font-weight:700;background:var(--tint);border:3px solid transparent;border-radius:12px;cursor:pointer;color:var(--zeed)}
+.optie:hover{border-color:var(--zee)}
+.optie.goed{background:var(--groen);color:#fff}
+.optie.fout{background:var(--rood);color:#fff;animation:schud .3s}
+@keyframes schud{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.invoer{font-size:1.8rem;padding:10px 14px;width:130px;text-align:center;border:3px solid var(--tint);border-radius:12px;color:var(--zeed);font-weight:700}
+.acties{margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+button.pill{background:var(--goud);border:0;color:#3a2a00;font-weight:700;padding:11px 20px;border-radius:30px;cursor:pointer;font-size:1rem}
+button.pill.blauw{background:var(--zee);color:#fff}
+button.pill.grijs{background:#e8e0d0;color:#654}
+.feedback{margin-top:14px;font-size:1.15rem;font-weight:700;min-height:30px}
+.feedback.goed{color:var(--groen)}.feedback.fout{color:var(--rood)}
+.slimme-tip{margin-top:8px;color:#567;font-size:.9rem;font-style:italic}
+.streep{display:flex;gap:8px;align-items:center;margin:10px 0 0;flex-wrap:wrap}
+.streep .dot{width:16px;height:16px;border-radius:50%;background:#ddd}
+.streep .dot.goed{background:var(--groen)}.streep .dot.fout{background:var(--rood)}
+.woord{font-size:2rem;letter-spacing:10px;font-weight:700;color:var(--zeed)}
+footer{text-align:center;color:#98a;font-size:.8rem;padding:20px}
+.hidden{display:none}
+.medal{font-size:2.4rem}
+</style>
+</head>
+<body>
+<header>
+<h1>🎓 G2B PlayLearn</h1><span class="sub">lezen & rekenen — van groep 1 tot genius</span>
+<div id="sterren" title="Verdiende sterren">⭐ 0</div>
+</header>
+<main>
+
+<div id="scherm-home">
+<p class="sub2">Kies je niveau en oefen. De app kijkt mee: waar je fouten maakt, oefen je extra — met trucs erbij. 🔊 staat aan: PlayLearn spreekt Nederlands.</p>
+<div id="niveau-lijst"></div>
+</div>
+
+<div id="scherm-oefen" class="hidden">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+<button class="pill grijs" onclick="naarHome()">← terug</button>
+<b id="oefen-titel"></b>
+<span class="sub2" style="margin:0 0 0 auto" id="oefen-niveau"></span>
+</div>
+<div class="vraag">
+<div id="vraag-inhoud"></div>
+<div id="antwoord-zone"></div>
+<div class="feedback" id="feedback"></div>
+<div class="slimme-tip" id="slimme-tip"></div>
+</div>
+<div class="streep" id="streep"></div>
+<div class="acties">
+<button class="pill blauw" onclick="herhaalZeg()">🔊 hoor het nog eens</button>
+<button class="pill grijs" onclick="volgendeVraag()">overslaan →</button>
+</div>
+</div>
+
+<div id="scherm-klaar" class="hidden">
+<div class="vraag">
+<div class="medal" id="medal-ic">🏅</div>
+<h2 id="klaar-titel">Goed gedaan!</h2>
+<p id="klaar-tekst" class="sub2"></p>
+<div class="acties">
+<button class="pill" onclick="nogEen()">🔁 nog een ronde</button>
+<button class="pill grijs" onclick="naarHome()">← kies ander vak</button>
+</div>
+</div>
+</div>
+
+</main>
+<footer>G2B PlayLearn — gratis leren, voor altijd van jou. © good2better</footer>
+
+<script>
+// ====== NIVEAU-LADDER: groep 1-8 → middelbaar → uni → master → genius
+var NIVEAUS=[
+ {id:"g12",naam:"Groep 1–2",tag:"start",vakken:["tellen","letters"]},
+ {id:"g34",naam:"Groep 3–4",tag:"basis",vakken:["tellen","plus1","woorden","spelling"]},
+ {id:"g56",naam:"Groep 5–6",tag:"door",vakken:["plus2","min2","tafels","spelling","zin"]},
+ {id:"g78",naam:"Groep 7–8",tag:"gevorderd",vakken:["plus3","min3","tafels","spelling2","zin"]},
+ {id:"mb",naam:"Middelbaar 1–5",tag:"verder",vakken:["tafels","procent","spelling2","zin2"]},
+ {id:"uni",naam:"Universiteit",tag:"hoog",vakken:["procent","breuk","zin2"]},
+ {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica"]},
+ {id:"genius",naam:"Genius",tag:"🏆",vakken:["logica","breuk","zin2"]}
+];
+var VAKKEN={
+ tellen:{ic:"🔢",naam:"Tellen",info:"tel de plaatjes"},
+ letters:{ic:"🔤",naam:"Letters",info:"welke letter hoor je?"},
+ plus1:{ic:"➕",naam:"Plus t/m 10",info:"rekenen"},
+ plus2:{ic:"➕",naam:"Plus t/m 100",info:"rekenen"},
+ plus3:{ic:"➕",naam:"Plus t/m 1000",info:"rekenen"},
+ min2:{ic:"➖",naam:"Min t/m 100",info:"rekenen"},
+ min3:{ic:"➖",naam:"Min t/m 1000",info:"rekenen"},
+ tafels:{ic:"✖️",naam:"Tafels",info:"keersommen"},
+ procent:{ic:"％",naam:"Procenten",info:"rekenen"},
+ breuk:{ic:"🍕",naam:"Breuken",info:"rekenen"},
+ woorden:{ic:"📖",naam:"Woorden",info:"wat staat hier?"},
+ spelling:{ic:"✏️",naam:"Spelling",info:"hoor & typ het woord"},
+ spelling2:{ic:"✏️",naam:"Spelling+",info:"moeilijkere woorden"},
+ zin:{ic:"💬",naam:"Zin lezen",info:"kies het juiste woord"},
+ zin2:{ic:"💬",naam:"Begrijpend lezen",info:"denk mee"},
+ logica:{ic:"🧩",naam:"Logica",info:"denkpuzzels"}
+};
+
+// ====== SLIM BREIN: leert van fouten, onthoudt per kind (localStorage)
+var staat=JSON.parse(localStorage.getItem("g2b_playlearn")||"{}");
+staat.sterren=staat.sterren||0;
+staat.fouten=staat.fouten||{};   // vak -> aantal fouten
+staat.goed=staat.goed||{};       // vak -> aantal goed
+staat.zwak=staat.zwak||{};       // specifieke sommen/woorden die moeilijk zijn
+function bewaar(){localStorage.setItem("g2b_playlearn",JSON.stringify(staat));
+ document.getElementById("sterren").textContent="⭐ "+staat.sterren;}
+
+// ====== STEM (gratis, ingebouwd in de browser — spreekt NL)
+function zeg(t){
+ try{speechSynthesis.cancel();
+ var u=new SpeechSynthesisUtterance(t);u.lang="nl-NL";u.rate=0.92;
+ speechSynthesis.speak(u);}catch(e){}
+}
+var laatsteZeg="";
+function zegHoud(t){laatsteZeg=t;zeg(t);}
+function herhaalZeg(){if(laatsteZeg)zeg(laatsteZeg);}
+
+// ====== WOORDENLIJSTEN (NL, niveau-stijgend)
+var WOORDEN1=["kat","hond","boom","huis","bal","vis","melk","beer","zon","boot","kip","aap"];
+var WOORDEN2=["schaap","vlinder","fietsen","school","tafel","lepel","bloem","pizza","zeilen","vriend","zebra","poes"];
+var ZINNEN1=[
+ {zin:"De ___ drinkt melk.",goed:"kat",opties:["kat","auto","stoel"]},
+ {zin:"Ik speel met de ___.",goed:"bal",opties:["bal","soep","deur"]},
+ {zin:"De ___ zwemt in het water.",goed:"vis",opties:["vis","klok","boom"]},
+ {zin:"De ___ is warm en geeft licht.",goed:"zon",opties:["zon","sok","pen"]}
+];
+var ZINNEN2=[
+ {zin:"Als ik drie appels heb en eet er één, dan heb ik er ___.",goed:"twee",opties:["twee","drie","vier"]},
+ {zin:"Een week heeft ___ dagen.",goed:"zeven",opties:["zeven","vijf","tien"]},
+ {zin:"Het tegenovergestelde van dag is ___.",goed:"nacht",opties:["nacht","ochtend","zon"]}
+];
+var LOGICA=[
+ {zin:"2, 4, 6, ___ ?",goed:"8",opties:["8","7","10"]},
+ {zin:"5, 10, 15, ___ ?",goed:"20",opties:["20","18","25"]},
+ {zin:"1, 2, 4, 8, ___ ?",goed:"16",opties:["16","12","10"]},
+ {zin:"Welke hoort er NIET bij: 🍎🍌🍇🚗 ?",goed:"🚗",opties:["🚗","🍎","🍌"]}
+];
+var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",zon:"☀️",ster:"⭐",bal:"⚽",bloem:"🌸"};
+
+// ====== NAVIGATIE
+var huidigVak="",huidigNiv="",vraagNr=0,goedTeller=0,RONDE=8;
+var dotHtml="";
+function toon(id){
+ ["scherm-home","scherm-oefen","scherm-klaar"].forEach(function(s){
+  document.getElementById(s).classList.toggle("hidden",s!==id);});
+ window.scrollTo(0,0);
+}
+function naarHome(){speechSynthesis.cancel();bouwHome();toon("scherm-home");}
+
+function bouwHome(){
+ var el=document.getElementById("niveau-lijst");el.innerHTML="";
+ NIVEAUS.forEach(function(n){
+  var kop=document.createElement("div");kop.className="niveau";
+  kop.innerHTML=n.naam+'<span class="tag">'+n.tag+"</span>";
+  el.appendChild(kop);
+  var g=document.createElement("div");g.className="grid";
+  n.vakken.forEach(function(vk){
+   var v=VAKKEN[vk];
+   var key=n.id+":"+vk;
+   var tot=((staat.goed[key]||0)+(staat.fouten[key]||0));
+   var pct=tot?Math.round((staat.goed[key]||0)/tot*100):0;
+   var c=document.createElement("div");c.className="card";
+   c.innerHTML='<span class="ic">'+v.ic+"</span><b>"+v.naam+"</b>"+
+    "<small>"+v.info+"</small>"+
+    '<div class="balkje"><i style="width:'+pct+'%"></i></div>';
+   c.onclick=function(){startOefening(n,vk);};
+   g.appendChild(c);
+  });
+  el.appendChild(g);
+ });
+ bewaar();
+}
+
+// ====== OEFENINGEN
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function shuffle(a){a.sort(function(){return Math.random()-0.5});return a;}
+
+function startOefening(niv,vak){
+ huidigNiv=niv.id;huidigVak=vak;vraagNr=0;goedTeller=0;
+ document.getElementById("oefen-titel").textContent=VAKKEN[vak].ic+" "+VAKKEN[vak].naam;
+ document.getElementById("oefen-niveau").textContent=niv.naam;
+ var st=document.getElementById("streep");st.innerHTML="";
+ for(var i=0;i<RONDE;i++){var d=document.createElement("span");d.className="dot";st.appendChild(d);}
+ toon("scherm-oefen");
+ volgendeVraag();
+}
+
+function volgendeVraag(){
+ if(vraagNr>=RONDE){eindRonde();return;}
+ document.getElementById("feedback").textContent="";
+ document.getElementById("feedback").className="feedback";
+ document.getElementById("slimme-tip").textContent="";
+ var v=document.getElementById("vraag-inhoud"),a=document.getElementById("antwoord-zone");
+ v.innerHTML="";a.innerHTML="";laatsteZeg="";
+ makers[huidigVak](v,a);
+ vraagNr++;
+}
+
+function antwoordOpties(a,goed,opties,tekst){
+ shuffle(opties);
+ opties.forEach(function(o){
+  var b=document.createElement("button");b.className="optie";b.innerHTML=o;
+  b.onclick=function(){check(o===goed,b,a);};
+  a.appendChild(b);
+ });
+}
+function antwoordTyp(a,goed){
+ var inp=document.createElement("input");inp.className="invoer";
+ inp.setAttribute("autocomplete","off");inp.setAttribute("autocapitalize","none");
+ var b=document.createElement("button");b.className="pill";b.textContent="OK";
+ function stuur(){check(inp.value.trim().toLowerCase()===String(goed).toLowerCase(),b,a,true);}
+ b.onclick=stuur;inp.onkeydown=function(e){if(e.key==="Enter")stuur();};
+ a.appendChild(inp);a.appendChild(b);setTimeout(function(){inp.focus();},100);
+}
+function check(goed,knop,a,laatOK){ 
+ var key=huidigNiv+":"+huidigVak;
+ var fb=document.getElementById("feedback");
+ if(goed){
+  knop.classList.add("goed");fb.textContent="🎉 Goed zo!";fb.classList.add("goed");
+  staat.goed[key]=(staat.goed[key]||0)+1;staat.sterren++;goedTeller++;
+  zeg("Goed zo!");
+  setTimeout(volgendeVraag,900);
+ }else{
+  knop.classList.add("fout");fb.textContent="Oops — probeer nog eens!";fb.classList.add("fout");
+  staat.fouten[key]=(staat.fouten[key]||0)+1;
+  zeg("Bijna! Luister goed en probeer opnieuw.");
+  if(!laatOK)knop.disabled=true;
+ }
+ // stip op de streep
+ var d=document.querySelectorAll("#streep .dot")[vraagNr-1];
+ if(d)d.classList.add(goed?"goed":"fout");
+ bewaar();
+}
+function eindRonde(){
+ var pct=Math.round(goedTeller/RONDE*100);
+ var ic=pct>=80?"🏆":pct>=50?"🏅":"💪";
+ document.getElementById("medal-ic").textContent=ic;
+ document.getElementById("klaar-titel").textContent=
+  pct>=80?"Super!" : pct>=50?"Goed bezig!" : "Oefening baart kunst!";
+ document.getElementById("klaar-tekst").textContent=
+  goedTeller+" van de "+RONDE+" goed — dat is "+pct+"%. "+
+  (pct<80?"De moeilijke stukjes oefenen we straks extra.":"Lekker tempo — klaar voor meer!");
+ zeg(pct>=80?"Super gedaan!":"Goed gedaan, blijf oefenen!");
+ toon("scherm-klaar");
+}
+function nogEen(){startOefening({id:huidigNiv,naam:document.getElementById("oefen-niveau").textContent},huidigVak);}
+
+// ====== MAKERS per vak (adaptive: zwakke dingen komen vaker terug)
+function zwakKies(lijst,key){
+ // favorieteer items waar eerder fout op gemaakt is
+ var zw=staat.zwak[key]||{};
+ var pool=[];
+ lijst.forEach(function(x){var w=1+((zw[String(x)]||0)*2);
+  for(var i=0;i<w;i++)pool.push(x);});
+ var x=pool[rnd(0,pool.length-1)];
+ window._huidigItem=x;
+ return x;
+}
+function markeerFout(key,val){
+ staat.zwak[key]=staat.zwak[key]||{};
+ staat.zwak[key][String(val)]=(staat.zwak[key][String(val)]||0)+1;
+}
+
+var makers={
+ tellen:function(v,a){
+  var dieren=["🐶","🐱","🐰","🦊","🐘","🐬","🦁"];
+  var dier=dieren[rnd(0,dieren.length-1)];
+  var n=rnd(1,10);
+  v.innerHTML='<div class="sub2">Hoeveel '+dier+' zie je?</div><div class="plaatjes">'+dier.repeat(n)+"</div>";
+  var opties=[n];while(opties.length<3){var x=rnd(Math.max(1,n-3),n+3);if(opties.indexOf(x)<0)opties.push(x);}
+  antwoordOpties(a,n,opties,"aantal");
+  zegHoud("Hoeveel zie je er? Tel maar mee!");
+ },
+ letters:function(v,a){
+  var l="ABCDEFGHIJKLMNOPRSTUVWZ".split("");
+  var goed=l[rnd(0,l.length-1)];
+  var opties=[goed];while(opties.length<3){var x=l[rnd(0,l.length-1)];if(opties.indexOf(x)<0)opties.push(x);}
+  v.innerHTML='<div class="sub2">Welke letter hoor je?</div><div class="big">❓</div>';
+  antwoordOpties(a,goed,opties,"letter");
+  zegHoud("Welke letter is dit: "+goed);
+ },
+ plus1:function(v,a){plus(v,a,10);},
+ plus2:function(v,a){plus(v,a,100);},
+ plus3:function(v,a){plus(v,a,1000);},
+ min2:function(v,a){min(v,a,100);},
+ min3:function(v,a){min(v,a,1000);},
+ tafels:function(v,a){
+  var x=rnd(1,10),y=rnd(1,10);
+  var key=huidigNiv+":"+huidigVak;
+  var som=x+"x"+y;
+  window._huidigItem=som;
+  v.innerHTML='<div class="big">'+x+" × "+y+" = ?</div>";
+  antwoordTyp(a,x*y);
+  zegHoud(x+" keer "+y);
+ },
+ procent:function(v,a){
+  var p=[10,25,50,75][rnd(0,3)],van=[20,40,80,100,200][rnd(0,4)];
+  v.innerHTML='<div class="big">'+p+"% van "+van+" = ?</div>";
+  antwoordTyp(a,van*p/100);
+  zegHoud(p+" procent van "+van);
+ },
+ breuk:function(v,a){
+  var n=rnd(2,8);
+  v.innerHTML='<div class="sub2">Een 🍕 in '+n+' stukken — je eet er 1. Hoeveel pizza heb je gehad?</div>';
+  var opties=["1/"+n,"1/"+(n+1),n+"/1"];
+  antwoordOpties(a,"1/"+n,opties,"breuk");
+ },
+ woorden:function(v,a){
+  var key=huidigNiv+":"+huidigVak;
+  var w=zwakKies(WOORDEN1,key);
+  v.innerHTML='<div class="sub2">Welk woord staat hier?</div><div class="big">'+w.toUpperCase()+"</div>";
+  var opties=[w];while(opties.length<3){var x=WOORDEN1[rnd(0,WOORDEN1.length-1)];if(opties.indexOf(x)<0)opties.push(x);}
+  antwoordOpties(a,w,opties,"woord");
+  zegHoud("Wat staat hier? De letters zijn: "+w.split("").join(" ")+" — "+w);
+  if((staat.fouten[key]||0)>1)document.getElementById("slimme-tip").textContent=
+   "Truc: zeg de letters hardop — dan hoor je het woord!";
+ },
+ spelling:function(v,a){spel(v,a,WOORDEN1);},
+ spelling2:function(v,a){spel(v,a,WOORDEN2);},
+ zin:function(v,a){
+  var z=ZINNEN1[rnd(0,ZINNEN1.length-1)];
+  v.innerHTML='<div class="sub2">Welk woord past?</div><div class="big" style="font-size:1.6rem">'+z.zin+"</div>";
+  antwoordOpties(a,z.goed,z.opties.slice(),"zin");
+  zegHoud(z.zin.replace("___","ehh"));
+ },
+ zin2:function(v,a){
+  var z=ZINNEN2[rnd(0,ZINNEN2.length-1)];
+  v.innerHTML='<div class="sub2">Denk mee:</div><div class="big" style="font-size:1.5rem">'+z.zin+"</div>";
+  antwoordOpties(a,z.goed,z.opties.slice(),"zin");
+  zegHoud(z.zin.replace("___","ehh"));
+ },
+ logica:function(v,a){
+  var z=LOGICA[rnd(0,LOGICA.length-1)];
+  v.innerHTML='<div class="sub2">🧩 puzzel:</div><div class="big" style="font-size:1.6rem">'+z.zin+"</div>";
+  antwoordOpties(a,z.goed,z.opties.slice(),"logica");
+ }
+};
+function plus(v,a,max){
+ var x=rnd(1,max),y=rnd(1,max);
+ v.innerHTML='<div class="big">'+x+" + "+y+" = ?</div>";
+ antwoordTyp(a,x+y);
+ zegHoud(x+" plus "+y);
+ if(max>10)document.getElementById("slimme-tip").textContent=
+  "Truc: doe eerst de tientallen, dan de enkeltjes — "+Math.floor(x/10)*10+" plus "+Math.floor(y/10)*10+" is "+(Math.floor(x/10)*10+Math.floor(y/10)*10);
+}
+function min(v,a,max){
+ var x=rnd(1,max),y=rnd(1,x);
+ v.innerHTML='<div class="big">'+x+" − "+y+" = ?</div>";
+ antwoordTyp(a,x-y);
+ zegHoud(x+" min "+y);
+}
+function spel(v,a,lijst){
+ var key=huidigNiv+":"+huidigVak;
+ var w=zwakKies(lijst,key);
+ v.innerHTML='<div class="sub2">Luister en typ het woord:</div><div class="big">✏️</div>';
+ if(EMOJI[w])v.innerHTML+='<div class="plaatjes">'+EMOJI[w]+"</div>";
+ antwoordTyp(a,w);
+ zegHoud("Typ het woord: "+w+". "+w+".");
+ document.getElementById("slimme-tip").textContent=
+  "Luister goed naar de klanken — hoor je de losse letters?";
+}
+// fout-markering: omsluit check om zwakke items bij te houden
+var _check=check;
+check=function(goed,knop,a){
+ if(!goed&&window._huidigItem)markeerFout(huidigNiv+":"+huidigVak,window._huidigItem);
+ _check(goed,knop,a);
+};
+
+bouwHome();bewaar();
+</script>
+</body>
+</html>
