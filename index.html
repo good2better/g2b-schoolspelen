@@ -56,6 +56,13 @@ animation:val linear forwards;pointer-events:none}
 @keyframes val{to{transform:translateY(110vh) rotate(720deg);opacity:.9}}
 .klap{font-size:1.8rem;display:inline-block;animation:klapper .5s ease 3}
 @keyframes klapper{50%{transform:scale(1.4) rotate(-8deg)}}
+.lesje{background:#fff8e6;border:2px solid var(--zon);border-radius:12px;
+padding:12px 14px;margin-top:10px;font-size:1rem;line-height:1.5;display:none}
+.lesje.aan{display:block;animation:verschijn .4s ease}
+@keyframes verschijn{from{opacity:0;transform:translateY(8px)}}
+.tel{display:inline-block;transition:transform .25s,filter .25s}
+.tel.act{transform:scale(1.35);filter:drop-shadow(0 0 6px var(--zon))}
+.teltot{font-size:1.6rem;font-weight:800;color:var(--roze);min-height:2rem}
 </style>
 </head>
 <body>
@@ -81,6 +88,7 @@ animation:val linear forwards;pointer-events:none}
 <div id="antwoord-zone"></div>
 <div class="feedback" id="feedback"></div>
 <div class="slimme-tip" id="slimme-tip"></div>
+<div class="lesje" id="lesje"></div>
 </div>
 <div class="streep" id="streep"></div>
 <div class="acties">
@@ -229,6 +237,8 @@ function volgendeVraag(){
  document.getElementById("feedback").textContent="";
  document.getElementById("feedback").className="feedback";
  document.getElementById("slimme-tip").textContent="";
+ var lj=document.getElementById("lesje");lj.className="lesje";lj.innerHTML="";
+ window._les=null;
  var v=document.getElementById("vraag-inhoud"),a=document.getElementById("antwoord-zone");
  v.innerHTML="";a.innerHTML="";laatsteZeg="";
  makers[huidigVak](v,a);
@@ -260,9 +270,9 @@ function check(goed,knop,a,laatOK){
   zeg("Goed zo!");
   setTimeout(volgendeVraag,900);
  }else{
-  knop.classList.add("fout");fb.textContent="Oops — probeer nog eens!";fb.classList.add("fout");
+  knop.classList.add("fout");fb.textContent="Bijna! Samen kijken we even…";fb.classList.add("fout");
   staat.fouten[key]=(staat.fouten[key]||0)+1;
-  zeg("Bijna! Luister goed en probeer opnieuw.");
+  toonLesje();
   if(!laatOK)knop.disabled=true;
  }
  // stip op de streep
@@ -299,6 +309,45 @@ function feestConfetti(n){
 }
 function nogEen(){startOefening({id:huidigNiv,naam:document.getElementById("oefen-niveau").textContent},huidigVak);}
 
+// ====== MINI-LESJE: bij een fout komt een geduldig uitleg-verhaaltje
+var AANMOEDIGING=["Bijna! Kom, we doen het samen.","Geen probleem — iedereen leert zo.",
+ "Goed geprobeerd! Even samen kijken.","Oefenen helpt — kijk maar mee."];
+function toonLesje(){
+ var l=window._les;if(!l){zeg("Bijna! Probeer het rustig nog eens — jij kan het.");return;}
+ var lj=document.getElementById("lesje");lj.classList.add("aan");
+ var kop='<b>'+AANMOEDIGING[rnd(0,AANMOEDIGING.length-1)]+'</b><br>';
+ var t="",z="";
+ if(l.soort==="tellen"){
+  t="Tel met me mee — ik tel voor:<br><div class='teltot' id='teltot'></div>Klaar? <b>Nu jij — jij kan het!</b>";
+  lj.innerHTML=kop+t;samenTellen(l.n);return;
+ }
+ if(l.soort==="letter"){t="De letter is <b>"+l.l+"</b>. Zeg maar na: "+l.l+"!";z="De letter is "+l.l+". Zeg mee: "+l.l;}
+ else if(l.soort==="plus"){t="Truc: begin bij "+l.x+" en tel er "+l.y+" bij: "+l.x+" + "+l.y+" = <b>"+(l.x+l.y)+"</b>";z="Kijk: "+l.x+" plus "+l.y+" is "+(l.x+l.y)+". Nu jij!";}
+ else if(l.soort==="min"){t="Truc: begin bij "+l.x+" en ga "+l.y+" terug: "+l.x+" − "+l.y+" = <b>"+(l.x-l.y)+"</b>";z="Kijk: "+l.x+" min "+l.y+" is "+(l.x-l.y)+". Nu jij!";}
+ else if(l.soort==="keer"){var st=[];for(var i=1;i<=l.y;i++)st.push(l.x*i);
+  t="Truc: "+l.x+"×"+l.y+" is "+l.y+" groepjes van "+l.x+": "+st.join(", ")+" — dus <b>"+(l.x*l.y)+"</b>";z="Kijk: "+l.x+" keer "+l.y+". Tel de groepjes: "+st.join(", ")+". Nu jij!";}
+ else if(l.soort==="procent"){t="Truc: 1% van "+l.van+" is "+(l.van/100)+". Dus "+l.p+"% is "+l.p+" × "+(l.van/100)+" = <b>"+(l.van*l.p/100)+"</b>";z="Een procent van "+l.van+" is "+(l.van/100)+". Keer "+l.p+" is "+(l.van*l.p/100)+". Nu jij!";}
+ else if(l.soort==="breuk"){t="De pizza ligt in "+l.n+" stukken. 1 stuk = <b>1/"+l.n+"</b> van de pizza.";z="Verdeel de pizza in "+l.n+" stukken. Een stuk is een op "+l.n+". Nu jij!";}
+ else if(l.soort==="woord"){t="Kijk goed: <b>"+l.w.split("").join("-")+"</b> — "+l.w+". Zeg de letters mee!";z="Kijk: de letters zijn "+l.w.split("").join(", ")+". Dat is "+l.w+". Nu jij!";}
+ else if(l.soort==="zin"){t="Lees de zin rustig nog eens en denk: welk woord klopt écht?";z="Lees de zin rustig nog eens. Welk woord past echt? Jij kan het.";}
+ else if(l.soort==="logica"){t="Kijk naar het patroon: wat verandert er elke stap?";z="Kijk naar het patroon. Wat verandert er steeds? Nu jij!";}
+ lj.innerHTML=kop+t;
+ zeg(z);}
+// samen tellen: app telt de plaatjes één voor één, dan: nu jij!
+var TELWOORD=["","een","twee","drie","vier","vijf","zes","zeven","acht","negen","tien"];
+function samenTellen(n){
+ var i=0;zeg("Tel met me mee.");
+ var iv=setInterval(function(){
+  var el=document.getElementById("tel-"+i),tt=document.getElementById("teltot");
+  if(!el||!tt){clearInterval(iv);return;}
+  el.classList.add("act");tt.textContent=(i+1);zeg(TELWOORD[i+1]);
+  if(i+1===n){clearInterval(iv);
+   setTimeout(function(){zeg("Samen: "+n+"! Yeah — nu jij, jij kan het!");
+    if(tt)tt.innerHTML=(i+1)+" — samen: <b>"+n+"!</b>";},700);
+  }else{i++;}
+ },700);
+}
+
 // ====== MAKERS per vak (adaptive: zwakke dingen komen vaker terug)
 function zwakKies(lijst,key){
  // favorieteer items waar eerder fout op gemaakt is
@@ -320,7 +369,9 @@ var makers={
   var dieren=["🐶","🐱","🐰","🦊","🐘","🐬","🦁"];
   var dier=dieren[rnd(0,dieren.length-1)];
   var n=rnd(1,10);
-  v.innerHTML='<div class="sub2">Hoeveel '+dier+' zie je?</div><div class="plaatjes">'+dier.repeat(n)+"</div>";
+  window._les={soort:"tellen",n:n};
+  var pjes="";for(var i=0;i<n;i++)pjes+='<span class="tel" id="tel-'+i+'">'+dier+"</span>";
+  v.innerHTML='<div class="sub2">Hoeveel '+dier+' zie je?</div><div class="plaatjes" id="telzone">'+pjes+"</div>";
   var opties=[n];while(opties.length<3){var x=rnd(Math.max(1,n-3),n+3);if(opties.indexOf(x)<0)opties.push(x);}
   antwoordOpties(a,n,opties,"aantal");
   zegHoud("Hoeveel zie je er? Tel maar mee!");
@@ -328,6 +379,7 @@ var makers={
  letters:function(v,a){
   var l="ABCDEFGHIJKLMNOPRSTUVWZ".split("");
   var goed=l[rnd(0,l.length-1)];
+  window._les={soort:"letter",l:goed};
   var opties=[goed];while(opties.length<3){var x=l[rnd(0,l.length-1)];if(opties.indexOf(x)<0)opties.push(x);}
   v.innerHTML='<div class="sub2">Welke letter hoor je?</div><div class="big">❓</div>';
   antwoordOpties(a,goed,opties,"letter");
@@ -343,18 +395,21 @@ var makers={
   var key=huidigNiv+":"+huidigVak;
   var som=x+"x"+y;
   window._huidigItem=som;
+  window._les={soort:"keer",x:x,y:y};
   v.innerHTML='<div class="big">'+x+" × "+y+" = ?</div>";
   antwoordTyp(a,x*y);
   zegHoud(x+" keer "+y);
  },
  procent:function(v,a){
   var p=[10,25,50,75][rnd(0,3)],van=[20,40,80,100,200][rnd(0,4)];
+  window._les={soort:"procent",p:p,van:van};
   v.innerHTML='<div class="big">'+p+"% van "+van+" = ?</div>";
   antwoordTyp(a,van*p/100);
   zegHoud(p+" procent van "+van);
  },
  breuk:function(v,a){
   var n=rnd(2,8);
+  window._les={soort:"breuk",n:n};
   v.innerHTML='<div class="sub2">Een 🍕 in '+n+' stukken — je eet er 1. Hoeveel pizza heb je gehad?</div>';
   var opties=["1/"+n,"1/"+(n+1),n+"/1"];
   antwoordOpties(a,"1/"+n,opties,"breuk");
@@ -362,6 +417,7 @@ var makers={
  woorden:function(v,a){
   var key=huidigNiv+":"+huidigVak;
   var w=zwakKies(WOORDEN1,key);
+  window._les={soort:"woord",w:w};
   v.innerHTML='<div class="sub2">Welk woord staat hier?</div><div class="big">'+w.toUpperCase()+"</div>";
   var opties=[w];while(opties.length<3){var x=WOORDEN1[rnd(0,WOORDEN1.length-1)];if(opties.indexOf(x)<0)opties.push(x);}
   antwoordOpties(a,w,opties,"woord");
@@ -373,24 +429,28 @@ var makers={
  spelling2:function(v,a){spel(v,a,WOORDEN2);},
  zin:function(v,a){
   var z=ZINNEN1[rnd(0,ZINNEN1.length-1)];
+  window._les={soort:"zin"};
   v.innerHTML='<div class="sub2">Welk woord past?</div><div class="big" style="font-size:1.6rem">'+z.zin+"</div>";
   antwoordOpties(a,z.goed,z.opties.slice(),"zin");
   zegHoud(z.zin.replace("___","ehh"));
  },
  zin2:function(v,a){
   var z=ZINNEN2[rnd(0,ZINNEN2.length-1)];
+  window._les={soort:"zin"};
   v.innerHTML='<div class="sub2">Denk mee:</div><div class="big" style="font-size:1.5rem">'+z.zin+"</div>";
   antwoordOpties(a,z.goed,z.opties.slice(),"zin");
   zegHoud(z.zin.replace("___","ehh"));
  },
  logica:function(v,a){
   var z=LOGICA[rnd(0,LOGICA.length-1)];
+  window._les={soort:"logica",zin:z.zin};
   v.innerHTML='<div class="sub2">🧩 puzzel:</div><div class="big" style="font-size:1.6rem">'+z.zin+"</div>";
   antwoordOpties(a,z.goed,z.opties.slice(),"logica");
  }
 };
 function plus(v,a,max){
  var x=rnd(1,max),y=rnd(1,max);
+ window._les={soort:"plus",x:x,y:y};
  v.innerHTML='<div class="big">'+x+" + "+y+" = ?</div>";
  antwoordTyp(a,x+y);
  zegHoud(x+" plus "+y);
@@ -399,6 +459,7 @@ function plus(v,a,max){
 }
 function min(v,a,max){
  var x=rnd(1,max),y=rnd(1,x);
+ window._les={soort:"min",x:x,y:y};
  v.innerHTML='<div class="big">'+x+" − "+y+" = ?</div>";
  antwoordTyp(a,x-y);
  zegHoud(x+" min "+y);
@@ -406,6 +467,7 @@ function min(v,a,max){
 function spel(v,a,lijst){
  var key=huidigNiv+":"+huidigVak;
  var w=zwakKies(lijst,key);
+ window._les={soort:"woord",w:w};
  v.innerHTML='<div class="sub2">Luister en typ het woord:</div><div class="big">✏️</div>';
  if(EMOJI[w])v.innerHTML+='<div class="plaatjes">'+EMOJI[w]+"</div>";
  antwoordTyp(a,w);
