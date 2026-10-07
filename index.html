@@ -49,7 +49,13 @@ button.pill.grijs{background:#e8e0d0;color:#654}
 .woord{font-size:2rem;letter-spacing:10px;font-weight:700;color:var(--zeed)}
 footer{text-align:center;color:#98a;font-size:.8rem;padding:20px}
 .hidden{display:none}
-.medal{font-size:2.4rem}
+.medal{font-size:2.4rem;animation:stuiter .9s ease infinite alternate;display:inline-block}
+@keyframes stuiter{to{transform:translateY(-14px) scale(1.12)}}
+.confetti{position:fixed;top:-12px;font-size:1.3rem;z-index:99;
+animation:val linear forwards;pointer-events:none}
+@keyframes val{to{transform:translateY(110vh) rotate(720deg);opacity:.9}}
+.klap{font-size:1.8rem;display:inline-block;animation:klapper .5s ease 3}
+@keyframes klapper{50%{transform:scale(1.4) rotate(-8deg)}}
 </style>
 </head>
 <body>
@@ -273,8 +279,23 @@ function eindRonde(){
  document.getElementById("klaar-tekst").textContent=
   goedTeller+" van de "+RONDE+" goed — dat is "+pct+"%. "+
   (pct<80?"De moeilijke stukjes oefenen we straks extra.":"Lekker tempo — klaar voor meer!");
- zeg(pct>=80?"Super gedaan!":"Goed gedaan, blijf oefenen!");
+ zeg(pct>=80?"Super gedaan, gefeliciteerd!":"Goed gedaan — probeer het gewoon nog eens!");
  toon("scherm-klaar");
+ if(pct>=50)feestConfetti(pct>=80?60:30);
+ else document.getElementById("medal-ic").innerHTML='💪 <span class="klap">👏</span>';
+}
+// bewegende beloning: confetti van boven naar beneden
+function feestConfetti(n){
+ var em=["🎉","⭐","🌈","🎈","✨","🎊"];
+ for(var i=0;i<n;i++){
+  var s=document.createElement("span");s.className="confetti";
+  s.textContent=em[rnd(0,em.length-1)];
+  s.style.left=(Math.random()*100)+"vw";
+  s.style.animationDuration=(2.2+Math.random()*2.2)+"s";
+  s.style.fontSize=(0.9+Math.random()*1.1)+"rem";
+  document.body.appendChild(s);
+  (function(el){setTimeout(function(){el.remove();},5200);})(s);
+ }
 }
 function nogEen(){startOefening({id:huidigNiv,naam:document.getElementById("oefen-niveau").textContent},huidigVak);}
 
