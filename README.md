@@ -1,4 +1,4 @@
-# G2B PlayLearn 🎓
+# G2B Schoolspelen 🎓
 
 Speels leren voor kinderen (en doorzetters): **rekenen en lezen** —
 van basisschool tot genius. Gratis, lokaal, 100% commercieel (regel 1).
