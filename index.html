@@ -158,7 +158,11 @@ var VAKKEN={
  zin:{ic:"💬",naam:"Zin lezen",info:"kies het juiste woord"},
  zin2:{ic:"💬",naam:"Begrijpend lezen",info:"denk mee"},
  logica:{ic:"🧩",naam:"Logica",info:"denkpuzzels"},
- puzzel:{ic:"🔀",naam:"Woordpuzzel",info:"letters in de goede volgorde — het plaatje leeft!"}
+ puzzel:{ic:"🔀",naam:"Woordpuzzel",info:"letters in de goede volgorde — het plaatje leeft!"},
+ boekWoord:{ic:"📖",naam:"Boekwoorden",info:"woorden uit jouw boek"},
+ boekSpel:{ic:"✏️",naam:"Boekspelling",info:"typ het boekwoord"},
+ boekZin:{ic:"💬",naam:"Boekzinnen",info:"zinnen uit jouw boek"},
+ boekPuz:{ic:"🔀",naam:"Boekpuzzel",info:"boekwoorden puzzelen"}
 };
 
 // ====== SLIM BREIN: leert van fouten, onthoudt per kind (localStorage)
@@ -201,6 +205,19 @@ var LOGICA=[
  {zin:"1, 2, 4, 8, ___ ?",goed:"16",opties:["16","12","10"]},
  {zin:"Welke hoort er NIET bij: 🍎🍌🍇🚗 ?",goed:"🚗",opties:["🚗","🍎","🍌"]}
 ];
+// ====== MIJN BOEKEN: jouw boeken worden oefeningen
+var BOEKEN=[
+ {id:"sunny",naam:"Sunny's Sailing Adventures",ic:"⛵",
+  woorden:["sunny","zeilen","boot","water","zon","wind","walvis","dolfijn","eiland","anker","golven","haven"],
+  zinnen:[{zin:"Sunny vaart met haar ___ over de zee.",goed:"boot",opties:["boot","fiets","auto"]},
+   {zin:"De ___ waait door de zeilen.",goed:"wind",opties:["wind","deur","hond"]},
+   {zin:"De ___ springt uit het water.",goed:"dolfijn",opties:["dolfijn","stoel","pen"]}]},
+ {id:"keesje",naam:"Keesje de Kip",ic:"🐔",
+  woorden:["keesje","kip","ei","hok","boer","graan","haan","nest","pluimen","kuiken"],
+  zinnen:[{zin:"Keesje legt een ___.",goed:"ei",opties:["ei","bal","schoen"]},
+   {zin:"Keesje woont op de ___.",goed:"boerderij",opties:["boerderij","straat","boot"]},
+   {zin:"De ___ zegt kukeleku.",goed:"haan",opties:["haan","kat","vis"]}]}
+];
 var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",zon:"☀️",ster:"⭐",
  bal:"⚽",bloem:"🌸",boom:"🌳",huis:"🏠",melk:"🥛",boot:"⛵",schaap:"🐑",vlinder:"🦋",
  fietsen:"🚲",school:"🏫",lepel:"🥄",pizza:"🍕",zebra:"🦓",poes:"🐱",vriend:"👫",zeilen:"⛵",tafel:"🍽️"};
@@ -215,6 +232,33 @@ function toon(id){
 }
 function naarHome(){speechSynthesis.cancel();bouwHome();toon("scherm-home");}
 
+function boekKaarten(el){
+ var h=document.createElement("div");h.className="niveau";
+ h.innerHTML='📚 Mijn boeken<span class="tag">oefenen met jouw verhalen</span>';
+ el.appendChild(h);
+ var g=document.createElement("div");g.className="grid";
+ BOEKEN.forEach(function(bk){
+  var c=document.createElement("div");c.className="card";
+  c.innerHTML='<span class="ic">'+bk.ic+"</span><b>"+bk.naam+"</b><small>oefenen met dit boek</small>";
+  c.onclick=function(){toonBoek(bk);};
+  g.appendChild(c);});
+ el.appendChild(g);}
+var huidigBoek=null;
+function toonBoek(bk){
+ huidigBoek=bk;var el=document.getElementById("niveau-lijst");el.innerHTML="";
+ var h=document.createElement("div");h.className="niveau";
+ h.innerHTML=bk.ic+" "+bk.naam+'<span class="tag">kies een oefening</span>';el.appendChild(h);
+ var g=document.createElement("div");g.className="grid";
+ [["boekWoord","Welk boekwoord?"],["boekSpel","Typ het boekwoord"],["boekZin","Boekzin aanvullen"],["boekPuz","Boekwoord-puzzel"]]
+ .forEach(function(vv){
+  var v=VAKKEN[vv[0]],c=document.createElement("div");c.className="card";
+  c.innerHTML='<span class="ic">'+v.ic+"</span><b>"+v.naam+"</b><small>"+vv[1]+"</small>";
+  c.onclick=function(){startOefening({id:"boek:"+bk.id,naam:bk.naam},vv[0]);};
+  g.appendChild(c);});
+ el.appendChild(g);
+ var terug=document.createElement("button");terug.className="pill grijs";
+ terug.textContent="← alle niveaus";terug.style.margin="10px 0";terug.onclick=bouwHome;
+ el.appendChild(terug);}
 function bouwHome(){
  var nz=document.getElementById("naam-zone");
  if(wie()){nz.innerHTML='<p class="sub2">👋 Hoi <b>'+wie()+"</b>! Klaar om te spelen?</p>";}
@@ -242,6 +286,7 @@ function bouwHome(){
   });
   el.appendChild(g);
  });
+ boekKaarten(el);
  bewaar();
 }
 
@@ -250,7 +295,7 @@ function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 function shuffle(a){a.sort(function(){return Math.random()-0.5});return a;}
 
 var pauzeStart=0,pauzeGedaan=false;
-function pauzeMs(){return ["g12","g34"].indexOf(huidigNiv)>=0?10*60*1000:15*60*1000;}
+function pauzeMs(){return (["g12","g34"].indexOf(huidigNiv)>=0||huidigNiv.indexOf("boek:")===0)?10*60*1000:15*60*1000;}
 function zetNaam(){
  var v=document.getElementById("naam-in").value.trim();if(!v)return;
  staat.naam=v;bewaar();zeg("Hoi "+v+"! Welkom bij Schoolspelen — kies een spel!");
@@ -529,10 +574,31 @@ var makers={
   v.innerHTML='<div class="sub2">🧩 puzzel:</div><div class="big" style="font-size:1.6rem">'+z.zin+"</div>";
   antwoordOpties(a,z.goed,z.opties.slice(),"logica");
  },
- puzzel:function(v,a){
+ puzzel:function(v,a){puzzelBouw(v,a,WOORDEN1);},
+ boekWoord:function(v,a){
+  var bk=huidigBoek||BOEKEN[0],key=huidigNiv+":"+huidigVak;
+  var w=zwakKies(bk.woorden,key);window._les={soort:"woord",w:w};
+  v.innerHTML='<div class="sub2">'+bk.ic+' '+bk.naam+' — welk woord staat hier?</div><div class="big">'+w.toUpperCase()+"</div>";
+  var opties=[w];while(opties.length<3){var x=bk.woorden[rnd(0,bk.woorden.length-1)];if(opties.indexOf(x)<0)opties.push(x);}
+  antwoordOpties(a,w,opties,"woord");
+  zegHoud("Wat staat hier? De letters zijn: "+w.split("").join(" ")+" — "+w);},
+ boekSpel:function(v,a){
+  var bk=huidigBoek||BOEKEN[0],key=huidigNiv+":"+huidigVak;
+  var w=zwakKies(bk.woorden,key);window._les={soort:"woord",w:w};
+  v.innerHTML='<div class="sub2">'+bk.ic+' Luister en typ het woord uit '+bk.naam+':</div><div class="big">✏️</div>';
+  antwoordTyp(a,w);zegHoud("Typ het woord: "+w+". "+w+".");},
+ boekZin:function(v,a){
+  var bk=huidigBoek||BOEKEN[0];
+  var z=bk.zinnen[rnd(0,bk.zinnen.length-1)];window._les={soort:"zin"};
+  v.innerHTML='<div class="sub2">'+bk.ic+' '+bk.naam+' — welk woord past?</div><div class="big" style="font-size:1.5rem">'+z.zin+"</div>";
+  antwoordOpties(a,z.goed,z.opties.slice(),"zin");
+  zegHoud(z.zin.replace("___","ehh"));},
+ boekPuz:function(v,a){puzzelBouw(v,a,(huidigBoek||BOEKEN[0]).woorden);}
+};
+function puzzelBouw(v,a,lijst){
   // letters door elkaar — goed maken en het plaatje komt tot leven
   var key=huidigNiv+":"+huidigVak;
-  var w=zwakKies(WOORDEN1,key);window._les={soort:"woord",w:w};
+  var w=zwakKies(lijst,key);window._les={soort:"woord",w:w};
   var em=EMOJI[w]||"❓";
   v.innerHTML='<div class="sub2">Zet de letters in de goede volgorde — dan komt het plaatje tot leven!</div>'+
    '<div class="plaatjes"><span id="levend">'+em+'</span></div>'+
@@ -555,7 +621,6 @@ var makers={
   a.appendChild(wis);
   zegHoud("Zet de letters in de goede volgorde en maak het woord: "+w);
  }
-};
 function plus(v,a,max){
  var x=rnd(1,max),y=rnd(1,max);
  window._les={soort:"plus",x:x,y:y};
