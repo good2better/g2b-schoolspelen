@@ -72,6 +72,10 @@ display:flex;align-items:center;justify-content:center}
 padding:14px;margin-top:14px;text-align:center}
 .juf{font-size:1.4rem;margin-right:6px}
 .gebouw{letter-spacing:12px;font-size:2rem;font-weight:700;color:var(--zeed);min-height:3rem}
+.clip-laag{position:fixed;inset:0;background:rgba(10,15,30,.82);display:none;align-items:center;justify-content:center;z-index:99}
+.clip-laag.aan{display:flex;animation:verschijn .3s}
+.clip-laag video{max-width:92vw;max-height:82vh;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+.clip-tip{position:absolute;bottom:6vh;color:#fff;opacity:.8;font-size:.95rem}
 </style>
 </head>
 <body>
@@ -390,7 +394,8 @@ function eindRonde(){
  var nm=wie()?", "+wie():"";
  zeg(pct>=80?"Super gedaan"+nm+", gefeliciteerd!":"Goed gedaan"+nm+" — probeer het gewoon nog eens!");
  toon("scherm-klaar");
- if(pct>=50)feestConfetti(pct>=80?60:30);
+ if(pct>=80)speelClip("feest.mp4",function(){feestConfetti(60);});
+ else if(pct>=50)feestConfetti(30);
  else document.getElementById("medal-ic").innerHTML='💪 <span class="klap">👏</span>';
  if(pct>=80&&Math.random()<0.5)toonUitdager();
 }
@@ -411,7 +416,20 @@ function durfAan(){
  var volg=NIVEAUS[Math.min(idx+1,NIVEAUS.length-1)];
  var vk=volg.vakken[rnd(0,volg.vakken.length-1)];
  zeg("Yes! Succes — jij kan het!");
- startOefening(volg,vk);}
+ speelClip("groei.mp4",function(){startOefening(volg,vk);});}
+// interactieve clip-momenten: speelt clips/<naam>.mp4 af; ontbreekt hij, dan gaat alles gewoon door
+function speelClip(naam,klaar){
+ var v=document.getElementById("clip-vid"),laag=document.getElementById("clip-laag");
+ var fin=false;function done(){if(fin)return;fin=true;sluitClip();if(klaar)klaar();}
+ v.onerror=done;v.onended=done;
+ v.src="clips/"+naam;laag.classList.add("aan");
+ var p=v.play();if(p&&p.catch)p.catch(done);
+ setTimeout(done,15000);
+}
+function sluitClip(){
+ var v=document.getElementById("clip-vid");if(!v)return;
+ v.pause();v.removeAttribute("src");v.load();
+ document.getElementById("clip-laag").classList.remove("aan");}
 // bewegende beloning: confetti van boven naar beneden
 function feestConfetti(n){
  var em=["🎉","⭐","🌈","🎈","✨","🎊"];
@@ -683,5 +701,6 @@ function speelDrum(){
 
 bouwHome();bewaar();
 </script>
+<div id="clip-laag" class="clip-laag" onclick="sluitClip()"><video id="clip-vid" playsinline></video><div class="clip-tip">tik om verder te gaan ▶</div></div>
 </body>
 </html>
