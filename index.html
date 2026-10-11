@@ -394,7 +394,8 @@ function eindRonde(){
  var nm=wie()?", "+wie():"";
  zeg(pct>=80?"Super gedaan"+nm+", gefeliciteerd!":"Goed gedaan"+nm+" — probeer het gewoon nog eens!");
  toon("scherm-klaar");
- if(pct>=80)speelClip("feest.mp4",function(){feestConfetti(60);});
+ if(pct>=100)speelClip("ziggy-hop.mp4",function(){feestConfetti(80);});
+ else if(pct>=80)speelClip("feest.mp4",function(){feestConfetti(60);});
  else if(pct>=50)feestConfetti(30);
  else document.getElementById("medal-ic").innerHTML='💪 <span class="klap">👏</span>';
  if(pct>=80&&Math.random()<0.5)toonUitdager();
