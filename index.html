@@ -344,7 +344,8 @@ function doeVraag(){
 function toonPauze(){document.getElementById("pauze").classList.remove("hidden");
  zeg("Drinkpauze! Pak je drinken — even rust is goed voor je hersenen.");}
 function sluitPauze(){document.getElementById("pauze").classList.add("hidden");
- pauzeStart=Date.now();zeg("Lekker! We gaan weer verder — je kan het!");doeVraag();}
+ pauzeStart=Date.now();zeg("Lekker! We gaan weer verder — je kan het!");
+ if(huidigVak&&makers[huidigVak])doeVraag();}
 
 function antwoordOpties(a,goed,opties,tekst){
  shuffle(opties);
