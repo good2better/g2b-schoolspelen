@@ -637,7 +637,8 @@ function spelKaarten(el){
   ["⚡","Reken-race","30 tellen — zoveel sommen als je kan",spelRekenrace],
   ["📖","Verhaal-dictee","hoor een boekwoord en typ het",spelDictee],
   ["🎯","Woord-bingo","hoor het woord — tik het vakje",spelBingo],
-  ["🌍","Talen","hoor & leer Engels, Duits, Frans",spelTalen]]
+  ["🌍","Talen","hoor & leer Engels, Duits, Frans",spelTalen],
+  ["🎨","Kleuren-jacht","tik alles wat de kleur is",spelKleuren]]
  .forEach(function(sp){
   var c=document.createElement("div");c.className="card";
   c.innerHTML='<span class="ic">'+sp[0]+"</span><b>"+sp[1]+"</b><small>"+sp[2]+"</small>";
@@ -1197,6 +1198,27 @@ function memKlaar(){
  },500);
 }
 
+// ====== OUDER-RAPPORT — printbaar voortgangsverslag (voor ouders/scholen)
+function ouderRapport(){
+ var keys=Object.keys(staat.goed).concat(Object.keys(staat.fouten)).filter(function(v,i,a){return a.indexOf(v)===i;}).sort();
+ var sterk=[],oefen=[];
+ keys.forEach(function(key){
+  var g=staat.goed[key]||0,f=staat.fouten[key]||0,tot=g+f,pct=tot?Math.round(100*g/tot):0;
+  var ps=key.split(":"),niv=ps[0]==="boek"?"boek:"+ps[1]:ps[0],vak=ps[ps.length-1];
+  var nnaam=niv.indexOf("boek:")===0?((BOEKEN.find(function(b){return "boek:"+b.id===niv;})||{naam:niv}).naam):niv==="fouten"?"🎯 foutenronde":niv==="seizoen"?"🍂 seizoen":((NIVEAUS.find(function(n){return n.id===niv;})||{naam:niv}).naam);
+  var regel=nnaam+" · "+(VAKKEN[vak]||{naam:vak}).naam+" — "+pct+"% ("+tot+"x)";
+  (pct>=70?sterk:oefen).push(regel);
+ });
+ var gbl=NIVEAUS.map(function(n){var gs=groepScore(n);
+  return n.naam+": "+gs.gedaan+"/"+gs.tot+(gs.klaar?" 🏅":"");}).join(" · ");
+ wbToon("📋 Voortgangs-rapport — "+(wie()||"je kind"),
+  "<p><b>Sterk</b> (≥70%):</p>"+(sterk.length?sterk.map(function(s){return "<div>"+s+"</div>";}).join(""):"<div>nog niets gemeten</div>")+
+  "<p style='margin-top:10px'><b>Oefen verder</b> (&lt;70%):</p>"+(oefen.length?oefen.map(function(s){return "<div>"+s+"</div>";}).join(""):"<div>alles sterk!</div>")+
+  "<p style='margin-top:10px'><b>Groep-bewijs:</b> "+gbl+"</p>"+
+  "<p><b>Oefenritme:</b> "+dagStreak()+" dag(en) op rij · ⭐ "+staat.sterren+" sterren</p>"+
+  "<p><b>Hoe "+(wie()||"je kind")+" leert:</b></p>"+speelstijlTekst().replace(/stijl-regel/g,""));
+}
+
 // ====== WERKBLADEN — printbare oefenblaadjes voor thuis/klas (gratis les-materiaal)
 function werkbladMenu(){
  document.getElementById("spel-titel").textContent="🖨️ Werkblad printen";
@@ -1209,6 +1231,9 @@ function werkbladMenu(){
   b.onclick=function(){werkbladBoek(bk);};zk.appendChild(b);});
  var s=document.createElement("button");s.className="pill";s.textContent="🔢 Sommen-blad";
  s.onclick=werkbladSommen;zk.appendChild(s);
+ ["zon","bloem","vis","konijn","vlinder"].forEach(function(k,i){
+  var b=document.createElement("button");b.className="pill";b.textContent="🖍️ kleurplaat: "+k;
+  (function(n){b.onclick=function(){werkbladKleurplaat(n);};})(k);zk.appendChild(b);});
  toon("scherm-spel");
 }
 function wbToon(titel,html){
@@ -1229,6 +1254,18 @@ function werkbladBoek(bk){
  }).join("");
  wbToon(bk.ic+" Woorden bij "+bk.naam,'<p>Vul de ontbrekende letters in en schrijf het woord over:</p>'+rijen);
  zeg("Werkblad van "+bk.naam+" klaar — de printer doet de rest!");
+}
+// kleurplaten — eenvoudige zwarte lijnen op wit, printen en inkleuren
+var KLEURPLATEN={
+ zon:'<circle cx="200" cy="150" r="70" fill="none" stroke="#000" stroke-width="6"/><g stroke="#000" stroke-width="8" stroke-linecap="round"><line x1="200" y1="40" x2="200" y2="10"/><line x1="200" y1="290" x2="200" y2="260"/><line x1="90" y1="150" x2="60" y2="150"/><line x1="340" y1="150" x2="310" y2="150"/><line x1="122" y1="72" x2="100" y2="50"/><line x1="300" y1="250" x2="278" y2="228"/><line x1="278" y1="72" x2="300" y2="50"/><line x1="122" y1="228" x2="100" y2="250"/></g><circle cx="175" cy="140" r="8" fill="#000"/><circle cx="225" cy="140" r="8" fill="#000"/><path d="M170 175 Q200 200 230 175" fill="none" stroke="#000" stroke-width="6" stroke-linecap="round"/>',
+ bloem:'<g fill="none" stroke="#000" stroke-width="6"><ellipse cx="200" cy="90" rx="35" ry="55"/><ellipse cx="200" cy="210" rx="35" ry="55"/><ellipse cx="120" cy="150" rx="55" ry="35"/><ellipse cx="280" cy="150" rx="55" ry="35"/><ellipse cx="145" cy="95" rx="45" ry="30" transform="rotate(-45 145 95)"/><ellipse cx="255" cy="95" rx="45" ry="30" transform="rotate(45 255 95)"/><ellipse cx="145" cy="205" rx="45" ry="30" transform="rotate(45 145 205)"/><ellipse cx="255" cy="205" rx="45" ry="30" transform="rotate(-45 255 205)"/></g><circle cx="200" cy="150" r="35" fill="none" stroke="#000" stroke-width="6"/><path d="M200 245 Q195 300 200 350" fill="none" stroke="#000" stroke-width="6"/><ellipse cx="155" cy="320" rx="40" ry="18" fill="none" stroke="#000" stroke-width="5"/><ellipse cx="245" cy="330" rx="40" ry="18" fill="none" stroke="#000" stroke-width="5"/>',
+ vis:'<ellipse cx="200" cy="160" rx="110" ry="70" fill="none" stroke="#000" stroke-width="6"/><path d="M300 160 L380 100 L380 220 Z" fill="none" stroke="#000" stroke-width="6" stroke-linejoin="round"/><circle cx="150" cy="145" r="14" fill="none" stroke="#000" stroke-width="6"/><circle cx="150" cy="145" r="6" fill="#000"/><path d="M200 90 Q230 60 260 90" fill="none" stroke="#000" stroke-width="5"/><path d="M210 230 Q235 260 260 230" fill="none" stroke="#000" stroke-width="5"/><g fill="none" stroke="#000" stroke-width="4"><circle cx="60" cy="60" r="14"/><circle cx="90" cy="95" r="10"/><circle cx="45" cy="110" r="8"/></g>',
+ konijn:'<ellipse cx="165" cy="80" rx="28" ry="65" fill="none" stroke="#000" stroke-width="6"/><ellipse cx="235" cy="80" rx="28" ry="65" fill="none" stroke="#000" stroke-width="6"/><circle cx="200" cy="210" r="80" fill="none" stroke="#000" stroke-width="6"/><circle cx="175" cy="195" r="9" fill="#000"/><circle cx="225" cy="195" r="9" fill="#000"/><path d="M190 220 Q200 230 210 220" fill="none" stroke="#000" stroke-width="5" stroke-linecap="round"/><path d="M200 228 L200 245 M185 255 Q200 265 215 255" fill="none" stroke="#000" stroke-width="5" stroke-linecap="round"/><g stroke="#000" stroke-width="4"><line x1="130" y1="215" x2="90" y2="205"/><line x1="130" y1="228" x2="92" y2="230"/><line x1="270" y1="215" x2="310" y2="205"/><line x1="270" y1="228" x2="308" y2="230"/></g>',
+ vlinder:'<ellipse cx="200" cy="160" rx="18" ry="70" fill="none" stroke="#000" stroke-width="6"/><g fill="none" stroke="#000" stroke-width="6"><ellipse cx="130" cy="105" rx="65" ry="50"/><ellipse cx="270" cy="105" rx="65" ry="50"/><ellipse cx="140" cy="225" rx="55" ry="42"/><ellipse cx="260" cy="225" rx="55" ry="42"/></g><g stroke="#000" stroke-width="4" stroke-linecap="round"><path d="M190 95 Q170 55 150 45"/><path d="M210 95 Q230 55 250 45"/></g><circle cx="200" cy="100" r="14" fill="none" stroke="#000" stroke-width="5"/><circle cx="130" cy="105" r="14" fill="none" stroke="#000" stroke-width="4"/><circle cx="270" cy="105" r="14" fill="none" stroke="#000" stroke-width="4"/>'};
+function werkbladKleurplaat(naam){
+ wbToon("🖍️ Kleurplaat: "+naam,'<svg viewBox="0 0 400 340" style="width:100%;max-width:520px;display:block;margin:0 auto">'+KLEURPLATEN[naam]+"</svg>"+
+  '<p style="text-align:center;margin-top:10px">Kleur '+naam+" mooi in — jouw kunstwerk!</p>");
+ zeg("Kleurplaat "+naam+" — printen en inkleuren!");
 }
 function werkbladSommen(){
  var soms=[],i;
@@ -1287,6 +1324,57 @@ function verhaalVragen(bk,nr,goed){
    else{b.classList.add("fout");document.getElementById("vq-fb").textContent="Bijna — het juiste antwoord was: '"+v.goed+"'";speelJammer();}
    nr++;setTimeout(function(){verhaalVragen(bk,nr,goed);},1600);};
   zo.appendChild(b);});
+}
+
+// ====== SPEL: KLEUREN-JACHT — tik alles wat de kleur is (bij Ziggy's kleurenrace!)
+var KLEUREN=[
+ {naam:"rood",css:"#e0453a",items:[["aardbei","🍓"],["tomaat","🍅"],["vuur","🔥"],["lieveheersbeestje","🐞"],["hart","❤️"]]},
+ {naam:"geel",css:"#e8b71a",items:[["banaan","🍌"],["zon","☀️"],["citroen","🍋"],["kaas","🧀"],["eendje","🐤"]]},
+ {naam:"blauw",css:"#2f7fd0",items:[["lucht","🌌"],["vis","🐟"],["water","💧"],["walvis","🐳"],["blauwe vogel","🐦"]]},
+ {naam:"groen",css:"#2fa44f",items:[["kikker","🐸"],["gras","🌱"],["schildpad","🐢"],["slang","🐍"],["rups","🐛"]]},
+ {naam:"oranje",css:"#ef8c2b",items:[["sinaasappel","🍊"],["wortel","🥕"],["vos","🦊"],["tijger","🐯"],["basketbal","🏀"]]},
+ {naam:"paars",css:"#8b4fc2",items:[["druiven","🍇"],["aubergine","🍆"],["octopus","🐙"]]},
+ {naam:"roze",css:"#f28bb4",items:[["flamingo","🦩"],["varken","🐷"],["bloem","🌸"],["droom","💭"]]},
+ {naam:"bruin",css:"#8a5a33",items:[["beer","🐻"],["hert","🦌"],["hond","🐶"],["noot","🌰"]]},
+ {naam:"wit",css:"#9aa7b0",items:[["wolk","☁️"],["schaap","🐑"],["melk","🥛"],["sneeuw","❄️"]]},
+ {naam:"zwart",css:"#333",items:[["nacht","🌙"],["pinguin","🐧"],["spinnenweb","🕸️"],["kat","🐈‍⬛"]]}];
+function spelKleuren(){
+ document.getElementById("spel-titel").textContent="🎨 Kleuren-jacht";
+ var nr=0,goed=0,totaal=0;
+ var reeks=shuffle(KLEUREN.slice()).slice(0,5);
+ var inh=document.getElementById("spel-inhoud");
+ function ronde(){
+  if(nr>=reeks.length){
+   inh.innerHTML='<div class="medal">'+(goed>=totaal-2?"🏆":"💪")+'</div><h2>Kleurenmeester!</h2>'+
+    '<p class="sub2">'+goed+" van "+totaal+" juist aangestipt"+(wie()?", "+wie():"")+'!</p>'+
+    '<div class="acties"><button class="pill" onclick="spelKleuren()">🔁 nog eens</button> '+
+    '<button class="pill grijs" onclick="naarHome()">← terug</button></div>';
+   if(goed>=totaal-2)feestConfetti(60);return;
+  }
+  var kl=reeks[nr],gevonden=0;
+  var goede=shuffle(kl.items.slice()).slice(0,3);
+  var rest=[];KLEUREN.forEach(function(k){if(k!==kl)rest=rest.concat(k.items);});
+  var af=shuffle(rest).slice(0,3);
+  var items=shuffle(goede.concat(af));
+  inh.innerHTML='<p class="sub2">ronde '+(nr+1)+" van "+reeks.length+"</p>"+
+   '<p style="font-size:1.7rem;color:'+kl.css+'"><b>Tik alles wat '+kl.naam.toUpperCase()+" is!</b></p>"+
+   '<div class="knoppen" id="kj-grid"></div><p class="sub2" id="kj-fb"></p>';
+  zeg("Tik alles wat "+kl.naam+" is!");
+  var g=document.getElementById("kj-grid");
+  items.forEach(function(it){
+   var b=document.createElement("button");b.className="optie";b.style.fontSize="1.7rem";
+   b.textContent=it[1]+" "+it[0];
+   var isGoed=goede.indexOf(it)>-1;
+   b.onclick=function(){
+    if(b.disabled)return;
+    if(isGoed){b.classList.add("goed");gevonden++;goed++;speelJubel();
+     document.getElementById("kj-fb").textContent="✔ "+it[0]+" is "+kl.naam+"! ("+gevonden+"/3)";
+     if(gevonden>=3){nr++;totaal+=3;setTimeout(ronde,1200);}}
+    else{b.classList.add("fout");totaal++;b.disabled=true;
+     document.getElementById("kj-fb").textContent="Hmm, "+it[0]+" is niet "+kl.naam+" — zoek verder!";speelJammer();}};
+   g.appendChild(b);});
+ }
+ ronde();toon("scherm-spel");
 }
 
 // ====== SPEL: TALEN — hoor & leer Engels, Duits en Frans
@@ -1530,7 +1618,8 @@ function oudersOverzicht(){
   '<div class="stijl-doos"><b>🔥 Oefenritme</b><div class="stijl-regel">'+dagStreak()+" dag(en) achter elkaar geoefend — vaste gewoonte groeit!</div></div>"+
   '<div class="stijl-doos"><b>🧠 Hoe '+(wie()||"je kind")+' leert</b>'+speelstijlTekst()+"</div>"+
   '<div class="stijl-doos"><b>🏅 Groep-bewijs (schoolniveau)</b>'+groepen+"</div>"+
-  '<div class="acties"><button class="pill" onclick="werkbladMenu()">🖨️ werkblad printen</button> '+
+  '<div class="acties"><button class="pill" onclick="ouderRapport()">📋 rapport printen</button> '+
+   '<button class="pill" onclick="werkbladMenu()">🖨️ werkblad printen</button> '+
    '<button class="pill" onclick="startFouten()">🎯 oefen de fouten</button> '+
   '<button class="pill grijs" onclick="naarHome()">← terug</button></div>';
  toon("scherm-spel");
