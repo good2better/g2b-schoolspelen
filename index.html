@@ -76,6 +76,10 @@ animation:val linear forwards;pointer-events:none}
 @keyframes val{to{transform:translateY(110vh) rotate(720deg);opacity:.9}}
 .klap{font-size:1.8rem;display:inline-block;animation:klapper .5s ease 3}
 @keyframes klapper{50%{transform:scale(1.4) rotate(-8deg)}}
+.grid .card:nth-child(2){animation-delay:.05s}.grid .card:nth-child(3){animation-delay:.1s}.grid .card:nth-child(4){animation-delay:.15s}
+.card .ic{display:inline-block;animation:dobber 3.4s ease-in-out infinite}
+@keyframes dobber{50%{transform:translateY(-4px)}}
+.lesje.lesje-les{background:#eaf4ff;border-color:var(--zeed)}
 .lesje{background:#fff8e6;border:2px solid var(--zon);border-radius:12px;
 padding:12px 14px;margin-top:10px;font-size:1rem;line-height:1.5;display:none}
 .lesje.aan{display:block;animation:verschijn .4s ease}
@@ -348,16 +352,55 @@ function feestdag(){
  return null;}
 // ====== NIEUWS van de app — klein berichtje dat via auto-update bij gebruikers komt
 var NIEUWS={titel:"Nieuw: Talen-niveaus!",tekst:"🌍 Talen heeft nu 4 niveaus: woorden, thema's, zinnetjes en een echt verhaaltje — in 6 talen!"};
+// ====== LESJES: mini-uitleg vóór het oefenen — leren vóór trainen, zoals een echte methode
+var LESJES={
+ tellen:"Tel één voor één — wijs elk plaatje aan terwijl je telt. Het láátste getal dat je zegt, is hoeveel er zijn!",
+ letters:"Elke letter heeft een klank. Luister goed: welke letter maakt die klank?",
+ plus:"Optellen = erbij! Tel door vanaf het eerste getal: 3+2 → vanaf drie verder: vier, vijf → 5!",
+ min:"Aftrekken = eraf! Tel terug: 5−2 → vanaf vijf terug: vier, drie → 3!",
+ tafels:"Keer = groepjes. 3×4 betekent 3 groepjes van 4: 4+4+4=12. Ken je er één, ken je er twee (3×4=4×3)!",
+ procent:"Procent = van de 100. 50% is de helft, 25% is een kwart, 100% is alles.",
+ breuk:"Een breuk is een stuk van iets: 1/2 is 1 van 2 gelijke stukken. Onder = hoeveel stukken, boven = hoeveel je pakt.",
+ woorden:"Lees letter voor letter in je hoofd: k-a-t → kat. Zeg het zachtjes na.",
+ spelling:"Luister naar het woord en schrijf elke klank die je hoort: schaap → sch-aa-p.",
+ spelling2:"Moeilijkere woorden: let op dubbele letters en stukjes zoals 'sch', 'ei' en 'ij'.",
+ zin:"Lees de zin rustig. Probeer elk woord op de open plek — welke klinkt écht logisch?",
+ zin2:"Denk mee: lees de zin en stel je de situatie voor. Welk antwoord klopt écht?",
+ logica:"Zoek het patroon: wat komt er steeds bij — of wat gaat eraf? Schrijf de rij maar verder.",
+ klok:"Korte wijzer = uren, lange wijzer = minuten. Bij hele uren wijst de lange wijzer naar de 12.",
+ seizoen:"Deze woorden horen bij deze tijd van het jaar — kijk eens om je heen!",
+ feest:"Het is feest! Deze woorden horen bij deze feestdag.",
+ boekWoord:"Woorden uit jouw boek — je kent ze al uit het verhaal!",
+ boekSpel:"Typ het boekwoord precies zoals je het hoort — letter voor letter.",
+ boekZin:"Zinnen uit jouw verhaal — welk woord mist er?",
+ boekPuz:"Zet de letters in de goede volgorde — het plaatje helpt je!",
+ puzzel:"Zet de letters in de goede volgorde — het plaatje is je hint.",
+ fouten:"Dit zijn jouw moeilijke stukjes — hier word je het allersterkst van!"
+};
+function lesVoor(vak){ // exacte sleutel, dan prefix zonder cijfers (plus1→plus)
+ if(LESJES[vak])return LESJES[vak];
+ var p=vak.replace(/[0-9]+$/,"");
+ return LESJES[p]||"";}
 function bewaar(){dagStreak();localStorage.setItem("g2b_playlearn",JSON.stringify(staat));
  document.getElementById("sterren").textContent="⭐ "+staat.sterren;}
 
 // ====== STEM (gratis, ingebouwd in de browser — spreekt NL)
+// Kies de mooiste beschikbare stem per taal (kwaliteitsnamen eerst)
+var _stemmen={};
+function stemVoor(lang){
+ var key=(lang||"nl").split("-")[0].toLowerCase();
+ if(_stemmen[key]!==undefined)return _stemmen[key];
+ var vs=[];try{vs=speechSynthesis.getVoices().filter(function(v){return (v.lang||"").toLowerCase().indexOf(key)===0;});}catch(e){}
+ _stemmen[key]=vs.find(function(v){return /google|microsoft|natural|online|samantha|ellen|claire|xander|anna|iris|eva|mark|thomas/i.test(v.name);})||vs[0]||null;
+ return _stemmen[key];}
+try{speechSynthesis.onvoiceschanged=function(){_stemmen={};};}catch(e){}
 function zeg(t){
  try{speechSynthesis.cancel();
- var u=new SpeechSynthesisUtterance(t);u.lang="nl-NL";u.rate=0.92;
+ var u=new SpeechSynthesisUtterance(t);u.lang="nl-NL";u.rate=0.92;u.pitch=1.06;
+ var v=stemVoor("nl");if(v)u.voice=v;
  speechSynthesis.speak(u);}catch(e){}
 }
-function zegTaal(t,lang){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.rate=0.85;speechSynthesis.speak(u);}catch(e){}}
+function zegTaal(t,lang){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.rate=0.85;var v=stemVoor(lang);if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}}
 var laatsteZeg="";
 function zegHoud(t){laatsteZeg=t;zeg(t);}
 function herhaalZeg(){staat.stijl.luister++;bewaar();if(laatsteZeg)zeg(laatsteZeg);}
@@ -754,6 +797,7 @@ function doeVraag(){
  document.getElementById("feedback").className="feedback";
  document.getElementById("slimme-tip").textContent="";
  var lj=document.getElementById("lesje");lj.className="lesje";lj.innerHTML="";
+ if(vraagNr===0){var _L=lesVoor(huidigVak);if(_L){lj.className="lesje lesje-les aan";lj.innerHTML='💡 <b>Eerst leren:</b> '+_L;}}
  window._les=null;
  var v=document.getElementById("vraag-inhoud"),a=document.getElementById("antwoord-zone");
  v.innerHTML="";a.innerHTML="";laatsteZeg="";
