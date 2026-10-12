@@ -93,6 +93,8 @@ padding:14px;margin-top:14px;text-align:center}
 .ouders-tbl{width:100%;border-collapse:collapse;font-size:.92rem;text-align:left}
 .ouders-tbl td,.ouders-tbl th{padding:5px 8px;border-bottom:1px solid var(--tint)}
 .ouders-tbl .meter{background:var(--tint);border-radius:4px;height:10px;overflow:hidden;min-width:70px}
+.stijl-doos{background:var(--zand2);border-radius:14px;padding:12px 14px;margin:10px 0;text-align:left;font-size:14px;line-height:1.5}
+.stijl-regel{padding:2px 0 2px 4px}
 .ouders-tbl .meter i{display:block;height:100%;background:var(--groen)}
 @media print{
  body.alleen-diploma header,body.alleen-diploma footer,body.alleen-diploma #pauze,
@@ -215,7 +217,8 @@ var VAKKEN={
  boekZin:{ic:"💬",naam:"Boekzinnen",info:"zinnen uit jouw boek"},
  boekPuz:{ic:"🔀",naam:"Boekpuzzel",info:"boekwoorden puzzelen"},
  klok:{ic:"🕐",naam:"Klokkijken",info:"hoe laat is het?"},
- fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"}
+ fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
+ seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"}
 };
 
 // ====== SLIM BREIN: leert van fouten, onthoudt per kind (localStorage)
@@ -224,7 +227,43 @@ staat.sterren=staat.sterren||0;
 staat.fouten=staat.fouten||{};   // vak -> aantal fouten
 staat.goed=staat.goed||{};       // vak -> aantal goed
 staat.zwak=staat.zwak||{};       // specifieke sommen/woorden die moeilijk zijn
+staat.stijl=staat.stijl||{luister:0,beeld:0,tempoN:0,tempoTot:0,trucs:0}; // hoe het kind leert
+staat.bewijs=staat.bewijs||{};   // groep -> true als ALLE vakken >=80% beheerst
 function wie(){return staat.naam||"";}
+
+// ====== JIJ BENT DE HELD: kies je eigen speelfiguur (jongen/meisje/dier)
+var HELDEN=[{ic:"\ud83e\uddd2",naam:"jongen-held"},{ic:"\ud83d\udc67",naam:"meisje-held"},{ic:"\ud83e\udd8a",naam:"vos"},
+ {ic:"\ud83d\udc30",naam:"konijn"},{ic:"\ud83e\udd93",naam:"zebra"},{ic:"\ud83d\udc31",naam:"kat"},{ic:"\ud83d\udc3c",naam:"panda"},{ic:"\ud83e\udd81",naam:"leeuw"}];
+function heldIc(){return staat.held||"\ud83e\udd93";}
+function kiesHeld(ic){staat.held=ic;bewaar();var m=document.getElementById("maatje");if(m)m.textContent=ic;
+ zeg((wie()?wie()+" kiest":"Je kiest")+" jouw held — samen gaan jullie oefenen!");feestConfetti(25);bouwHome();}
+
+// ====== SEIZOEN & VAKANTIE: de app weet wat voor dag het is
+function seizoensInfo(){
+ var m=new Date().getMonth(),W=[
+  {ic:"\u2744\ufe0f",titel:"Winter-woorden",tip:"januari: ijs en sneeuw",woorden:["sneeuw","schaatsen","kaars","ster","handschoen","muts"]},
+  {ic:"\u2744\ufe0f",titel:"Winter-woorden",tip:"februari: koud maar gezellig",woorden:["sneeuw","schaatsen","kaars","ster","handschoen","muts"]},
+  {ic:"\ud83c\udf37",titel:"Lente-woorden",tip:"maart: alles gaat bloeien",woorden:["bloem","vogel","lam","zon","regenboog","vlinder"]},
+  {ic:"\ud83c\udf37",titel:"Lente-woorden",tip:"april: bloemetjes en lammetjes",woorden:["bloem","vogel","lam","zon","regenboog","vlinder"]},
+  {ic:"\ud83c\udf5e",titel:"Bijna-zomer",tip:"mei: warm en vrolijk",woorden:["aardbei","zwemmen","ijsje","zon","fietsen","vlinder"]},
+  {ic:"\ud83c\udf5e",titel:"Bijna-vakantie",tip:"juni: nog even — dan zomer!",woorden:["aardbei","zwemmen","ijsje","zon","koffer","vlinder"]},
+  {ic:"\ud83c\udfd6\ufe0f",titel:"Zomervakantie",tip:"juli: strand-tijd!",woorden:["strand","zwemmen","ijsje","koffer","zon","golven"]},
+  {ic:"\ud83c\udfd6\ufe0f",titel:"Zomervakantie",tip:"augustus: nog even genieten",woorden:["strand","zwemmen","ijsje","koffer","zon","golven"]},
+  {ic:"\ud83c\udf92",titel:"Terug-naar-school",tip:"september: nieuw schooljaar",woorden:["school","boek","pen","rugzak","klas","juf"]},
+  {ic:"\ud83c\udf42",titel:"Herfst-woorden",tip:"oktober: bladeren en wind",woorden:["blad","regen","wind","paddestoel","eekhoorn","kaars"]},
+  {ic:"\ud83c\udf42",titel:"Herfst-woorden",tip:"november: binnen lezen",woorden:["blad","regen","wind","paddestoel","eekhoorn","kaars"]},
+  {ic:"\ud83c\udf84",titel:"Feest-woorden",tip:"december: kerstfeest",woorden:["sneeuw","kerstboom","cadeau","kaars","ster","schaatsen"]}
+ ];
+ return W[m];
+}
+function vakantieHint(){
+ var V={0:"Voorjaarsvakantie ±21 feb–1 mrt \u2744\ufe0f",1:"Voorjaarsvakantie ±21 feb–1 mrt \u2744\ufe0f",2:"Meivakantie ±25 apr–3 mei \ud83c\udf37",
+  3:"Meivakantie ±25 apr–3 mei \ud83c\udf37",4:"Zomervakantie vanaf ±11 juli \ud83c\udfd6\ufe0f",5:"Zomervakantie ±11 jul–23 aug \ud83c\udfd6\ufe0f",
+  6:"Vakantie! Geniet — blijf ook een beetje spelen \ud83d\ude09",7:"Laatste weken vakantie — bijna weer school \ud83c\udf92",
+  8:"Herfstvakantie ±17–25 oktober \ud83c\udf42",9:"Herfstvakantie ±17–25 okt · kerstvakantie ±19 dec \ud83c\udf84",
+  10:"Kerstvakantie ±19 dec–4 jan \ud83c\udf84",11:"Kerstvakantie ±19 dec–4 jan \ud83c\udf84"};
+ return V[new Date().getMonth()]||"";
+}
 function bewaar(){localStorage.setItem("g2b_playlearn",JSON.stringify(staat));
  document.getElementById("sterren").textContent="⭐ "+staat.sterren;}
 
@@ -236,7 +275,7 @@ function zeg(t){
 }
 var laatsteZeg="";
 function zegHoud(t){laatsteZeg=t;zeg(t);}
-function herhaalZeg(){if(laatsteZeg)zeg(laatsteZeg);}
+function herhaalZeg(){staat.stijl.luister++;bewaar();if(laatsteZeg)zeg(laatsteZeg);}
 
 // ====== WOORDENLIJSTEN (NL, niveau-stijgend)
 var WOORDEN1=["kat","hond","boom","huis","bal","vis","melk","beer","zon","boot","kip","aap"];
@@ -289,10 +328,12 @@ var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",z
  fietsen:"🚲",school:"🏫",lepel:"🥄",pizza:"🍕",zebra:"🦓",poes:"🐱",vriend:"👫",zeilen:"⛵",tafel:"🍽️",
  keesje:"🐰",konijn:"🐰",bos:"🌲",huppelen:"🐇",eekhoorn:"🐿️",bes:"🫐",beek:"💧",picknick:"🧺",
  vrienden:"👫",vijver:"🦆",appel:"🍎",metro:"🚇",noten:"🌰",bessen:"🫐",kikker:"🐸",golven:"🌊",wind:"💨",dolfijn:"🐬",walvis:"🐳",eiland:"🏝️",anker:"⚓",haven:"⚓",sunny:"☀️",water:"💧",
- ziggy:"🦓",regenboog:"🌈",dansen:"💃",kleuren:"🎨",finish:"🏁",start:"🏁",vlag:"🚩",feest:"🎉",trofee:"🏆",lopen:"🏃",wolk:"☁️"};
+ ziggy:"🦓",regenboog:"🌈",dansen:"💃",kleuren:"🎨",finish:"🏁",start:"🏁",vlag:"🚩",feest:"🎉",trofee:"🏆",lopen:"🏃",wolk:"☁️",
+ sneeuw:"❄️",schaatsen:"⛸️",handschoen:"🧤",muts:"🧢",kerstboom:"🎄",cadeau:"🎁",aardbei:"🍓",zwemmen:"🏊",ijsje:"🍦",
+ koffer:"🧳",strand:"🏖️",boek:"📖",pen:"🖊️",rugzak:"🎒",klas:"🏫",juf:"👩‍🏫",blad:"🍂",regen:"🌧️",paddestoel:"🍄",lam:"🐑",vogel:"🐦",kaars:"🕯️"};
 
 // ====== NAVIGATIE
-var huidigVak="",huidigNiv="",vraagNr=0,goedTeller=0,RONDE=8,rondeMax=RONDE;
+var huidigVak="",huidigNiv="",vraagNr=0,goedTeller=0,goedRij=0,RONDE=8,rondeMax=RONDE;
 var dotHtml="";
 function toon(id){
  ["scherm-home","scherm-oefen","scherm-klaar","scherm-spel","scherm-diploma"].forEach(function(s){
@@ -359,10 +400,58 @@ function bouwHome(){
   });
   el.appendChild(g);
  });
+ heldKaart(el);
  slimmeKaarten(el);
+ seizoensKaart(el);
  boekKaarten(el);
  spelKaarten(el);
+ var mj3=document.getElementById("maatje");if(mj3)mj3.textContent=heldIc();
  bewaar();
+}
+// ====== HELD-KAART: kies je eigen speelfiguur
+function heldKaart(el){
+ var h=document.createElement("div");h.className="niveau";
+ h.innerHTML='🦸 Jouw held<span class="tag">'+(staat.held?"speelt met jou mee":"kies wie je bent")+"</span>";
+ el.appendChild(h);
+ var g=document.createElement("div");g.className="grid";
+ HELDEN.forEach(function(hh){
+  var c=document.createElement("div");c.className="card";
+  var gk=staat.held===hh.ic;
+  c.innerHTML='<span class="ic">'+hh.ic+"</span><b>"+hh.naam+"</b>"+(gk?'<small>✔ jouw held!</small>':"<small>kies mij!</small>");
+  if(gk)c.style.borderColor="var(--goud)";
+  c.onclick=function(){kiesHeld(hh.ic);};g.appendChild(c);});
+ el.appendChild(g);
+}
+// ====== SEIZOENS-KAART + groep-bewijs-kaart
+function seizoensKaart(el){
+ var S=seizoensInfo();
+ var h=document.createElement("div");h.className="niveau";
+ h.innerHTML=S.ic+' '+S.titel+'<span class="tag">'+S.tip+"</span>";
+ el.appendChild(h);
+ var g=document.createElement("div");g.className="grid";
+ var c=document.createElement("div");c.className="card";
+ c.innerHTML='<span class="ic">'+S.ic+"</span><b>"+S.titel+"</b><small>"+vakantieHint()+"</small>";
+ c.onclick=function(){startOefening({id:"seizoen",naam:S.titel},"seizoen");};
+ g.appendChild(c);
+ var gs=groepScoreKaart();if(gs)g.appendChild(gs);
+ el.appendChild(g);
+}
+// ====== GROEP-BEWIJS: alle vakken van een groep ≥80% = echt schoolniveau
+function groepScore(n){
+ var gedaan=0,lijst=n.vakken.filter(function(vk){return vk!=="fouten";});
+ lijst.forEach(function(vk){var key=n.id+":"+vk,t=(staat.goed[key]||0)+(staat.fouten[key]||0);
+  if(t>=8&&(staat.goed[key]||0)/t>=0.8)gedaan++;});
+ return{gedaan:gedaan,tot:lijst.length,klaar:gedaan===lijst.length&&lijst.length>0};
+}
+function groepScoreKaart(){
+ var beste=null;
+ NIVEAUS.forEach(function(n){var gs=groepScore(n);
+  if(gs.gedaan>0&&(!beste||gs.gedaan/gs.tot>beste.gs.gedaan/beste.gs.tot))beste={n:n,gs:gs};});
+ if(!beste)return null;
+ var c=document.createElement("div");c.className="card";
+ if(beste.gs.klaar){c.innerHTML='<span class="ic">🏅</span><b>Groep-bewijs!</b><small>ALLE vakken van '+beste.n.naam+" beheerst — echt niveau!</small>";c.style.borderColor="var(--goud)";}
+ else{c.innerHTML='<span class="ic">🏅</span><b>Groep-bewijs</b><small>'+beste.n.naam+": "+beste.gs.gedaan+" van "+beste.gs.tot+" vakken ≥80% — bijna!</small>";}
+ return c;
 }
 // ====== SLIM SPELEN: oefen-je-fouten + ouders-overzicht
 function slimmeKaarten(el){
@@ -453,6 +542,8 @@ function doeVraag(){
  var v=document.getElementById("vraag-inhoud"),a=document.getElementById("antwoord-zone");
  v.innerHTML="";a.innerHTML="";laatsteZeg="";
  makers[huidigVak](v,a);
+ window._vraagT0=Date.now();
+ window._beeld=!!document.querySelector("#vraag-inhoud .plaatjes,#vraag-inhoud svg");
  vraagNr++;
 }
 function toonPauze(){document.getElementById("pauze").classList.remove("hidden");
@@ -480,16 +571,23 @@ function antwoordTyp(a,goed){
 function check(goed,knop,a,laatOK){ 
  var key=huidigNiv+":"+huidigVak;
  var fb=document.getElementById("feedback");
+ if(window._vraagT0){staat.stijl.tempoN++;staat.stijl.tempoTot+=Date.now()-window._vraagT0;window._vraagT0=0;}
  if(goed){
-  knop.classList.add("goed");fb.textContent="🎉 Goed zo"+(wie()?", "+wie():"")+"!";fb.classList.add("goed");
-  staat.goed[key]=(staat.goed[key]||0)+1;staat.sterren++;goedTeller++;
+  if(window._beeld)staat.stijl.beeld++;
+  var wasZwak=window._huidigItem&&((staat.zwak[key]||{})[window._huidigItem]||0)>0;
+  knop.classList.add("goed");
+  fb.textContent=wasZwak?"🌱 Eerst mis, nu GOED — je brein groeit!":
+   (goedRij>=2?"🔥 "+(goedRij+1)+" op rij goed — op dreef!":"🎉 Goed zo"+(wie()?", "+wie():"")+"!");
+  fb.classList.add("goed");
+  staat.goed[key]=(staat.goed[key]||0)+1;staat.sterren++;goedTeller++;goedRij++;
   var lv=document.getElementById("levend");if(lv)lv.classList.add("leeft");
   var mj=document.getElementById("maatje");if(mj){mj.classList.remove("jubel","oops");void mj.offsetWidth;mj.classList.add("jubel");}
   speelJubel();
   zeg("Goed zo"+(wie()?", "+wie():"")+"!");
   setTimeout(volgendeVraag,900);
  }else{
-  knop.classList.add("fout");fb.textContent="Bijna"+(wie()?", "+wie():"")+"! Samen kijken we even…";fb.classList.add("fout");
+  knop.classList.add("fout");goedRij=0;
+  fb.textContent="Bijna"+(wie()?", "+wie():"")+"! Elke fout is een aanwijzing, geen mislukking — samen kijken we…";fb.classList.add("fout");
   staat.fouten[key]=(staat.fouten[key]||0)+1;
   var mj2=document.getElementById("maatje");if(mj2){mj2.classList.remove("jubel","oops");void mj2.offsetWidth;mj2.classList.add("oops");}
   speelJammer();
@@ -515,6 +613,8 @@ function eindRonde(){
   (pct>=80?'<button class="pill blauw" onclick="toonDiploma()">📜 diploma</button> ':'')+
   '<button class="pill grijs" onclick="naarHome()">← kies ander vak</button>';
  var nm=wie()?", "+wie():"";
+ var nv=NIVEAUS.find(function(n){return n.id===huidigNiv;});
+ if(nv&&pct>=80){var gs=groepScore(nv);if(gs.klaar&&!staat.bewijs[nv.id]){staat.bewijs[nv.id]=true;bewaar();window._bewijsGroep=nv;}}
  zeg(pct>=80?"Super gedaan"+nm+", gefeliciteerd!":"Goed gedaan"+nm+" — probeer het gewoon nog eens!");
  toon("scherm-klaar");
  if(pct>=100)speelClip("ziggy-hop.mp4",function(){feestConfetti(80);});
@@ -592,6 +692,7 @@ function diagnose(){
   return"<br>🔍 <i>De detective ziet: deze woorden zijn moeilijk — "+items.slice(0,3).join(", ")+". Die komen vaker terug.</i>";
  return"";}
 function toonLesje(){
+ staat.stijl.trucs++;bewaar();
  var l=window._les;if(!l){zeg("Bijna! Probeer het rustig nog eens — jij kan het.");return;}
  var lj=document.getElementById("lesje");lj.classList.add("aan");
  var kop='<span class="juf">👩‍🏫</span><b>'+AANMOEDIGING[rnd(0,AANMOEDIGING.length-1)]+'</b><br>';
@@ -751,6 +852,26 @@ var makers={
   if(q.niv0&&q.niv0.indexOf("boek:")===0){var _b=BOEKEN.find(function(b){return "boek:"+b.id===q.niv0;});if(_b)huidigBoek=_b;}
   window._forceItem=q.item;
   huidigVak=q.vak;makers[q.vak](v,a);huidigVak="fouten"; // blijf in de fouten-ronde
+ },
+ seizoen:function(v,a){
+  var S=seizoensInfo();
+  var woord=S.woorden[vraagNr%S.woorden.length];
+  window._huidigItem=woord;
+  var em=EMOJI[woord]||S.ic;
+  v.innerHTML="<b>Welk woord past bij "+S.titel.toLowerCase()+"?</b>";
+  var p=document.createElement("div");p.className="plaatjes";
+  p.innerHTML='<span class="em">'+em+"</span>";
+  v.appendChild(p);
+  var foute=S.woorden.filter(function(w){return w!==woord;});
+  foute=foute.sort(function(){return Math.random()-0.5;}).slice(0,3);
+  var opties=foute.concat([woord]).sort(function(){return Math.random()-0.5;});
+  opties.forEach(function(w2){
+   var b=document.createElement("button");b.className="knop";b.textContent=w2;
+   b.onclick=function(){check(w2===woord,b,{woord:woord,uitleg:"Dit is '"+woord+"' — dat hoort bij "+S.titel.toLowerCase()+". "+S.tip+"!"});};
+   a.appendChild(b);});
+  var hb=document.createElement("button");hb.className="pill klein";hb.textContent="🔊 luister";
+  hb.onclick=function(){staat.stijl.luister++;bewaar();zeg(woord);};v.appendChild(hb);
+  zeg("Welk woord past bij "+S.titel.toLowerCase()+"?");
  },
  boekWoord:function(v,a){
   var bk=huidigBoek||BOEKEN[0],key=huidigNiv+":"+huidigVak;
@@ -992,12 +1113,31 @@ function eindRace(score,fout){
 // ====== DIPLOMA — printbaar bij ≥80% op een ronde
 function toonDiploma(){
  var pct=Math.round(100*goedTeller/Math.max(1,rondeMax));
- document.getElementById("dip-naam").textContent=wie()||"jonge tovenaar";
- document.getElementById("dip-tekst").innerHTML="voor het fantastisch oefenen van <b>"+VAKKEN[huidigVak].naam.toLowerCase()+"</b><br>met "+pct+"% goed in "+rondeMax+" vragen";
+ document.getElementById("dip-naam").textContent=(heldIc()+" ")+(wie()||"jonge held");
+ if(window._bewijsGroep){
+  document.getElementById("dip-tekst").innerHTML="heeft <b>ALLE vakken</b> van <b>"+window._bewijsGroep.naam+"</b> beheerst (\u226580%)<br>— echt "+window._bewijsGroep.naam.toLowerCase()+"-niveau gehaald!";
+  window._bewijsGroep=null;
+ }else{
+  document.getElementById("dip-tekst").innerHTML="voor het fantastisch oefenen van <b>"+VAKKEN[huidigVak].naam.toLowerCase()+"</b><br>met "+pct+"% goed in "+rondeMax+" vragen";
+ }
  document.getElementById("dip-datum").textContent=new Date().toLocaleDateString("nl-NL",{day:"numeric",month:"long",year:"numeric"});
  document.body.classList.add("alleen-diploma");
  toon("scherm-diploma");
  feestConfetti(90);speelLiedje();
+}
+
+// ====== SPEELSTIJL: de app leert hoe het kind leert
+function speelstijlTekst(){
+ var s=staat.stijl,tips=[];
+ var luister=s.luister||0,beeld=s.beeld||0,trucs=s.trucs||0;
+ var tempoMs=s.tempoN?(s.tempoTot/s.tempoN):0;
+ if(luister>=3)tips.push("luistert graag (tikte "+luister+"× op 🔊) — auditieve uitleg werkt");
+ if(beeld>=5)tips.push("denkt in plaatjes ("+beeld+"× goed bij beeld-vragen)");
+ if(trucs>=3)tips.push("gebruikt slimme trucs ("+trucs+"× de 💡-truc geopend) — stap-voor-stap helpt");
+ if(tempoMs&&tempoMs<4000)tips.push("werkt in een snel tempo — korte rondjes passen");
+ if(tempoMs>=4000)tips.push("neemt rustig de tijd — bedachtzaam werken");
+ if(!tips.length)tips.push("nog aan het meten — speel een paar rondjes met 🔊, 💡 en plaatjes erbij");
+ return tips.map(function(t){return '<div class="stijl-regel">• '+t+"</div>";}).join("");
 }
 
 // ====== OUDERS-OVERZICHT — voortgang per vak
@@ -1016,9 +1156,13 @@ function oudersOverzicht(){
   rows+='<tr><td>'+nnaam+'</td><td>'+vnaam+'</td><td>'+pct+"%</td>"+
    '<td><div class="meter"><i style="width:'+pct+"%;background:"+kleur+'"></i></div></td></tr>';
  });
+ var groepen=NIVEAUS.map(function(n){var gs=groepScore(n);
+  return '<div class="stijl-regel"><b>'+n.naam+":</b> "+gs.gedaan+"/"+gs.tot+" vakken ≥80%"+(gs.klaar?" — 🏅 <b>groep-bewijs behaald!</b>":"")+"</div>";}).join("");
  document.getElementById("spel-inhoud").innerHTML=
   '<div class="sub2">Alles wat geoefend is — groen = sterk vak, rood = extra oefenen (klik op 🎯 thuis).</div>'+
   '<table class="ouders-tbl"><tr><th>niveau/boek</th><th>vak</th><th>goed</th><th></th></tr>'+rows+"</table>"+
+  '<div class="stijl-doos"><b>🧠 Hoe '+(wie()||"je kind")+' leert</b>'+speelstijlTekst()+"</div>"+
+  '<div class="stijl-doos"><b>🏅 Groep-bewijs (schoolniveau)</b>'+groepen+"</div>"+
   '<div class="acties"><button class="pill" onclick="startFouten()">🎯 oefen de fouten</button> '+
   '<button class="pill grijs" onclick="naarHome()">← terug</button></div>';
  toon("scherm-spel");

@@ -38,12 +38,27 @@ Geen installatie, geen account, geen internet nodig na het laden.
 - **🔔 Geluid & animatie**: juich-tonen bij goed antwoord, zachte
   toon bij fout (WebAudio, geen bestanden), confetti bij mijlpalen,
   en het 🦓-maatje dat meedanst onderaan het scherm.
+- **🦸 Jouw held**: het kind kiest zijn eigen speelfiguur
+  (jongen/meisje/vos/konijn/zebra/kat/panda/leeuw). Die danst mee bij
+  elk goed antwoord én staat op het diploma — je zit echt ín het spel.
+- **🧠 Speelstijl-meting**: de app leert hoe het kind leert —
+  luisteren (🔊), plaatjes (beeld), tempo en truc-gebruik — en vertaalt
+  dat voor ouders: "luistert graag", "denkt in plaatjes" enz.
+- **🏅 Groep-bewijs**: beheerst een kind ALLE vakken van een groep
+  (≥80%), dan volgt een groep-bewijs-diploma — echt schoolniveau.
+- **🌱 Groei-motivatie**: feedback prijst groei en doorzetten
+  ("eerst mis, nu goed — je brein groeit!", 🔥 op-rij-streaks),
+  fouten zijn aanwijzingen, geen mislukkingen.
+- **🍂 Seizoenskaart**: de app weet welke maand het is — seizoens-
+  woorden als oefenvak plus NL vakantie-hints. Blijft actueel.
 - **⏸ Drinkpauze**: automatische rust-reminder tijdens lange sessies.
 
 ## Zo gebruik je hem
 
-Open `index.html` in je browser — dat is alles. Of publiceer hem op
-GitHub Pages en deel de link met iedereen.
+**Online (makkelijkst)**: open https://good2better.github.io/g2b-schoolspelen/
+— werkt meteen op pc, tablet en telefoon. Niets installeren.
+
+**Offline**: open `index.html` in je browser — dat is alles.
 
 Lokaal serveren (optioneel):
 
