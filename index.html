@@ -205,7 +205,23 @@ padding:14px;margin-top:14px;text-align:center}
 
 <script>
 // PWA — offline speelbaar + installeerbaar op tablet/telefoon
-if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){});}
+// Auto-update: checkt bij start + elke 30 min of GitHub Pages nieuwere code heeft.
+// Staat die er? Dan ververst de app zichzelf — gebruikers zijn altijd up-to-date.
+if("serviceWorker" in navigator){
+ navigator.serviceWorker.register("sw.js").then(function(reg){
+  reg.update();setInterval(function(){reg.update();},30*60*1000);
+ }).catch(function(){});
+ navigator.serviceWorker.addEventListener("controllerchange",function(){
+  try{sessionStorage.setItem("g2b_update","1");}catch(e){}location.reload();});
+ if(window.sessionStorage&&sessionStorage.getItem("g2b_update")){
+  sessionStorage.removeItem("g2b_update");
+  window.addEventListener("load",function(){
+   var t=document.createElement("div");
+   t.textContent="✨ App bijgewerkt naar de nieuwste versie!";
+   t.style.cssText="position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#1e7a46;color:#fff;padding:10px 20px;border-radius:99px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.25);z-index:99;font-family:sans-serif";
+   document.body.appendChild(t);setTimeout(function(){t.remove();},5000);});
+ }
+}
 </script>
 <script>
 // ====== NIVEAU-LADDER: groep 1-8 → middelbaar → uni → master → genius
@@ -1388,35 +1404,81 @@ var TAALW=[["hond","dog","Hund","chien","dagu","כלב — kelev","perro"],["kat
  ["appel","apple","Apfel","pomme","apra","תפוח — tapuakh","manzana"],["water","water","Wasser","eau","watra","מים — mayim","agua"],["school","school","Schule","école","skoro","בית ספר — beit sefer","escuela"],
  ["vriend","friend","Freund","ami","mati","חבר — khaver","amigo"],["zon","sun","Sonne","soleil","son","שמש — shemesh","sol"],["boek","book","Buch","livre","buku","ספר — sefer","libro"],
  ["melk","milk","Milch","lait","merki","חלב — khalav","leche"],["bloem","flower","Blume","fleur","blom","פרח — perakh","flor"],["bedankt","thank you","danke","merci","danki","תודה — toda","gracias"]];
+// Niveau 2: 6 thema's × 8 woorden [nl,en,de,fr,srn,hebr,es]
+var TAALT={
+ "🐶 Dieren":[["vogel","bird","Vogel","oiseau","fowru","ציפור — tsipor","pájaro"],["vis","fish","Fisch","poisson","fisi","דג — dag","pez"],["paard","horse","Pferd","cheval","asi","סוס — sus","caballo"],["koe","cow","Kuh","vache","kau","פרה — para","vaca"],["konijn","rabbit","Kaninchen","lapin","kownu","ארנב — arnav","conejo"],["beer","bear","Bär","ours","bere","דב — dov","oso"],["muis","mouse","Maus","souris","moysa","עכבר — akhbar","ratón"],["slang","snake","Schlange","serpent","sneki","נחש — nakhash","serpiente"]],
+ "🍎 Eten":[["brood","bread","Brot","pain","brede","לחם — lekhem","pan"],["kaas","cheese","Käse","fromage","kesi","גבינה — gvina","queso"],["ei","egg","Ei","œuf","egi","ביצה — beitsa","huevo"],["rijst","rice","Reis","riz","aleisi","אורז — orez","arroz"],["banaan","banana","Banane","banane","bakba","בננה — banana","plátano"],["soep","soup","Suppe","soupe","supu","מרק — marak","sopa"],["suiker","sugar","Zucker","sucre","sukru","סוכר — sukar","azúcar"],["kip","chicken","Hähnchen","poulet","fowru","עוף — of","pollo"]],
+ "👨‍👩‍👧 Familie":[["moeder","mother","Mutter","mère","mama","אימא — ima","madre"],["vader","father","Vater","père","papa","אבא — abba","padre"],["broer","brother","Bruder","frère","brada","אח — akh","hermano"],["zus","sister","Schwester","sœur","sisa","אחות — akhot","hermana"],["oma","grandma","Oma","mamie","granm'ma","סבתא — savta","abuela"],["opa","grandpa","Opa","papi","granp'pa","סבא — saba","abuelo"],["baby","baby","Baby","bébé","bebi","תינוק — tinok","bebé"],["kind","child","Kind","enfant","pikin","ילד — yeled","niño"]],
+ "✋ Lichaam":[["hoofd","head","Kopf","tête","ede","ראש — rosh","cabeza"],["hand","hand","Hand","main","anu","יד — yad","mano"],["voet","foot","Fuß","pied","futu","רגל — regel","pie"],["oog","eye","Auge","œil","ai","עין — ayin","ojo"],["neus","nose","Nase","nez","noso","אף — af","nariz"],["mond","mouth","Mund","bouche","mofo","פה — peh","boca"],["oor","ear","Ohr","oreille","yesi","אוזן — ozen","oreja"],["haar","hair","Haar","cheveux","hari","שיער — se'ar","pelo"]],
+ "🎨 Kleuren":[["rood","red","rot","rouge","redi","אדום — adom","rojo"],["geel","yellow","gelb","jaune","jere","צהוב — tsahov","amarillo"],["blauw","blue","blau","bleu","blau","כחול — kakhol","azul"],["groen","green","grün","vert","gron","ירוק — yarok","verde"],["zwart","black","schwarz","noir","blaka","שחור — shakhor","negro"],["wit","white","weiß","blanc","weti","לבן — lavan","blanco"],["oranje","orange","orange","orange","orenji","כתום — katom","naranja"],["roze","pink","rosa","rose","roz","ורוד — varod","rosa"]],
+ "🌳 Natuur":[["maan","moon","Mond","lune","mun","ירח — yareakh","luna"],["ster","star","Stern","étoile","stari","כוכב — kokhav","estrella"],["wolk","cloud","Wolke","nuage","wolku","ענן — anan","nube"],["regen","rain","Regen","pluie","alen","גשם — geshem","lluvia"],["boom","tree","Baum","arbre","bonu","עץ — ets","árbol"],["gras","grass","Gras","herbe","grasi","דשא — deshe","hierba"],["rivier","river","Fluss","rivière","liba","נהר — nahar","río"],["berg","mountain","Berg","montagne","bergi","הר — har","montaña"]]
+};
+// Niveau 3: zinnetjes [nl,en,de,fr,srn,hebr,es]
+var TAALZ=[
+ ["Hallo! Ik heet Sam.","Hello! My name is Sam.","Hallo! Ich heiße Sam.","Bonjour ! Je m'appelle Sam.","Afa! Mi nen Sam.","שלום! קוראים לי סם — shalom! korim li Sam.","¡Hola! Me llamo Sam."],
+ ["Ik ben 8 jaar.","I am 8 years old.","Ich bin 8 Jahre alt.","J'ai 8 ans.","Mi e habi 8 yari.","אני בן שמונה — ani ben shmone.","Tengo 8 años."],
+ ["Ik hou van jou.","I love you.","Ich habe dich lieb.","Je t'aime.","Mi lobi yu.","אני אוהב אותך — ani ohev otkha.","Te quiero."],
+ ["Ik wil water, alsjeblieft.","I want water, please.","Ich will Wasser, bitte.","Je veux de l'eau, s'il te plaît.","Mi wani watra, tangi.","אני רוצה מים בבקשה — ani rotse mayim, bevakasha.","Quiero agua, por favor."],
+ ["Waar is de school?","Where is the school?","Wo ist die Schule?","Où est l'école ?","Pe a skoro de?","איפה בית הספר? — eifo beit hasefer?","¿Dónde está la escuela?"],
+ ["Ik ga naar huis.","I am going home.","Ich gehe nach Hause.","Je vais à la maison.","Mi e go oso.","אני הולך הביתה — ani holekh habayta.","Voy a casa."],
+ ["Dank je wel, vriend!","Thank you, friend!","Danke, Freund!","Merci, ami !","Danki yu, mati!","תודה, חבר! — toda, khaver!","¡Gracias, amigo!"],
+ ["De zon schijnt vandaag.","The sun is shining today.","Die Sonne scheint heute.","Le soleil brille aujourd'hui.","Son e schine tide.","השמש זורחת היום — hashemesh zorakhat hayom.","El sol brilla hoy."]
+];
+// Niveau 4: verhaaltje + NL-begripsvragen
+var TAALV=[
+ {tekst:["Sam has a dog.","The dog is black.","Sam loves his dog."],vragen:[["Wat heeft Sam?","een hond",["een kat","een hond","een vis"]],["Welke kleur is de hond?","zwart",["wit","bruin","zwart"]]]},
+ {tekst:["Sam hat einen Hund.","Der Hund ist schwarz.","Sam liebt seinen Hund."],vragen:[["Wat hat Sam? (Wat heeft Sam?)","einen Hund",["eine Katze","einen Hund","einen Fisch"]],["Welche Farbe? (welke kleur?)","schwarz",["weiß","braun","schwarz"]]]},
+ {tekst:["Sam a un chien.","Le chien est noir.","Sam aime son chien."],vragen:[["Qu'est-ce que Sam a ?","un chien",["un chat","un chien","un poisson"]],["De quelle couleur ?","noir",["blanc","brun","noir"]]]},
+ {tekst:["Sam abi wan dagu.","A dagu de blaka.","Sam lobi en dagu."],vragen:[["San Sam abi?","wan dagu",["wan pusi","wan dagu","wan fisi"]],["Fu sorto klori?","blaka",["weti","brawn","blaka"]]]},
+ {tekst:["לסם יש כלב — LeSam yesh kelev.","הכלב שחור — hakelev shakhor.","סם אוהב את הכלב — Sam ohev et hakelev."],vragen:[["מה יש לסם?","kelev — hond",["khatul — kat","kelev — hond","dag — vis"]],["איזה צבע?","shakhor — zwart",["lavan — wit","khum — bruin","shakhor — zwart"]]]},
+ {tekst:["Sam tiene un perro.","El perro es negro.","Sam quiere a su perro."],vragen:[["¿Qué tiene Sam?","un perro",["un gato","un perro","un pez"]],["¿De qué color?","negro",["blanco","marrón","negro"]]]}
+];
 function spelTalen(){
  document.getElementById("spel-titel").textContent="🌍 Talen";
  var inh=document.getElementById("spel-inhoud");
- inh.innerHTML='<p class="sub2">Welke taal wil je oefenen? De stem spreekt het woord in die taal! <small>(Sranan leest de NL-stem — fonetisch gespeld)</small></p><div class="acties" id="taal-kies"></div>';
+ inh.innerHTML='<p class="sub2">Welke taal wil je leren? Van eerste woordjes tot echt verhaaltje — 4 niveaus!</p><div class="acties" id="taal-kies"></div>';
  var zk=document.getElementById("taal-kies");
  TALEN.forEach(function(t,ti){
   var b=document.createElement("button");b.className="pill";b.textContent=t.ic+" "+t.naam;
-  b.onclick=function(){taalRonde(ti);};zk.appendChild(b);});
+  b.onclick=function(){taalNiv(ti);};zk.appendChild(b);});
  toon("scherm-spel");
 }
-function taalRonde(ti){
+function taalNiv(ti){
+ var taal=TALEN[ti],inh=document.getElementById("spel-inhoud");
+ inh.innerHTML='<p class="sub2">'+taal.ic+" <b>"+taal.naam+'</b> — kies je niveau:</p><div class="knoppen" id="tn-lijst"></div>'+
+  '<div class="acties"><button class="pill grijs" onclick="spelTalen()">🌍 andere taal</button></div>';
+ var l=document.getElementById("tn-lijst");
+ [["1️⃣","Kernwoorden","de 12 basiswoorden",function(){taalRonde(ti);}],
+  ["2️⃣","Thema's","48 woorden in 6 thema's",function(){taalThema(ti);}],
+  ["3️⃣","Zinnetjes","echte zinnen spreken",function(){taalZinnen(ti);}],
+  ["4️⃣","Verhaaltje","luister & begrijp — top!",function(){taalVerhaal(ti);}]]
+ .forEach(function(n){
+  var b=document.createElement("button");b.className="optie";b.innerHTML=n[0]+" <b>"+n[1]+"</b><br><small>"+n[2]+"</small>";
+  b.onclick=n[3];l.appendChild(b);});
+}
+// gedeelde woorden-quiz: NL → kies vreemde taal (werkt voor elke woordenlijst)
+var _tq=null;
+function taalQuiz(ti,woorden,titel,bron){
+ _tq={ti:ti,woorden:woorden,titel:titel,bron:bron};
  var taal=TALEN[ti],nr=0,goed=0;
- var woorden=shuffle(TAALW.slice()).slice(0,6);
  var inh=document.getElementById("spel-inhoud");
  function ronde(){
   if(nr>=woorden.length){
-   inh.innerHTML='<div class="medal">'+(goed>=5?"🏆":goed>=3?"🏅":"💪")+'</div><h2>'+taal.naam+' geoefend!</h2>'+
+   inh.innerHTML='<div class="medal">'+(goed>=woorden.length-1?"🏆":goed>=Math.ceil(woorden.length/2)?"🏅":"💪")+'</div><h2>'+titel+' klaar!</h2>'+
     '<p class="sub2">'+goed+" van de "+woorden.length+" goed"+(wie()?", "+wie():"")+'!</p>'+
-    '<div class="acties"><button class="pill" onclick="taalRonde('+ti+')">🔁 nog eens</button> '+
-    '<button class="pill" onclick="spelTalen()">🌍 andere taal</button> '+
+    '<div class="acties"><button class="pill" id="tq-weer">🔁 nog eens</button> '+
+    '<button class="pill" id="tq-niv">'+'📶 niveaus</button> '+
     '<button class="pill grijs" onclick="naarHome()">← terug</button></div>';
-   if(goed>=3)feestConfetti(60);return;
+   document.getElementById("tq-weer").onclick=function(){taalQuiz(_tq.ti,_tq.woorden,_tq.titel,_tq.bron);};
+   document.getElementById("tq-niv").onclick=function(){taalNiv(_tq.ti);};
+   if(goed>=Math.ceil(woorden.length/2))feestConfetti(60);return;
   }
   var w=woorden[nr],vreemd=w[ti+1];
-  var fouten=shuffle(TAALW.filter(function(x){return x[ti+1]!==vreemd;})).slice(0,3).map(function(x){return x[ti+1];});
+  var fouten=shuffle(bron.filter(function(x){return x[ti+1]!==vreemd;})).slice(0,3).map(function(x){return x[ti+1];});
   var opties=shuffle(fouten.concat([vreemd]));
-  inh.innerHTML='<p class="sub2">woord '+(nr+1)+" van "+woorden.length+" — <b>"+taal.naam+"</b></p>"+
+  inh.innerHTML='<p class="sub2">'+titel+" · "+(nr+1)+" van "+woorden.length+" — <b>"+taal.naam+"</b></p>"+
    '<p style="font-size:1.6rem;color:var(--zeed)"><b>'+w[0]+"</b> = wat in het "+taal.naam+"?</p>"+
-   '<div class="acties"><button class="pill" id="taal-hoor">'+taal.ic+' hoor het woord</button></div>'+
+   '<div class="acties"><button class="pill" id="taal-hoor">'+taal.ic+' hoor het antwoord</button></div>'+
    '<div class="knoppen" id="taal-opt"></div><p class="sub2" id="taal-fb"></p>';
   document.getElementById("taal-hoor").onclick=function(){staat.stijl.luister++;bewaar();zegTaal(vreemd,taal.lang);};
   zeg("Wat is "+w[0]+" in het "+taal.naam+"?");
@@ -1431,6 +1493,81 @@ function taalRonde(ti){
    zo.appendChild(b);});
  }
  ronde();
+}
+function taalRonde(ti){taalQuiz(ti,shuffle(TAALW.slice()).slice(0,6),"Kernwoorden",TAALW);}
+function taalThema(ti){
+ var inh=document.getElementById("spel-inhoud");
+ inh.innerHTML='<p class="sub2">Kies een thema — elk thema heeft 8 woorden!</p><div class="knoppen" id="tt-lijst"></div>'+
+  '<div class="acties"><button class="pill grijs" onclick="taalNiv('+ti+')">📶 niveaus</button></div>';
+ var l=document.getElementById("tt-lijst");
+ Object.keys(TAALT).forEach(function(th){
+  var b=document.createElement("button");b.className="optie";b.innerHTML="<b>"+th+"</b><br><small>"+TAALT[th].length+" woorden</small>";
+  b.onclick=function(){taalQuiz(ti,shuffle(TAALT[th].slice()).slice(0,6),th,TAALT[th]);};l.appendChild(b);});
+}
+function taalZinnen(ti){
+ var taal=TALEN[ti],nr=0,goed=0;
+ var zinnen=shuffle(TAALZ.slice()).slice(0,6);
+ var inh=document.getElementById("spel-inhoud");
+ function ronde(){
+  if(nr>=zinnen.length){
+   inh.innerHTML='<div class="medal">'+(goed>=5?"🏆":goed>=3?"🏅":"💪")+'</div><h2>Zinnetjes gesproken!</h2>'+
+    '<p class="sub2">'+goed+" van de "+zinnen.length+" goed"+(wie()?", "+wie():"")+'!</p>'+
+    '<div class="acties"><button class="pill" onclick="taalZinnen('+ti+')">🔁 nog eens</button> '+
+    '<button class="pill" onclick="taalNiv('+ti+')">📶 niveaus</button> '+
+    '<button class="pill grijs" onclick="naarHome()">← terug</button></div>';
+   if(goed>=3)feestConfetti(60);return;
+  }
+  var z=zinnen[nr],vreemd=z[ti+1];
+  var fouten=shuffle(TAALZ.filter(function(x){return x[ti+1]!==vreemd;})).slice(0,3).map(function(x){return x[ti+1];});
+  var opties=shuffle(fouten.concat([vreemd]));
+  inh.innerHTML='<p class="sub2">zin '+(nr+1)+" van "+zinnen.length+" — <b>"+taal.naam+"</b></p>"+
+   '<p style="font-size:1.5rem;color:var(--zeed)"><b>"'+z[0]+'"</b> = hoe zeg je dat in het '+taal.naam+"?</p>"+
+   '<div class="knoppen" id="tz-opt"></div><p class="sub2" id="tz-fb"></p>';
+  zeg("Hoe zeg je in het "+taal.naam+": "+z[0]);
+  var zo=document.getElementById("tz-opt");
+  opties.forEach(function(o){
+   var b=document.createElement("button");b.className="optie";b.textContent=o;
+   b.onclick=function(){
+    if(b.disabled)return;
+    if(o===vreemd){goed++;staat.sterren++;bewaar();b.classList.add("goed");document.getElementById("tz-fb").textContent="🎉 Juist!";speelJubel();zegTaal(vreemd.replace(/ — .*/,""),taal.lang);}
+    else{b.classList.add("fout");document.getElementById("tz-fb").textContent="Bijna — hoor het juiste:";speelJammer();zegTaal(vreemd.replace(/ — .*/,""),taal.lang);}
+    nr++;setTimeout(ronde,1800);};
+   zo.appendChild(b);});
+ }
+ ronde();
+}
+function taalVerhaal(ti){
+ var taal=TALEN[ti],v=TAALV[ti],nr=0,goed=0;
+ var inh=document.getElementById("spel-inhoud");
+ inh.innerHTML='<p class="sub2"><b>'+taal.ic+" "+taal.naam+"-verhaaltje</b> — hoor het en klik dan door naar de vragen!</p>"+
+  '<div style="font-size:1.3rem;line-height:1.8;margin:14px 0" id="tv-tekst"></div>'+
+  '<div class="acties"><button class="pill" id="tv-hoor">'+taal.ic+' hoor alles</button> <button class="pill" id="tv-vragen">❓ naar de vragen</button></div>';
+ document.getElementById("tv-tekst").innerHTML=v.tekst.map(function(l){return "<div>"+l+"</div>";}).join("");
+ document.getElementById("tv-hoor").onclick=function(){staat.stijl.luister++;bewaar();v.tekst.forEach(function(l,i){setTimeout(function(){zegTaal(l.replace(/ — .*/,""),taal.lang);},i*2200);});};
+ document.getElementById("tv-vragen").onclick=ronde;
+ function ronde(){
+  if(nr>=v.vragen.length){
+   inh.innerHTML='<div class="medal">'+(goed>=2?"🏆":"💪")+'</div><h2>Verhaaltje begrepen!</h2>'+
+    '<p class="sub2">'+goed+" van "+v.vragen.length+" vragen goed — je verstaat echt "+taal.naam+"!</p>"+
+    '<div class="acties"><button class="pill" onclick="taalVerhaal('+ti+')">🔁 nog eens</button> '+
+    '<button class="pill" onclick="taalNiv('+ti+')">📶 niveaus</button> '+
+    '<button class="pill grijs" onclick="naarHome()">← terug</button></div>';
+   if(goed>=2)feestConfetti(80);speelLiedje();return;
+  }
+  var q=v.vragen[nr];
+  inh.innerHTML='<p class="sub2">vraag '+(nr+1)+" van "+v.vragen.length+" — over het "+taal.naam+"-verhaaltje</p>"+
+   '<p style="font-size:1.5rem;color:var(--zeed)"><b>'+q[0]+"</b></p>"+
+   '<div class="knoppen" id="tv-opt"></div><p class="sub2" id="tv-fb"></p>';
+  var zo=document.getElementById("tv-opt");
+  shuffle(q[2].slice()).forEach(function(o){
+   var b=document.createElement("button");b.className="optie";b.textContent=o;
+   b.onclick=function(){
+    if(b.disabled)return;
+    if(o===q[1]){goed++;staat.sterren++;bewaar();b.classList.add("goed");document.getElementById("tv-fb").textContent="🎉 Goed begrepen!";speelJubel();}
+    else{b.classList.add("fout");document.getElementById("tv-fb").textContent="Nee — het was '"+q[1]+"'";speelJammer();}
+    nr++;setTimeout(ronde,1400);};
+   zo.appendChild(b);});
+ }
 }
 
 // ====== SPEL: VERHAAL-DICTEE — stem spreekt boekwoord, kind typt het
