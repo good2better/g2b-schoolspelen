@@ -76,6 +76,10 @@ padding:14px;margin-top:14px;text-align:center}
 .clip-laag.aan{display:flex;animation:verschijn .3s}
 .clip-laag video{max-width:92vw;max-height:82vh;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.5)}
 .clip-tip{position:absolute;bottom:6vh;color:#fff;opacity:.8;font-size:.95rem}
+.mem-kaart{aspect-ratio:1;font-size:1.9rem;border:3px solid var(--tint);border-radius:12px;background:var(--tint);cursor:pointer;transition:.15s}
+.mem-kaart:hover{border-color:var(--zee);transform:scale(1.04)}
+.mem-kaart.open{background:#fff;border-color:var(--goud)}
+.mem-kaart.gevonden{background:#d9f5dd;border-color:var(--groen);animation:stuiter .5s ease}
 </style>
 </head>
 <body>
@@ -122,6 +126,15 @@ padding:14px;margin-top:14px;text-align:center}
 <button class="pill grijs" onclick="naarHome()">← kies ander vak</button>
 </div>
 </div>
+</div>
+
+<div id="scherm-spel" class="hidden">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+<button class="pill grijs" onclick="naarHome()">← terug</button>
+<b id="spel-titel"></b>
+<span class="sub2" style="margin:0 0 0 auto" id="spel-teller"></span>
+</div>
+<div class="vraag"><div id="spel-inhoud"></div></div>
 </div>
 
 </main>
@@ -246,11 +259,11 @@ var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",z
 var huidigVak="",huidigNiv="",vraagNr=0,goedTeller=0,RONDE=8;
 var dotHtml="";
 function toon(id){
- ["scherm-home","scherm-oefen","scherm-klaar"].forEach(function(s){
+ ["scherm-home","scherm-oefen","scherm-klaar","scherm-spel"].forEach(function(s){
   document.getElementById(s).classList.toggle("hidden",s!==id);});
  window.scrollTo(0,0);
 }
-function naarHome(){speechSynthesis.cancel();bouwHome();toon("scherm-home");}
+function naarHome(){speechSynthesis.cancel();if(raceTijd)clearInterval(raceTijd);bouwHome();toon("scherm-home");}
 
 function boekKaarten(el){
  var h=document.createElement("div");h.className="niveau";
@@ -311,8 +324,21 @@ function bouwHome(){
   el.appendChild(g);
  });
  boekKaarten(el);
+ spelKaarten(el);
  bewaar();
 }
+// ====== SPELLETJES-HOEK: gewoon leuk, geen niveau nodig
+function spelKaarten(el){
+ var h=document.createElement("div");h.className="niveau";
+ h.innerHTML='🎮 Spelletjes<span class="tag">gewoon leuk — geen niveau nodig</span>';
+ el.appendChild(h);
+ var g=document.createElement("div");g.className="grid";
+ [["🃏","Memory","vind dezelfde plaatjes",spelMemory],["⚡","Reken-race","30 tellen — zoveel sommen als je kan",spelRekenrace]]
+ .forEach(function(sp){
+  var c=document.createElement("div");c.className="card";
+  c.innerHTML='<span class="ic">'+sp[0]+"</span><b>"+sp[1]+"</b><small>"+sp[2]+"</small>";
+  c.onclick=sp[3];g.appendChild(c);});
+ el.appendChild(g);}
 
 // ====== OEFENINGEN
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
@@ -718,6 +744,114 @@ function speelDrum(){
  var c=ac();if(!c)return;
  [523,659].forEach(function(f,i){noot(f,i*0.15,0.15);});
  noot(98,0.3,0.18);noot(98,0.48,0.18);noot(147,0.66,0.3); // ba-dum-baa!
+}
+
+// ====== SPEL 1: MEMORY — boek-emoji's, vind de paren
+var memOpen=[],memGevonden=0,memBeurten=0,memLock=false;
+function spelMemory(){
+ memOpen=[];memGevonden=0;memBeurten=0;memLock=false;
+ document.getElementById("spel-titel").textContent="🃏 Memory";
+ document.getElementById("spel-teller").textContent="paren: 0/6";
+ var pool=["🦓","🐰","🌈","⛵","🌸","⚽","🍎","🦋","🐬","🌻","🐸","🎨"];
+ var gekozen=shuffle(pool.slice()).slice(0,6);
+ var kaarten=shuffle(gekozen.concat(gekozen));
+ var inh=document.getElementById("spel-inhoud");inh.innerHTML=
+  '<div class="sub2">Draai twee kaartjes om — vind alle 6 paren!</div><div id="mem-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:460px;margin:14px auto 0"></div>';
+ var grid=document.getElementById("mem-grid");
+ kaarten.forEach(function(em,idx){
+  var b=document.createElement("button");b.className="mem-kaart";b.textContent="❓";b.dataset.em=em;
+  b.onclick=function(){memDraai(b,em);};
+  grid.appendChild(b);});
+ toon("scherm-spel");
+ zeg("Memory! Draai twee kaartjes en vind de paren."+(wie()?" Succes "+wie()+"!":""));
+}
+function memDraai(b,em){
+ if(memLock||b.disabled||memOpen.indexOf(b)>=0)return;
+ b.textContent=em;b.classList.add("open");memOpen.push(b);
+ zeg(""); // stil
+ if(memOpen.length===2){
+  memBeurten++;memLock=true;
+  var a0=memOpen[0],a1=memOpen[1];
+  if(a0.dataset.em===a1.dataset.em){
+   setTimeout(function(){
+    a0.disabled=a1.disabled=true;a0.classList.add("gevonden");a1.classList.add("gevonden");
+    memOpen=[];memGevonden++;memLock=false;
+    staat.sterren++;bewaar();
+    document.getElementById("spel-teller").textContent="paren: "+memGevonden+"/6";
+    feestConfetti(8);zeg("Paar gevonden!");
+    if(memGevonden===6)memKlaar();
+   },350);
+  }else{
+   setTimeout(function(){
+    a0.textContent=a1.textContent="❓";a0.classList.remove("open");a1.classList.remove("open");
+    memOpen=[];memLock=false;},750);
+  }
+ }
+}
+function memKlaar(){
+ var beur=memBeurten;
+ setTimeout(function(){
+  document.getElementById("spel-inhoud").innerHTML=
+   '<div class="medal">🏆</div><h2>Alle paren gevonden!</h2>'+
+   '<p class="sub2">In '+beur+' beurten — '+(beur<=8?"schitterend geheugen":beur<=11?"goed onthouden":"lekker gespeeld")+(wie()?", "+wie():"")+'!</p>'+
+   '<div class="acties"><button class="pill" onclick="spelMemory()">🔁 nog eens</button> '+
+   '<button class="pill grijs" onclick="naarHome()">← terug</button></div>';
+  feestConfetti(70);zeg("Yes! Alle zes paren"+(wie()?", "+wie():"")+" — klasse!");
+ },500);
+}
+
+// ====== SPEL 2: REKEN-RACE — 30 tellen, zoveel sommen als je kan
+var raceTijd=null;
+function spelRekenrace(){
+ var score=0,fout=0,restant=30;
+ document.getElementById("spel-titel").textContent="⚡ Reken-race";
+ var inh=document.getElementById("spel-inhoud");
+ function som(){
+  var x=rnd(1,12),y=rnd(1,12),op=rnd(0,1)?"+":"−";
+  if(op==="−"&&y>x){var t=x;x=y;y=t;}
+  return {x:x,y:y,op:op,ant:op==="+"?x+y:x-y};
+ }
+ var huidige=som();
+ function teken(){
+  document.getElementById("spel-teller").textContent="⏱ "+restant+"s  ⭐ "+score;
+  inh.innerHTML='<div class="sub2">Snel! Hoeveel is:</div>'+
+   '<div class="big">'+huidige.x+" "+huidige.op+" "+huidige.y+" = ?</div>"+
+   '<input class="invoer" id="race-in" autocomplete="off"> <button class="pill" id="race-ok">OK</button>'+
+   '<div class="feedback" id="race-fb"></div>';
+  var inp=document.getElementById("race-in"),ok=document.getElementById("race-ok"),fb=document.getElementById("race-fb");
+  function stuur(){
+   var val=parseInt(inp.value,10);
+   if(val===huidige.ant){score++;staat.sterren++;fb.textContent="✓";fb.className="feedback goed";}
+   else{fout++;fb.textContent="✗ was "+huidige.ant;fb.className="feedback fout";}
+   bewaar();huidige=som();
+   inp.value="";inp.focus();tekenSomAlleen();
+  }
+  ok.onclick=stuur;inp.onkeydown=function(e){if(e.key==="Enter")stuur();};
+  setTimeout(function(){inp.focus();},50);
+ }
+ function tekenSomAlleen(){
+  var big=inh.querySelector(".big");if(big)big.innerHTML=huidige.x+" "+huidige.op+" "+huidige.y+" = ?";
+  var fb=document.getElementById("race-fb");if(fb)fb.textContent="";
+  var inp=document.getElementById("race-in");if(inp){inp.value="";inp.focus();}
+ }
+ teken();
+ zeg("Reken-race! 30 tellen — zoveel sommen als je kan. Start!");
+ clearInterval(raceTijd);
+ raceTijd=setInterval(function(){
+  restant--;document.getElementById("spel-teller").textContent="⏱ "+restant+"s  ⭐ "+score;
+  if(restant<=10)noot(880,0,0.08);
+  if(restant<=0){clearInterval(raceTijd);eindRace(score,fout);}
+ },1000);
+}
+function eindRace(score,fout){
+ var ic=score>=10?"🏆":score>=6?"🏅":"💪";
+ document.getElementById("spel-inhoud").innerHTML=
+  '<div class="medal">'+ic+'</div><h2>'+score+' sommen in 30 tellen!</h2>'+
+  '<p class="sub2">'+(score>=10?"razendsnel"+(wie()?", "+wie():"")+"!":score>=6?"sterk tempo"+(wie()?", "+wie():"")+"!":"goed geoefend — elke keer wordt je sneller!")+(fout?" ("+fout+" mis — oefenen helpt)":"")+'</p>'+
+  '<div class="acties"><button class="pill" onclick="spelRekenrace()">⚡ nog een race</button> '+
+  '<button class="pill grijs" onclick="naarHome()">← terug</button></div>';
+ if(score>=10)feestConfetti(70);else if(score>=6)feestConfetti(40);
+ zeg("Tijd om! "+score+" sommen"+(wie()?", "+wie():"")+" — "+(score>=10?"super snel!":"goed bezig!"));
 }
 
 bouwHome();bewaar();
