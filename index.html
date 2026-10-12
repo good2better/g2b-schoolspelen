@@ -235,9 +235,9 @@ if("serviceWorker" in navigator){
 <script>
 // ====== NIVEAU-LADDER: groep 1-8 → middelbaar → uni → master → genius
 var NIVEAUS=[
- {id:"g12",naam:"Groep 1–2",tag:"start",vakken:["tellen","letters","klanken"]},
- {id:"g34",naam:"Groep 3–4",tag:"basis",vakken:["tellen","plus1","split","woorden","spelling","klok","puzzel"]},
- {id:"g56",naam:"Groep 5–6",tag:"door",vakken:["plus2","min2","tafels","spelling","klok","zin","puzzel"]},
+ {id:"g12",naam:"Groep 1–2",tag:"start",vakken:["tellen","letters","klanken","eindklank"]},
+ {id:"g34",naam:"Groep 3–4",tag:"basis",vakken:["tellen","plus1","split","woorden","spelling","klok","klinker","puzzel"]},
+ {id:"g56",naam:"Groep 5–6",tag:"door",vakken:["plus2","min2","tafels","spelling","klok","klok2","zin","puzzel"]},
  {id:"g78",naam:"Groep 7–8",tag:"gevorderd",vakken:["plus3","min3","tafels","spelling2","zin","puzzel"]},
  {id:"mb",naam:"Middelbaar 1–5",tag:"verder",vakken:["tafels","procent","spelling2","zin2"]},
  {id:"uni",naam:"Universiteit",tag:"hoog",vakken:["procent","breuk","zin2"]},
@@ -267,6 +267,9 @@ var VAKKEN={
  boekZin:{ic:"💬",naam:"Boekzinnen",info:"zinnen uit jouw boek"},
  boekPuz:{ic:"🔀",naam:"Boekpuzzel",info:"boekwoorden puzzelen"},
  klok:{ic:"🕐",naam:"Klokkijken",info:"hoe laat is het?"},
+ klok2:{ic:"🕰️",naam:"Klok gevorderd",info:"kwartieren en hoe laat later?"},
+ eindklank:{ic:"🔚",naam:"Eindklank",info:"met welke klank eindigt het woord?"},
+ klinker:{ic:"🗣️",naam:"Klinkers",info:"welke klinker hoor je in het woord?"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
  seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
  feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"},
@@ -413,7 +416,7 @@ function feestdag(){
   if(f[0]===m&&d>=f[1]&&d<=f[2])return {ic:f[3],naam:f[4],woorden:f[5]};}
  return null;}
 // ====== NIEUWS van de app — klein berichtje dat via auto-update bij gebruikers komt
-var NIEUWS={titel:"Nieuw: Badges & meer verhalen!",tekst:"🏆 Verdien alle 9 badges — van eerste ronde tot week-streak — en 4 nieuwe verhaaltjes bij Verhaal begrijpen!"};
+var NIEUWS={titel:"Nieuw: Klok-kwartieren & klinkers!",tekst:"🕰️ Kwart over en kwart voor op de echte klok, 🔚 eindklanken, 🗣️ klinkers — en ouders zien nu een 📆 weekoverzicht!"};
 // ====== LESJES: mini-uitleg vóór het oefenen — leren vóór trainen, zoals een echte methode
 var LESJES={
  tellen:"Tel één voor één — wijs elk plaatje aan terwijl je telt. Het láátste getal dat je zegt, is hoeveel er zijn!",
@@ -430,6 +433,9 @@ var LESJES={
  zin2:"Denk mee: lees de zin en stel je de situatie voor. Welk antwoord klopt écht?",
  logica:"Zoek het patroon: wat komt er steeds bij — of wat gaat eraf? Schrijf de rij maar verder.",
  klok:"Korte wijzer = uren, lange wijzer = minuten. Bij hele uren wijst de lange wijzer naar de 12.",
+ klok2:"Kwart over = wijzer naar de 3 (15 min). Kwart voor = wijzer naar de 9 (45 min). En tel door: over 30 minuten is een half uurtje later.",
+ eindklank:"Luister goed naar het EINDE van het woord. Welke klank hoor je als laatste? 'kat' eindigt op T.",
+ klinker:"De klinkers zijn A E I O U. Elk woord heeft er minstens één — luister welke je hoort: 'vis' heeft de I.",
  seizoen:"Deze woorden horen bij deze tijd van het jaar — kijk eens om je heen!",
  feest:"Het is feest! Deze woorden horen bij deze feestdag.",
  boekWoord:"Woorden uit jouw boek — je kent ze al uit het verhaal!",
@@ -1061,8 +1067,15 @@ function check(goed,knop,a,laatOK){
  // stip op de streep
  var d=document.querySelectorAll("#streep .dot")[vraagNr-1];
  if(d)d.classList.add(goed?"goed":"fout");
+ // week-registratie voor het ouder-weekoverzicht
+ var wk=weekKey();staat.weken=staat.weken||{};
+ var W=staat.weken[wk]=staat.weken[wk]||{antw:0,goed:0,vakken:{}};
+ W.antw++;if(goed)W.goed++;W.vakken[huidigVak]=(W.vakken[huidigVak]||0)+1;
  bewaar();
 }
+function weekKey(){var d=new Date(),t=new Date(d.getFullYear(),0,1);var w=Math.ceil((((d-t)/864e5)+t.getDay()+1)/7);return d.getFullYear()+"-W"+w;}
+function weekDagen(){var d=new Date(),ma=new Date(d);ma.setDate(d.getDate()-((d.getDay()+6)%7));
+ var s=ma.toISOString().slice(0,10);return Object.keys(staat.dagen||{}).filter(function(k){return k>=s;}).length;}
 function eindRonde(){
  var pct=Math.round(goedTeller/rondeMax*100);
  var ic=pct>=80?"🏆":pct>=50?"🏅":"💪";
@@ -1361,6 +1374,63 @@ var makers={
    a.appendChild(b);});
   zeg("Hoeveel mist er om "+n+" te maken? "+deel+" en hoeveel?");
  },
+ eindklank:function(v,a){
+  var woord=shuffle(WOORDEN1.slice())[0];
+  window._huidigItem=woord;
+  var em=EMOJI[woord]||"🐾";
+  v.innerHTML="<b>Met welke klank EINDIGT dit woord?</b><div class='plaatjes'>"+em+"</div><div class='big'>"+woord+"</div>";
+  var goed=woord[woord.length-1];
+  var pool="abcdefghjklmnoprstvwz".split("").filter(function(l){return l!==goed;});
+  var opties=shuffle(pool.slice()).slice(0,2).concat([goed]);opties=shuffle(opties);
+  opties.forEach(function(l){
+   var b=document.createElement("button");b.className="optie";b.textContent=l.toUpperCase();
+   b.onclick=function(){check(l===goed,b,{woord:woord,uitleg:"'"+woord+"' eindigt op letter "+goed.toUpperCase()+" — dat is de klank van "+goed+"."});};
+   a.appendChild(b);});
+  var hb=document.createElement("button");hb.className="pill klein";hb.textContent="🔊 luister";
+  hb.onclick=function(){staat.stijl.luister++;bewaar();zeg(woord);};v.appendChild(hb);
+  zeg("Luister: "+woord+". Met welke klank eindigt het?");
+ },
+ klinker:function(v,a){
+  var lijst=WOORDEN1.filter(function(w){return /[aeiou]/.test(w);});
+  var woord=shuffle(lijst.slice())[0];
+  window._huidigItem=woord;
+  var em=EMOJI[woord]||"🐾";
+  v.innerHTML="<b>Welke klinker hoor je in dit woord?</b><div class='plaatjes'>"+em+"</div><div class='big'>"+woord+"</div>";
+  var goed=woord.match(/[aeiou]/)[0];
+  var opties=shuffle(["a","e","i","o","u"].filter(function(l){return l!==goed;})).slice(0,2).concat([goed]);opties=shuffle(opties);
+  opties.forEach(function(l){
+   var b=document.createElement("button");b.className="optie";b.textContent=l.toUpperCase();
+   b.onclick=function(){check(l===goed,b,{woord:woord,uitleg:"In '"+woord+"' hoor je de klinker "+goed.toUpperCase()+". Klinkers zijn A E I O U."});};
+   a.appendChild(b);});
+  var hb=document.createElement("button");hb.className="pill klein";hb.textContent="🔊 luister";
+  hb.onclick=function(){staat.stijl.luister++;bewaar();zeg(woord);};v.appendChild(hb);
+  zeg("Luister: "+woord+". Welke klinker hoor je?");
+ },
+ klok2:function(v,a){
+  if(vraagNr%2===0){
+   var uur=rnd(1,12),voor=rnd(0,1),min=voor?45:15;
+   var goed=voor?("kwart voor "+(uur===12?1:uur+1)):("kwart over "+uur);
+   window._huidigItem="klok2-"+uur+"-"+min;
+   window._les={soort:"klok2",uur:uur,min:min};
+   v.innerHTML='<div class="sub2">Hoe laat is het?</div>'+klokSvgM(uur,min);
+   var opties=[goed];
+   while(opties.length<3){var w2=(["kwart over ","kwart voor ","half ","kwart over "][rnd(0,3)])+rnd(1,12);if(w2!==goed&&opties.indexOf(w2)<0)opties.push(w2);}
+   antwoordOpties(a,goed,opties,"klok2");
+   zegHoud("Hoe laat is het? Kijk goed: wijst de lange wijzer naar de 3 of de 9?");
+  }else{
+   var uur2=rnd(0,23),mm=["00","15","30","45"][rnd(0,3)];
+   var t=uur2*60+(+mm)+30,h2=Math.floor(t/60)%24,m2=t%60;
+   var goed2=(h2<10?"0":"")+h2+":"+(m2<10?"0":"")+m2;
+   var start=(uur2<10?"0":"")+uur2+":"+mm;
+   window._huidigItem="later-"+start;
+   v.innerHTML="<b>Het is "+start+" — hoe laat is het over 30 minuten?</b><div class='plaatjes'>⏳</div><div class='big'>"+start+" + 0:30 = ?</div>";
+   var opties2=[goed2];
+   while(opties2.length<3){var d2=[15,-15,60,-60][rnd(0,3)],t2=uur2*60+(+mm)+30+d2,h3=((Math.floor(t2/60)%24)+24)%24,m3=t2%60;
+    var x=(h3<10?"0":"")+h3+":"+(m3<10?"0":"")+m3;if(x!==goed2&&opties2.indexOf(x)<0)opties2.push(x);}
+   antwoordOpties(a,goed2,opties2,"klok2");
+   zegHoud("Het is "+start+". Hoe laat is het over een half uur?");
+  }
+ },
  seizoen:function(v,a){
   var S=seizoensInfo();
   var woord=S.woorden[vraagNr%S.woorden.length];
@@ -1430,6 +1500,15 @@ function puzzelBouw(v,a,lijst){
 function klokSvg(uur,half){
  // analoge klok: kleine wijzer=uren, grote wijzer=minuten (half = wijzer op 6)
  var mi=half?180:0,ui=(uur%12)*30+(half?15:0);
+ function wijzer(deg,len,w){var rad=(deg-90)*Math.PI/180;
+  return '<line x1="60" y1="60" x2="'+(60+len*Math.cos(rad)).toFixed(1)+'" y2="'+(60+len*Math.sin(rad)).toFixed(1)+'" stroke="#084E7C" stroke-width="'+w+'" stroke-linecap="round"/>';}
+ var ticks="";for(var i=0;i<12;i++){var a2=(i*30-90)*Math.PI/180;
+  ticks+='<circle cx="'+(60+48*Math.cos(a2)).toFixed(1)+'" cy="'+(60+48*Math.sin(a2)).toFixed(1)+'" r="2.6" fill="#F5A623"/>';}
+ return '<svg viewBox="0 0 120 120" style="width:150px;height:150px"><circle cx="60" cy="60" r="56" fill="#fff" stroke="#084E7C" stroke-width="4"/>'+
+  ticks+wijzer(ui,30,6)+wijzer(mi,44,4)+'<circle cx="60" cy="60" r="4" fill="#F5A623"/></svg>';
+}
+function klokSvgM(uur,min){ // kwartieren: lange wijzer op echte minuten-stand
+ var mi=min*6,ui=(uur%12)*30+min*0.5;
  function wijzer(deg,len,w){var rad=(deg-90)*Math.PI/180;
   return '<line x1="60" y1="60" x2="'+(60+len*Math.cos(rad)).toFixed(1)+'" y2="'+(60+len*Math.sin(rad)).toFixed(1)+'" stroke="#084E7C" stroke-width="'+w+'" stroke-linecap="round"/>';}
  var ticks="";for(var i=0;i<12;i++){var a2=(i*30-90)*Math.PI/180;
@@ -2098,11 +2177,17 @@ function oudersOverzicht(){
   rows+='<tr><td>'+nnaam+'</td><td>'+vnaam+'</td><td>'+pct+"%</td>"+
    '<td><div class="meter"><i style="width:'+pct+"%;background:"+kleur+'"></i></div></td></tr>';
  });
+ var wk=weekKey(),W=(staat.weken||{})[wk]||{antw:0,goed:0,vakken:{}};
+ var topVak=Object.keys(W.vakken||{}).sort(function(a,b){return W.vakken[b]-W.vakken[a];})[0];
+ var weekRegels='<div class="stijl-regel"><b>'+W.antw+"</b> vragen geoefend — "+(W.antw?Math.round(100*W.goed/W.antw):0)+'% goed</div>'+
+  (topVak?'<div class="stijl-regel">Meest geoefend: <b>'+(VAKKEN[topVak]||{naam:topVak}).naam+"</b></div>":"")+
+  '<div class="stijl-regel">Actief op <b>'+weekDagen()+"</b> dag(en) deze week</div>";
  var groepen=NIVEAUS.map(function(n){var gs=groepScore(n);
   return '<div class="stijl-regel"><b>'+n.naam+":</b> "+gs.gedaan+"/"+gs.tot+" vakken ≥80%"+(gs.klaar?" — 🏅 <b>groep-bewijs behaald!</b>":"")+"</div>";}).join("");
  document.getElementById("spel-inhoud").innerHTML=
   '<div class="sub2">Alles wat geoefend is — groen = sterk vak, rood = extra oefenen (klik op 🎯 thuis).</div>'+
   '<table class="ouders-tbl"><tr><th>niveau/boek</th><th>vak</th><th>goed</th><th></th></tr>'+rows+"</table>"+
+  '<div class="stijl-doos"><b>📆 Deze week</b>'+weekRegels+"</div>"+
   '<div class="stijl-doos"><b>🔥 Oefenritme</b><div class="stijl-regel">'+dagStreak()+" dag(en) achter elkaar geoefend — vaste gewoonte groeit!</div></div>"+
   '<div class="stijl-doos"><b>🧠 Hoe '+(wie()||"je kind")+' leert</b>'+speelstijlTekst()+"</div>"+
   '<div class="stijl-doos"><b>🏅 Groep-bewijs (schoolniveau)</b>'+groepen+"</div>"+
