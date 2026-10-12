@@ -11,7 +11,8 @@ Geen installatie, geen account, geen internet nodig na het laden.
 - **Niveau-ladder**: Groep 1–2 → Groep 3–4 → Groep 5–6 → Groep 7–8 →
   Middelbaar 1–5 → Universiteit → Master 1-2-3 → Genius 🏆
 - **Vakken**: Tellen · Letters · Plus · Min · Tafels · Procenten ·
-  Breuken · Woorden · Spelling · Zin lezen · Begrijpend lezen · Logica
+  Breuken · Woorden · Spelling · Zin lezen · Begrijpend lezen · Logica ·
+  **Klokkijken** (analoge klok, hele en halve uren — Groep 3–4 en 5–6)
 - **Adaptief brein**: de app onthoudt fouten (per apparaat,
   localStorage). Woorden en sommen die lastig zijn komen vaker terug,
   met een truc-tip erbij. Te makkelijk? Kies een hoger niveau.
@@ -24,6 +25,20 @@ Geen installatie, geen account, geen internet nodig na het laden.
 - **📚 Mijn boeken**: de G2B-boeken (Sunny, Ziggy, Keesje) worden
   oefeningen — woorden, spelling, zinnen en letterpuzzels uit de
   verhalen zelf, met eigen voortgangsbalkjes per boek.
+- **🎯 Oefen je fouten**: één knop die een extra ronde draait met
+  precies de woorden, sommen en boekvragen die eerder fout gingen —
+  het adaptieve brein als oefenronde.
+- **👪 Voor ouders**: overzicht per vak/boek met percentages en
+  kleurmeters (groen = sterk, rood = extra oefenen).
+- **🎮 Spelletjes**: Memory (plaatjes), **Leesmemory** (woord↔plaatje —
+  lezen én spelen) en Reken-race (30 tellen, zoveel sommen als je kan).
+- **📜 Diploma**: bij 80%+ in een ronde verschijnt een printbaar
+  diploma met naam, vak en score — via de knop wordt alleen het
+  diploma geprint (print-CSS).
+- **🔔 Geluid & animatie**: juich-tonen bij goed antwoord, zachte
+  toon bij fout (WebAudio, geen bestanden), confetti bij mijlpalen,
+  en het 🦓-maatje dat meedanst onderaan het scherm.
+- **⏸ Drinkpauze**: automatische rust-reminder tijdens lange sessies.
 
 ## Zo gebruik je hem
 
