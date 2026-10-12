@@ -240,8 +240,23 @@ function wie(){return staat.naam||"";}
 var HELDEN=[{ic:"\ud83e\uddd2",naam:"jongen-held"},{ic:"\ud83d\udc67",naam:"meisje-held"},{ic:"\ud83e\udd8a",naam:"vos"},
  {ic:"\ud83d\udc30",naam:"konijn"},{ic:"\ud83e\udd93",naam:"zebra"},{ic:"\ud83d\udc31",naam:"kat"},{ic:"\ud83d\udc3c",naam:"panda"},{ic:"\ud83e\udd81",naam:"leeuw"}];
 function heldIc(){return staat.held||"\ud83e\udd93";}
-function kiesHeld(ic){staat.held=ic;bewaar();var m=document.getElementById("maatje");if(m)m.textContent=ic;
- zeg((wie()?wie()+" kiest":"Je kiest")+" jouw held — samen gaan jullie oefenen!");feestConfetti(25);bouwHome();}
+function heldNaam(){return staat.heldNaam||"";}
+function kiesHeld(ic){
+ staat.held=ic;
+ var nn=prompt("Hoe heet jouw held? (laat leeg voor geen naam)",staat.heldNaam||"");
+ if(nn!==null){staat.heldNaam=nn.trim().slice(0,16)||"";}
+ bewaar();var m=document.getElementById("maatje");if(m)m.textContent=ic;
+ zeg((wie()?wie()+" kiest":"Je kiest")+" jouw held"+(heldNaam()?" — "+heldNaam():"")+"! Samen gaan jullie oefenen!");
+ feestConfetti(25);bouwHome();}
+// ====== DAG-STREAK: oefenen op opeenvolgende dagen telt
+function vandaag(){return new Date().toISOString().slice(0,10);}
+function dagStreak(){
+ staat.dagen=staat.dagen||{};
+ staat.dagen[vandaag()]=true;
+ var d=new Date(),rij=0;
+ while(staat.dagen[d.toISOString().slice(0,10)]){rij++;d.setDate(d.getDate()-1);}
+ return rij;
+}
 
 // ====== SEIZOEN & VAKANTIE: de app weet wat voor dag het is
 function seizoensInfo(){
@@ -269,7 +284,7 @@ function vakantieHint(){
   10:"Kerstvakantie ±19 dec–4 jan \ud83c\udf84",11:"Kerstvakantie ±19 dec–4 jan \ud83c\udf84"};
  return V[new Date().getMonth()]||"";
 }
-function bewaar(){localStorage.setItem("g2b_playlearn",JSON.stringify(staat));
+function bewaar(){dagStreak();localStorage.setItem("g2b_playlearn",JSON.stringify(staat));
  document.getElementById("sterren").textContent="⭐ "+staat.sterren;}
 
 // ====== STEM (gratis, ingebouwd in de browser — spreekt NL)
@@ -380,7 +395,7 @@ function toonBoek(bk){
  el.appendChild(terug);}
 function bouwHome(){
  var nz=document.getElementById("naam-zone");
- if(wie()){nz.innerHTML='<p class="sub2">👋 Hoi <b>'+wie()+"</b>! Klaar om te spelen?</p>";}
+ if(wie()){var ds=dagStreak();nz.innerHTML='<p class="sub2">👋 Hoi <b>'+wie()+"</b>! Klaar om te spelen?"+(ds>1?' <span class="tag">🔥 '+ds+" dagen op rij geoefend!</span>":"")+"</p>";}
  else{nz.innerHTML='<div class="card" style="max-width:340px;margin:0 auto 14px">'+
   '<b>Hoe heet jij?</b><br><input class="invoer" id="naam-in" style="width:160px" maxlength="20"> '+
   '<button class="pill" onclick="zetNaam()">▶ start</button><br>'+
@@ -501,7 +516,8 @@ function spelKaarten(el){
  var g=document.createElement("div");g.className="grid";
  [["🃏","Memory","vind dezelfde plaatjes",spelMemory],
   ["📚","Leesmemory","koppel het woord aan het plaatje",spelLeesmemory],
-  ["⚡","Reken-race","30 tellen — zoveel sommen als je kan",spelRekenrace]]
+  ["⚡","Reken-race","30 tellen — zoveel sommen als je kan",spelRekenrace],
+  ["📖","Verhaal-dictee","hoor een boekwoord en typ het",spelDictee]]
  .forEach(function(sp){
   var c=document.createElement("div");c.className="card";
   c.innerHTML='<span class="ic">'+sp[0]+"</span><b>"+sp[1]+"</b><small>"+sp[2]+"</small>";
@@ -1061,6 +1077,47 @@ function memKlaar(){
  },500);
 }
 
+// ====== SPEL: VERHAAL-DICTEE — stem spreekt boekwoord, kind typt het
+function spelDictee(){
+ var woorden=[];
+ BOEKEN.forEach(function(bk){bk.woorden.forEach(function(w){woorden.push({w:w,b:bk.naam});});});
+ shuffle(woorden);woorden=woorden.slice(0,6);
+ var nr=0,goed=0;
+ document.getElementById("spel-titel").textContent="📖 Verhaal-dictee";
+ var inh=document.getElementById("spel-inhoud");
+ function ronde(){
+  if(nr>=woorden.length){
+   inh.innerHTML='<div class="medal">'+(goed>=5?"🏆":goed>=3?"🏅":"💪")+'</div><h2>Dictee klaar!</h2>'+
+    '<p class="sub2">'+goed+" van de "+woorden.length+" woorden goed getypt"+(wie()?", "+wie():"")+'!</p>'+
+    '<div class="acties"><button class="pill" onclick="spelDictee()">🔁 nog eens</button> '+
+    '<button class="pill grijs" onclick="naarHome()">← terug</button></div>';
+   if(goed>=3)feestConfetti(60);
+   zeg(goed>=5?"Wat een spellingstalent"+(wie()?", "+wie():"")+"!":"Goed geoefend"+(wie()?", "+wie():"")+" — nog een rondje?");
+   return;
+  }
+  var cur=woorden[nr];
+  inh.innerHTML='<p class="sub2">woord '+(nr+1)+" van "+woorden.length+" — uit <b>"+cur.b+'</b></p>'+
+   '<div class="acties"><button class="pill" id="dic-hoor">🔊 hoor het woord</button></div>'+
+   '<input class="invoer" id="dic-in" autocomplete="off" placeholder="typ het woord…" style="font-size:1.4rem;text-align:center">'+
+   '<div class="acties"><button class="pill" id="dic-ok">OK</button></div><p class="sub2" id="dic-fb"></p>';
+  zeg("Dictee. Typ het woord: "+cur.w);
+  document.getElementById("dic-hoor").onclick=function(){herhaalZeg();};
+  var inp=document.getElementById("dic-in");
+  function ok(){
+   var v=inp.value.trim().toLowerCase();
+   if(!v)return;
+   var fb=document.getElementById("dic-fb");
+   if(v===cur.w){goed++;fb.textContent="🎉 Goed! "+cur.w+" — uit "+cur.b;speelJubel();}
+   else{fb.textContent="Bijna — het was '"+cur.w+"'. Elke fout is een aanwijzing!";speelJammer();}
+   nr++;setTimeout(ronde,1200);
+  }
+  document.getElementById("dic-ok").onclick=ok;
+  inp.onkeydown=function(e){if(e.key==="Enter")ok();};
+  setTimeout(function(){inp.focus();},100);
+ }
+ toon("scherm-spel");ronde();
+}
+
 // ====== SPEL 2: REKEN-RACE — 30 tellen, zoveel sommen als je kan
 var raceTijd=null;
 function spelRekenrace(){
@@ -1166,6 +1223,7 @@ function oudersOverzicht(){
  document.getElementById("spel-inhoud").innerHTML=
   '<div class="sub2">Alles wat geoefend is — groen = sterk vak, rood = extra oefenen (klik op 🎯 thuis).</div>'+
   '<table class="ouders-tbl"><tr><th>niveau/boek</th><th>vak</th><th>goed</th><th></th></tr>'+rows+"</table>"+
+  '<div class="stijl-doos"><b>🔥 Oefenritme</b><div class="stijl-regel">'+dagStreak()+" dag(en) achter elkaar geoefend — vaste gewoonte groeit!</div></div>"+
   '<div class="stijl-doos"><b>🧠 Hoe '+(wie()||"je kind")+' leert</b>'+speelstijlTekst()+"</div>"+
   '<div class="stijl-doos"><b>🏅 Groep-bewijs (schoolniveau)</b>'+groepen+"</div>"+
   '<div class="acties"><button class="pill" onclick="startFouten()">🎯 oefen de fouten</button> '+
