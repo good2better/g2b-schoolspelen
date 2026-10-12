@@ -35,6 +35,8 @@ h2{color:var(--zeed);margin-bottom:6px}
 .vraag .big{font-size:2.6rem;font-weight:700;color:var(--zeed);margin:10px 0}
 .vraag .plaatjes{font-size:2rem;letter-spacing:4px;margin:6px 0}
 .knoppen{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.verhaal-img{max-width:min(560px,92%);border-radius:16px;border:3px solid var(--licht);box-shadow:0 6px 18px rgba(30,90,60,.15);margin:6px auto;display:block}
+.verhaal-tekst{max-width:560px;margin:10px auto;font-size:1.2rem;line-height:1.6}
 .optie{min-width:74px;padding:12px 18px;font-size:1.5rem;font-weight:700;background:var(--tint);border:3px solid transparent;border-radius:12px;cursor:pointer;color:var(--zeed)}
 .optie:hover{border-color:var(--zee)}
 .optie.goed{background:var(--groen);color:#fff}
@@ -333,6 +335,32 @@ var BOEKEN=[
    {zin:"Ziggy rent over een weg van ___.",goed:"regenboog",opties:["regenboog","steen","ijs"]},
    {zin:"Na de race krijgt Ziggy een gouden ___.",goed:"trofee",opties:["trofee","wortel","sok"]},
    {zin:"Ziggy is een vrolijke ___.",goed:"zebra",opties:["zebra","kikker","muis"]}]},
+ {id:"sam",naam:"Samen Sterk — het verhaal van Sam",ic:"🛡️",
+  woorden:["sam","pesten","vriend","moedig","verdrietig","helpen","samen","sorry","lachen","luisteren","sterk","plein"],
+  zinnen:[{zin:"Sam was ___ op zijn nieuwe school.",goed:"alleen",opties:["alleen","druk","laat"]},
+   {zin:"De kinderen lachten om zijn ___.",goed:"bril",opties:["bril","schoenen","pet"]},
+   {zin:"___ kwam rustig naast Sam zitten.",goed:"Emma",opties:["Emma","de hond","niemand"]},
+   {zin:"Sam en Emma gingen samen naar de ___.",goed:"juf",opties:["juf","winkel","dokter"]},
+   {zin:"Ze hingen ___ op tegen pesten.",goed:"posters",opties:["posters","ballonnen","gordijnen"]},
+   {zin:"Op het plein speelden de kinderen ___.",goed:"samen",opties:["samen","boos","stil"]}],
+  verhaal:[
+   ["Sam stapt met zijn kleurrijke rugzak de grote, nieuwe school binnen. Hij glimlacht dapper, maar is een beetje zenuwachtig."],
+   ["In de pauze lachen een paar kinderen Sam uit om zijn bril. Sam draait zich verlegen om."],
+   ["Pestkoppen trekken aan Sams tas — die scheurt! Zijn boeken vallen op de grond. Sam rent huilend weg."],
+   ["Emma komt rustig naast Sam zitten. Ze legt haar hand op zijn schouder en glimlacht bemoedigend."],
+   ["Sam, Emma en de juf maken samen een plan om het pesten te stoppen. Sam kijkt weer hoopvol."],
+   ["Sam en Emma staan moedig tegenover de pestkoppen. De pestkoppen luisteren met een bedenkelijke blik."],
+   ["Samen met de juf hangen ze anti-pest-posters op. De hele school kijkt nieuwsgierig toe."],
+   ["Op het schoolplein speelt steeds meer kinderen samen. Sam en Emma kijken glimlachend toe."],
+   ["Sam en Emma schilderen een regenboog: 'Iedereen hoort erbij'. Ze zijn trots op hun werk."],
+   ["Een van de vroegere pestkoppen helpt Sam met zijn boeken. Nu zijn het vrienden!"],
+   ["Op het podium krijgen Sam en Emma een groot applaus voor hun inzet tegen pesten."],
+   ["Sam, Emma en hun vrienden lopen hand in hand de school uit. Samen staan we sterk!"]],
+  vragen:[
+   {vraag:"Wat moet je doen als je gepest wordt?",goed:"Zeg het tegen een juf of ouder",opties:["Zeg het tegen een juf of ouder","Niks zeggen en stilletjes huilen","Terug gaan pesten"]},
+   {vraag:"Wat deed Emma toen Sam verdrietig was?",goed:"Ze kwam naast hem zitten en hielp hem",opties:["Ze kwam naast hem zitten en hielp hem","Ze liep snel weg","Ze lachte met de anderen mee"]},
+   {vraag:"Waarom is pesten verkeerd?",goed:"Pesten maakt mensen verdrietig en eenzaam",opties:["Pesten maakt mensen verdrietig en eenzaam","Pesten is gewoon grappig","Pesten maakt je stoer"]},
+   {vraag:"Hoe voelde Sam zich aan het einde?",goed:"Sterk en gelukkig, met nieuwe vrienden",opties:["Sterk en gelukkig, met nieuwe vrienden","Nog steeds bang","Boos op iedereen"]}]},
  {id:"keesje",naam:"De avonturen van Keesje Konijn",ic:"🐰",
   woorden:["keesje","konijn","bos","huppelen","eekhoorn","bes","vlinder","beek","picknick","vrienden","vijver","appel"],
   zinnen:[{zin:"Keesje huppelde door het ___.",goed:"bos",opties:["bos","water","huis"]},
@@ -350,6 +378,7 @@ var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",z
  keesje:"🐰",konijn:"🐰",bos:"🌲",huppelen:"🐇",eekhoorn:"🐿️",bes:"🫐",beek:"💧",picknick:"🧺",
  vrienden:"👫",vijver:"🦆",appel:"🍎",metro:"🚇",noten:"🌰",bessen:"🫐",kikker:"🐸",golven:"🌊",wind:"💨",dolfijn:"🐬",walvis:"🐳",eiland:"🏝️",anker:"⚓",haven:"⚓",sunny:"☀️",water:"💧",
  ziggy:"🦓",regenboog:"🌈",dansen:"💃",kleuren:"🎨",finish:"🏁",start:"🏁",vlag:"🚩",feest:"🎉",trofee:"🏆",lopen:"🏃",wolk:"☁️",
+ sam:"👦",pesten:"😢",moedig:"💪",verdrietig:"😢",helpen:"🤝",samen:"🤝",sorry:"🙏",lachen:"😄",luisteren:"👂",sterk:"💪",plein:"🏫",
  sneeuw:"❄️",schaatsen:"⛸️",handschoen:"🧤",muts:"🧢",kerstboom:"🎄",cadeau:"🎁",aardbei:"🍓",zwemmen:"🏊",ijsje:"🍦",
  koffer:"🧳",strand:"🏖️",boek:"📖",pen:"🖊️",rugzak:"🎒",klas:"🏫",juf:"👩‍🏫",blad:"🍂",regen:"🌧️",paddestoel:"🍄",lam:"🐑",vogel:"🐦",kaars:"🕯️"};
 
@@ -374,12 +403,17 @@ function boekKaarten(el){
   c.onclick=function(){toonBoek(bk);};
   g.appendChild(c);});
  el.appendChild(g);}
-var huidigBoek=null;
+var huidigBoek=null,laatsteBoek=null;
 function toonBoek(bk){
  huidigBoek=bk;var el=document.getElementById("niveau-lijst");el.innerHTML="";
  var h=document.createElement("div");h.className="niveau";
  h.innerHTML=bk.ic+" "+bk.naam+'<span class="tag">kies een oefening</span>';el.appendChild(h);
  var g=document.createElement("div");g.className="grid";
+ if(bk.verhaal){
+  var vc=document.createElement("div");vc.className="card";
+  vc.innerHTML='<span class="ic">📖</span><b>Lees het verhaal</b><small>met plaatjes, stem en vragen</small>';
+  vc.onclick=function(){verhaalLezer(bk);};
+  g.appendChild(vc);}
  [["boekWoord","Welk boekwoord?"],["boekSpel","Typ het boekwoord"],["boekZin","Boekzin aanvullen"],["boekPuz","Boekwoord-puzzel"]]
  .forEach(function(vv){
   var v=VAKKEN[vv[0]],c=document.createElement("div");c.className="card";
@@ -1098,6 +1132,57 @@ function memKlaar(){
    '<button class="pill grijs" onclick="naarHome()">← terug</button></div>';
   feestConfetti(70);zeg("Yes! Alle zes paren"+(wie()?", "+wie():"")+" — klasse!");
  },500);
+}
+
+// ====== VERHAAL-LEZER — pagina's met plaatjes + voorleesstem + begrips-vragen
+function verhaalLezer(bk){
+ laatsteBoek=bk;
+ document.getElementById("spel-titel").textContent=bk.ic+" "+bk.naam;
+ var pag=0;
+ function pagina(){
+  var inh=document.getElementById("spel-inhoud");
+  if(pag>=bk.verhaal.length){verhaalVragen(bk,0,0);return;}
+  inh.innerHTML='<p class="sub2">pagina '+(pag+1)+" van "+bk.verhaal.length+"</p>"+
+   '<img class="verhaal-img" src="sam/p'+pag+'.jpg" alt="verhaalplaatje">'+
+   '<p class="verhaal-tekst">'+bk.verhaal[pag][0]+"</p>"+
+   '<div class="acties"><button class="pill" id="vh-hoor">🔊 lees voor</button> '+
+   (pag>0?'<button class="pill grijs" id="vh-vorige">◀ vorige</button> ':"")+
+   '<button class="pill" id="vh-volgende">'+(pag===bk.verhaal.length-1?"⭐ naar de vragen":"volgende ▶")+"</button></div>";
+  document.getElementById("vh-hoor").onclick=function(){staat.stijl.luister++;bewaar();zeg(bk.verhaal[pag][0]);};
+  document.getElementById("vh-volgende").onclick=function(){pag++;pagina();};
+  var vp=document.getElementById("vh-vorige");if(vp)vp.onclick=function(){pag--;pagina();};
+  zeg(bk.verhaal[pag][0]);
+ }
+ pagina();toon("scherm-spel");
+}
+function verhaalVragen(bk,nr,goed){
+ var inh=document.getElementById("spel-inhoud");
+ if(nr>=bk.vragen.length){
+  var key="boek:"+bk.id+":verhaal";
+  staat.goed[key]=(staat.goed[key]||0)+goed;staat.fouten[key]=(staat.fouten[key]||0)+(bk.vragen.length-goed);bewaar();
+  inh.innerHTML='<div class="medal">'+(goed>=3?"🏆":"💪")+'</div><h2>Verhaal uit!</h2>'+
+   '<p class="sub2">'+goed+" van de "+bk.vragen.length+" vragen goed"+(wie()?", "+wie():"")+". Sam zou trots op je zijn!</p>"+
+   '<div class="acties"><button class="pill" onclick="verhaalLezer(laatsteBoek)">🔁 lees opnieuw</button> '+
+   '<button class="pill grijs" onclick="naarHome()">← terug</button></div>'+
+   '<p class="sub2" style="margin-top:16px">📚 Meer G2B-boeken? <a href="https://good2better.github.io/g2b-winkel/gsbooks/" target="_blank" style="color:var(--zeed)">Kijk in de winkel →</a></p>';
+  if(goed>=3)feestConfetti(60);return;
+ }
+ var v=bk.vragen[nr],opties=shuffle(v.opties.slice());
+ inh.innerHTML='<p class="sub2">vraag '+(nr+1)+" van "+bk.vragen.length+" — over het verhaal</p>"+
+  '<p style="font-size:1.35rem"><b>'+v.vraag+"</b></p>"+
+  '<div class="acties"><button class="pill" id="vq-hoor">🔊 hoor de vraag</button></div>'+
+  '<div class="knoppen" id="vq-opt"></div><p class="sub2" id="vq-fb"></p>';
+ document.getElementById("vq-hoor").onclick=function(){staat.stijl.luister++;bewaar();zeg(v.vraag);};
+ zeg(v.vraag);
+ var zo=document.getElementById("vq-opt");
+ opties.forEach(function(o){
+  var b=document.createElement("button");b.className="optie";b.textContent=o;
+  b.onclick=function(){
+   if(b.disabled)return;
+   if(o===v.goed){goed++;b.classList.add("goed");document.getElementById("vq-fb").textContent="🎉 Goed onthouden!";speelJubel();}
+   else{b.classList.add("fout");document.getElementById("vq-fb").textContent="Bijna — het juiste antwoord was: '"+v.goed+"'";speelJammer();}
+   nr++;setTimeout(function(){verhaalVragen(bk,nr,goed);},1600);};
+  zo.appendChild(b);});
 }
 
 // ====== SPEL: TALEN — hoor & leer Engels, Duits en Frans
