@@ -1150,7 +1150,7 @@ function oudersOverzicht(){
   var g=staat.goed[key]||0,f=staat.fouten[key]||0,tot=g+f;
   var pct=tot?Math.round(100*g/tot):0;
   var ps=key.split(":"),niv=ps[0]==="boek"?"boek:"+ps[1]:ps[0],vak=ps[ps.length-1];
-  var nnaam=niv==="fouten"?"🎯 foutenronde":niv.indexOf("boek:")===0?((BOEKEN.find(function(b){return "boek:"+b.id===niv;})||{naam:niv}).naam):((NIVEAUS.find(function(n){return n.id===niv;})||{naam:niv}).naam);
+  var nnaam=niv==="fouten"?"🎯 foutenronde":niv==="seizoen"?"🍂 seizoen":niv.indexOf("boek:")===0?((BOEKEN.find(function(b){return "boek:"+b.id===niv;})||{naam:niv}).naam):((NIVEAUS.find(function(n){return n.id===niv;})||{naam:niv}).naam);
   var vnaam=(VAKKEN[vak]||{naam:vak}).naam;
   var kleur=pct>=80?"var(--groen)":pct>=50?"var(--zee)":"var(--rood)";
   rows+='<tr><td>'+nnaam+'</td><td>'+vnaam+'</td><td>'+pct+"%</td>"+
