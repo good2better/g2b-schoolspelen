@@ -352,6 +352,7 @@ function zetNaam(){
  bouwHome();}
 function startOefening(niv,vak){
  huidigNiv=niv.id;huidigVak=vak;vraagNr=0;goedTeller=0;
+ if(niv.id.indexOf("boek:")===0){var _b=BOEKEN.find(function(b){return "boek:"+b.id===niv.id;});if(_b)huidigBoek=_b;}
  pauzeStart=Date.now();pauzeGedaan=false;
  document.getElementById("uitdager").innerHTML="";
  speelLiedje();
