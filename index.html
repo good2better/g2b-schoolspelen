@@ -9,7 +9,9 @@
 <meta property="og:title" content="G2B Schoolspelen — lezen &amp; rekenen, van groep 1 tot genius">
 <meta property="og:description" content="Speels leren voor kinderen: eigen held kiezen, seizoenswoorden, echte boeken-oefeningen. De app leert hoe jouw kind leert. Gratis — geen account, geen reclame.">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#0E6BA8">
+<meta name="theme-color" content="#1a7a4a">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <style>
 :root{--zee:#0E6BA8;--zeed:#084E7C;--zand:#FFF8EC;--goud:#F5A623;--koraal:#FF7F50;--tint:#E8F4FB;--groen:#4CAF50;--rood:#E74C3C}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -36,6 +38,17 @@ h2{color:var(--zeed);margin-bottom:6px}
 .vraag .plaatjes{font-size:2rem;letter-spacing:4px;margin:6px 0}
 .knoppen{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
 .verhaal-img{max-width:min(560px,92%);border-radius:16px;border:3px solid var(--licht);box-shadow:0 6px 18px rgba(30,90,60,.15);margin:6px auto;display:block}
+#werkblad{display:none}
+@media print{
+ body>*{display:none!important}
+ #werkblad{display:block!important;font-family:'Comic Sans MS',cursive;color:#123;padding:10px}
+ .wb-titel{font-size:22px;font-weight:bold;text-align:center;margin-bottom:4px}
+ .wb-naam{border-bottom:1px solid #888;margin-bottom:14px;padding-bottom:2px;font-size:14px}
+ .wb-rij{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:18px}
+ .wb-lijntje{flex:1;border-bottom:2px dashed #999;height:26px}
+ .wb-som{font-size:20px;margin:14px 0}
+ .wb-foot{margin-top:18px;font-size:11px;color:#789;text-align:center}
+}
 .verhaal-tekst{max-width:560px;margin:10px auto;font-size:1.2rem;line-height:1.6}
 .optie{min-width:74px;padding:12px 18px;font-size:1.5rem;font-weight:700;background:var(--tint);border:3px solid transparent;border-radius:12px;cursor:pointer;color:var(--zeed)}
 .optie:hover{border-color:var(--zee)}
@@ -186,9 +199,14 @@ padding:14px;margin-top:14px;text-align:center}
 <p class="sub2">Je hersenen werken hard — pak je drinken, rek je even uit.<br>Even rust = beter leren!</p>
 <button class="pill" onclick="sluitPauze()">✓ gedronken — door!</button></div>
 </div>
+<div id="werkblad"></div>
 <footer>G2B Schoolspelen — gratis leren, voor altijd van jou. © good2better</footer>
 <div id="maatje" title="Ziggy kijkt mee">🦓</div>
 
+<script>
+// PWA — offline speelbaar + installeerbaar op tablet/telefoon
+if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){});}
+</script>
 <script>
 // ====== NIVEAU-LADDER: groep 1-8 → middelbaar → uni → master → genius
 var NIVEAUS=[
@@ -1179,6 +1197,47 @@ function memKlaar(){
  },500);
 }
 
+// ====== WERKBLADEN — printbare oefenblaadjes voor thuis/klas (gratis les-materiaal)
+function werkbladMenu(){
+ document.getElementById("spel-titel").textContent="🖨️ Werkblad printen";
+ var inh=document.getElementById("spel-inhoud");
+ inh.innerHTML='<p class="sub2">Kies een werkblad — je printer maakt er een echt oefenblaadje van (naam + lijntjes)!</p><div class="acties" id="wb-kies"></div>'+
+  '<div class="acties" style="margin-top:12px"><button class="pill grijs" onclick="naarHome()">← terug</button></div>';
+ var zk=document.getElementById("wb-kies");
+ BOEKEN.forEach(function(bk){
+  var b=document.createElement("button");b.className="pill";b.textContent=bk.ic+" "+bk.naam.split("—")[0].split(" en ")[0];
+  b.onclick=function(){werkbladBoek(bk);};zk.appendChild(b);});
+ var s=document.createElement("button");s.className="pill";s.textContent="🔢 Sommen-blad";
+ s.onclick=werkbladSommen;zk.appendChild(s);
+ toon("scherm-spel");
+}
+function wbToon(titel,html){
+ var w=document.getElementById("werkblad");
+ w.innerHTML='<div class="wb-titel">'+titel+' — G2B Schoolspelen</div>'+
+  '<div class="wb-naam">Naam: ______________________ &nbsp; Datum: ____________</div>'+html+
+  '<div class="wb-foot">Gemaakt met G2B Schoolspelen — good2better.github.io/g2b-schoolspelen — gratis les-materiaal</div>';
+ window.print();
+}
+function gatig(woord){
+ var t=woord.split(""),n=Math.max(1,Math.floor(t.length/3));
+ for(var i=0;i<n;i++){var p=1+Math.floor(Math.random()*(t.length-2));t[p]="_";}
+ return t.join(" ");
+}
+function werkbladBoek(bk){
+ var rijen=bk.woorden.slice(0,8).map(function(w){
+  return '<div class="wb-rij"><span style="font-size:26px">'+(EMOJI[w]||"✏️")+"</span><b>"+gatig(w)+"</b><span class=wb-lijntje></span></div>";
+ }).join("");
+ wbToon(bk.ic+" Woorden bij "+bk.naam,'<p>Vul de ontbrekende letters in en schrijf het woord over:</p>'+rijen);
+ zeg("Werkblad van "+bk.naam+" klaar — de printer doet de rest!");
+}
+function werkbladSommen(){
+ var soms=[],i;
+ for(i=0;i<10;i++){var a=1+Math.floor(Math.random()*10),b=1+Math.floor(Math.random()*10);soms.push(a+" + "+b+" = ______");}
+ for(i=0;i<10;i++){var c=6+Math.floor(Math.random()*10),d=1+Math.floor(Math.random()*c);soms.push(c+" − "+d+" = ______");}
+ wbToon("🔢 Sommen-blad",'<p>Reken uit:</p>'+soms.map(function(s){return '<div class="wb-som">'+s+"</div>";}).join(""));
+ zeg("Sommen-blad klaar — succes!");
+}
+
 // ====== VERHAAL-LEZER — pagina's met plaatjes + voorleesstem + begrips-vragen
 function verhaalLezer(bk){
  laatsteBoek=bk;
@@ -1471,7 +1530,8 @@ function oudersOverzicht(){
   '<div class="stijl-doos"><b>🔥 Oefenritme</b><div class="stijl-regel">'+dagStreak()+" dag(en) achter elkaar geoefend — vaste gewoonte groeit!</div></div>"+
   '<div class="stijl-doos"><b>🧠 Hoe '+(wie()||"je kind")+' leert</b>'+speelstijlTekst()+"</div>"+
   '<div class="stijl-doos"><b>🏅 Groep-bewijs (schoolniveau)</b>'+groepen+"</div>"+
-  '<div class="acties"><button class="pill" onclick="startFouten()">🎯 oefen de fouten</button> '+
+  '<div class="acties"><button class="pill" onclick="werkbladMenu()">🖨️ werkblad printen</button> '+
+   '<button class="pill" onclick="startFouten()">🎯 oefen de fouten</button> '+
   '<button class="pill grijs" onclick="naarHome()">← terug</button></div>';
  toon("scherm-spel");
 }
