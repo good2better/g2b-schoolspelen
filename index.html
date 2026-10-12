@@ -488,6 +488,11 @@ function toonBoek(bk){
   c.onclick=function(){startOefening({id:"boek:"+bk.id,naam:bk.naam},vv[0]);};
   g.appendChild(c);});
  el.appendChild(g);
+ var promo=document.createElement("div");promo.className="card";
+ promo.style.cssText="max-width:460px;margin:14px auto 0;border:2px dashed var(--goud)";
+ promo.innerHTML='<span class="ic">📚</span><b>Koop het echte boek</b><small>"'+bk.naam+'" als echt prentenboek in de G2B-winkel</small><br>'+
+  '<a class="pill" href="https://good2better.github.io/g2b-winkel/gsbooks/#winkel" target="_blank" rel="noopener">🛒 naar de winkel</a>';
+ el.appendChild(promo);
  var terug=document.createElement("button");terug.className="pill grijs";
  terug.textContent="← alle niveaus";terug.style.margin="10px 0";terug.onclick=bouwHome;
  el.appendChild(terug);}
@@ -1367,7 +1372,7 @@ function spelKleuren(){
    var isGoed=goede.indexOf(it)>-1;
    b.onclick=function(){
     if(b.disabled)return;
-    if(isGoed){b.classList.add("goed");gevonden++;goed++;speelJubel();
+    if(isGoed){b.classList.add("goed");gevonden++;goed++;staat.sterren++;bewaar();speelJubel();
      document.getElementById("kj-fb").textContent="✔ "+it[0]+" is "+kl.naam+"! ("+gevonden+"/3)";
      if(gevonden>=3){nr++;totaal+=3;setTimeout(ronde,1200);}}
     else{b.classList.add("fout");totaal++;b.disabled=true;
@@ -1420,7 +1425,7 @@ function taalRonde(ti){
    var b=document.createElement("button");b.className="optie";b.textContent=o;
    b.onclick=function(){
     if(b.disabled)return;
-    if(o===vreemd){goed++;b.classList.add("goed");document.getElementById("taal-fb").textContent="🎉 "+w[0]+" = "+vreemd+"!";speelJubel();zegTaal(vreemd,taal.lang);}
+    if(o===vreemd){goed++;staat.sterren++;bewaar();b.classList.add("goed");document.getElementById("taal-fb").textContent="🎉 "+w[0]+" = "+vreemd+"!";speelJubel();zegTaal(vreemd,taal.lang);}
     else{b.classList.add("fout");document.getElementById("taal-fb").textContent="Bijna — het was '"+vreemd+"'";speelJammer();}
     nr++;setTimeout(ronde,1400);};
    zo.appendChild(b);});
@@ -1458,7 +1463,7 @@ function spelDictee(){
    var v=inp.value.trim().toLowerCase();
    if(!v)return;
    var fb=document.getElementById("dic-fb");
-   if(v===cur.w){goed++;fb.textContent="🎉 Goed! "+cur.w+" — uit "+cur.b;speelJubel();}
+   if(v===cur.w){goed++;staat.sterren++;bewaar();fb.textContent="🎉 Goed! "+cur.w+" — uit "+cur.b;speelJubel();}
    else{fb.textContent="Bijna — het was '"+cur.w+"'. Elke fout is een aanwijzing!";speelJammer();}
    nr++;setTimeout(ronde,1200);
   }
@@ -1502,7 +1507,7 @@ function spelBingo(){
   var b=document.createElement("button");b.className="optie";b.style.minWidth="0";b.style.fontSize="1.1rem";b.textContent=w;
   b.onclick=function(){
    if(b.disabled)return;
-   if(w===doel){geraakt++;b.classList.add("goed");b.disabled=true;speelJubel();setTimeout(nieuweVraag,700);}
+   if(w===doel){geraakt++;staat.sterren++;bewaar();b.classList.add("goed");b.disabled=true;speelJubel();setTimeout(nieuweVraag,700);}
    else{b.classList.add("fout");speelJammer();setTimeout(function(){b.classList.remove("fout");},400);}
   };
   grid.appendChild(b);});
