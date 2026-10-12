@@ -642,7 +642,7 @@ function spelKaarten(el){
   ["⚡","Reken-race","30 tellen — zoveel sommen als je kan",spelRekenrace],
   ["📖","Verhaal-dictee","hoor een boekwoord en typ het",spelDictee],
   ["🎯","Woord-bingo","hoor het woord — tik het vakje",spelBingo],
-  ["🌍","Talen","hoor & leer Engels, Duits, Frans",spelTalen],
+  ["🌍","Talen","hoor & leer Engels, Duits, Frans, Sranan",spelTalen],
   ["🎨","Kleuren-jacht","tik alles wat de kleur is",spelKleuren]]
  .forEach(function(sp){
   var c=document.createElement("div");c.className="card";
@@ -1383,15 +1383,15 @@ function spelKleuren(){
 }
 
 // ====== SPEL: TALEN — hoor & leer Engels, Duits en Frans
-var TALEN=[{ic:"🇬🇧",naam:"Engels",lang:"en-US"},{ic:"🇩🇪",naam:"Duits",lang:"de-DE"},{ic:"🇫🇷",naam:"Frans",lang:"fr-FR"}];
-var TAALW=[["hond","dog","Hund","chien"],["kat","cat","Katze","chat"],["huis","house","Haus","maison"],
- ["appel","apple","Apfel","pomme"],["water","water","Wasser","eau"],["school","school","Schule","école"],
- ["vriend","friend","Freund","ami"],["zon","sun","Sonne","soleil"],["boek","book","Buch","livre"],
- ["melk","milk","Milch","lait"],["bloem","flower","Blume","fleur"],["bedankt","thank you","danke","merci"]];
+var TALEN=[{ic:"🇬🇧",naam:"Engels",lang:"en-US"},{ic:"🇩🇪",naam:"Duits",lang:"de-DE"},{ic:"🇫🇷",naam:"Frans",lang:"fr-FR"},{ic:"🇸🇷",naam:"Sranan",lang:"nl-NL"}];
+var TAALW=[["hond","dog","Hund","chien","dagu"],["kat","cat","Katze","chat","pusi"],["huis","house","Haus","maison","oso"],
+ ["appel","apple","Apfel","pomme","apra"],["water","water","Wasser","eau","watra"],["school","school","Schule","école","skoro"],
+ ["vriend","friend","Freund","ami","mati"],["zon","sun","Sonne","soleil","son"],["boek","book","Buch","livre","buku"],
+ ["melk","milk","Milch","lait","merki"],["bloem","flower","Blume","fleur","blom"],["bedankt","thank you","danke","merci","danki"]];
 function spelTalen(){
  document.getElementById("spel-titel").textContent="🌍 Talen";
  var inh=document.getElementById("spel-inhoud");
- inh.innerHTML='<p class="sub2">Welke taal wil je oefenen? De stem spreekt het woord in die taal!</p><div class="acties" id="taal-kies"></div>';
+ inh.innerHTML='<p class="sub2">Welke taal wil je oefenen? De stem spreekt het woord in die taal! <small>(Sranan leest de NL-stem — fonetisch gespeld)</small></p><div class="acties" id="taal-kies"></div>';
  var zk=document.getElementById("taal-kies");
  TALEN.forEach(function(t,ti){
   var b=document.createElement("button");b.className="pill";b.textContent=t.ic+" "+t.naam;
