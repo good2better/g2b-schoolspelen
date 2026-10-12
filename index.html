@@ -130,6 +130,7 @@ padding:14px;margin-top:14px;text-align:center}
 <body>
 <header>
 <h1>🎓 G2B Schoolspelen</h1><span class="sub">lezen & rekenen — van groep 1 tot genius</span>
+<span id="geluid-knop" title="Geluid aan/uit" onclick="zetGeluid()" style="cursor:pointer;font-size:1.2rem">🔊</span>
 <div id="sterren" title="Verdiende sterren">⭐ 0</div>
 </header>
 <main>
@@ -282,11 +283,26 @@ var HELDEN=[{ic:"\ud83e\uddd2",naam:"jongen-held"},{ic:"\ud83d\udc67",naam:"meis
  {ic:"\ud83d\udc30",naam:"konijn"},{ic:"\ud83e\udd93",naam:"zebra"},{ic:"\ud83d\udc31",naam:"kat"},{ic:"\ud83d\udc3c",naam:"panda"},{ic:"\ud83e\udd81",naam:"leeuw"}];
 function heldIc(){return staat.held||"\ud83e\udd93";}
 function heldNaam(){return staat.heldNaam||"";}
+// ====== STERREN-WINKEL: ⭐ is echt geld — koop iets leuks voor je held
+var WINKEL=[
+ {id:"hoed",ic:"🎩",naam:"Hoge hoed",prijs:10},{id:"strik",ic:"🎀",naam:"Strik",prijs:15},
+ {id:"pet",ic:"🧢",naam:"Pet",prijs:20},{id:"bril",ic:"🕶️",naam:"Zonnebril",prijs:25},
+ {id:"kroon",ic:"👑",naam:"Kroon",prijs:30},{id:"cowboy",ic:"🤠",naam:"Cowboyhoed",prijs:40},
+ {id:"tover",ic:"🧙",naam:"Toverhoed",prijs:50},{id:"helm",ic:"🚀",naam:"Ruimtehelm",prijs:60}];
+function maatjeUpdate(){
+ var m=document.getElementById("maatje");if(!m)return;
+ m.innerHTML=heldIc()+(staat.petje?'<span style="position:absolute;top:-16px;left:-6px;font-size:1.5rem">'+staat.petje+"</span>":"");
+}
+// ====== GELUID aan/uit (ouders-vraag: rust kunnen zetten)
+function geluidAan(){return staat.geluid!==false;}
+function zetGeluid(){staat.geluid=!geluidAan();bewaar();
+ var k=document.getElementById("geluid-knop");if(k)k.textContent=geluidAan()?"🔊":"🔇";
+ if(geluidAan())zeg("Geluid staat weer aan!");}
 function kiesHeld(ic){
  staat.held=ic;
  var nn=prompt("Hoe heet jouw held? (laat leeg voor geen naam)",staat.heldNaam||"");
  if(nn!==null){staat.heldNaam=nn.trim().slice(0,16)||"";}
- bewaar();var m=document.getElementById("maatje");if(m)m.textContent=ic;
+ bewaar();maatjeUpdate();
  zeg((wie()?wie()+" kiest":"Je kiest")+" jouw held"+(heldNaam()?" — "+heldNaam():"")+"! Samen gaan jullie oefenen!");
  feestConfetti(25);bouwHome();}
 // ====== DAG-STREAK: oefenen op opeenvolgende dagen telt
@@ -395,12 +411,13 @@ function stemVoor(lang){
  return _stemmen[key];}
 try{speechSynthesis.onvoiceschanged=function(){_stemmen={};};}catch(e){}
 function zeg(t){
+ if(staat.geluid===false)return;
  try{speechSynthesis.cancel();
  var u=new SpeechSynthesisUtterance(t);u.lang="nl-NL";u.rate=0.92;u.pitch=1.06;
  var v=stemVoor("nl");if(v)u.voice=v;
  speechSynthesis.speak(u);}catch(e){}
 }
-function zegTaal(t,lang){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.rate=0.85;var v=stemVoor(lang);if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}}
+function zegTaal(t,lang){if(staat.geluid===false)return;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.rate=0.85;var v=stemVoor(lang);if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}}
 var laatsteZeg="";
 function zegHoud(t){laatsteZeg=t;zeg(t);}
 function herhaalZeg(){staat.stijl.luister++;bewaar();if(laatsteZeg)zeg(laatsteZeg);}
@@ -618,7 +635,8 @@ function bouwHome(){
  nieuwsKaart(el);
  boekKaarten(el);
  spelKaarten(el);
- var mj3=document.getElementById("maatje");if(mj3)mj3.textContent=heldIc();
+ maatjeUpdate();
+ var gkk=document.getElementById("geluid-knop");if(gkk)gkk.textContent=geluidAan()?"🔊":"🔇";
  bewaar();
 }
 // ====== AVONTUUR-KAART: jouw held reist door het Schoolspelen-land
@@ -755,13 +773,84 @@ function spelKaarten(el){
   ["📖","Verhaal-dictee","hoor een boekwoord en typ het",spelDictee],
   ["🎯","Woord-bingo","hoor het woord — tik het vakje",spelBingo],
   ["🌍","Talen","hoor & leer 6 talen — kies je favoriet!",spelTalen],
-  ["🎨","Kleuren-jacht","tik alles wat de kleur is",spelKleuren]]
+  ["🎨","Kleuren-jacht","tik alles wat de kleur is",spelKleuren],
+  ["🛍️","Sterren-winkel","koop iets leuks voor je held — betaal met ⭐",toonWinkel],
+  ["📖","Verhaal begrijpen","kort verhaaltje + vragen erover",spelLeesbegrip]]
  .forEach(function(sp){
   var c=document.createElement("div");c.className="card";
   c.innerHTML='<span class="ic">'+sp[0]+"</span><b>"+sp[1]+"</b><small>"+sp[2]+"</small>";
   c.onclick=sp[3];g.appendChild(c);});
  el.appendChild(g);}
 
+// ====== STERREN-WINKEL SCHERM
+function toonWinkel(){
+ document.getElementById("spel-titel").textContent="🛍️ Sterren-winkel";
+ document.getElementById("spel-teller").textContent="⭐ "+staat.sterren;
+ var inh=document.getElementById("spel-inhoud");
+ inh.innerHTML='<p class="sub2">Ruil je ⭐ in voor iets leuks voor jouw held! Tik om te kopen — gekochte items tik je aan/uit.</p>';
+ var g=document.createElement("div");
+ g.style.cssText="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:520px;margin:14px auto 0";
+ WINKEL.forEach(function(it){
+  var gekocht=(staat.winkel||[]).indexOf(it.id)>=0;
+  var gedragen=staat.petje===it.ic;
+  var b=document.createElement("button");b.className="mem-kaart woord";
+  if(gedragen)b.classList.add("open");
+  b.innerHTML='<span style="font-size:1.7rem">'+it.ic+"</span><br>"+it.naam+"<br><small>"+(gedragen?"✔️ draagt":(gekocht?"tik: aan/uit":"⭐ "+it.prijs))+"</small>";
+  b.onclick=function(){
+   var idx=(staat.winkel||[]).indexOf(it.id);
+   if(idx<0){
+    if(staat.sterren<it.prijs){speelJammer();zeg("Dat kost "+it.prijs+" sterren — je hebt er "+staat.sterren+". Oefen meer om te sparen!");return;}
+    staat.sterren-=it.prijs;staat.winkel=(staat.winkel||[]).concat([it.id]);staat.petje=it.ic;
+    bewaar();maatjeUpdate();feestConfetti(30);speelJubel();
+    zeg("Gekocht — "+it.naam+" staat je held geweldig!");toonWinkel();return;
+   }
+   staat.petje=(staat.petje===it.ic)?"":it.ic;bewaar();maatjeUpdate();toonWinkel();
+  };
+  g.appendChild(b);});
+ inh.appendChild(g);
+ var t=document.createElement("div");t.className="acties";t.style.marginTop="14px";
+ t.innerHTML='<button class="pill grijs" onclick="naarHome()">← terug</button>';
+ inh.appendChild(t);toon("scherm-spel");
+}
+// ====== VERHAAL BEGRIJPEN: korte NL-tekstjes + begripsvragen (cito-stof)
+var NLVERH=[
+ {tekst:"Mila vindt een verloren poes in de tuin. Ze zet een bakje water neer en maakt een doos met een zachte deken. De poes drinkt en gaat slapen.",
+  vragen:[["Wat vindt Mila in de tuin?","een poes",["een hond","een poes","een vogel"]],["Wat doet Mila voor de poes?","water en een doos geven",["water en een doos geven","speelgoed kopen","hem wegjagen"]]]},
+ {tekst:"Jayden wil naar de speeltuin, maar het regent hard. Hij blijft niet lang verdrietig: hij bouwt een hindernisbaan van stoelen en kussens in de woonkamer.",
+  vragen:[["Waarom gaat Jayden niet naar de speeltuin?","het regent",["het sneeuwt","het regent","het is donker"]],["Wat verzint Jayden?","een hindernisbaan",["een hut","een hindernisbaan","een toren"]]]},
+ {tekst:"Oma stuurt Finn een doos briefpapier en postzegels. Finn schrijft meteen zijn eerste echte brief terug, met een tekening van zijn hond erbij.",
+  vragen:[["Wat stuurt oma naar Finn?","briefpapier en postzegels",["snoep","speelgoed","briefpapier en postzegels"]],["Wat doet Finn daarna?","hij schrijft terug",["hij schrijft terug","hij gooit het weg","hij belt oma"]]]},
+ {tekst:"Klas 4 verzamelt vier weken lang lege flessen. Van het statiegeld kopen ze een picknicktafel voor op het schoolplein.",
+  vragen:[["Wat verzamelt klas 4?","lege flessen",["blikjes","lege flessen","doppen"]],["Wat kopen ze van het geld?","een picknicktafel",["een picknicktafel","ijsjes voor iedereen","nieuwe ballen"]]]}];
+function spelLeesbegrip(){
+ document.getElementById("spel-titel").textContent="📖 Verhaal begrijpen";
+ var inh=document.getElementById("spel-inhoud");
+ var volg=0,tot=NLVERH.length*2;
+ function stap(){
+  if(volg>=tot){
+   document.getElementById("spel-teller").textContent="";
+   inh.innerHTML='<div class="medal">🏆</div><h2>Goed gelezen!</h2><p class="sub2">Alle verhaaltjes begrepen'+(wie()?", "+wie():"")+'!</p>'+
+    '<div class="acties"><button class="pill" onclick="spelLeesbegrip()">🔁 nog eens</button> <button class="pill grijs" onclick="naarHome()">← terug</button></div>';
+   feestConfetti(80);speelLiedje();zeg("Goed gelezen"+(wie()?", "+wie():"")+" — alle verhaaltjes begrepen!");return;}
+  document.getElementById("spel-teller").textContent=(volg>>1)+1+"/"+NLVERH.length+" verhaaltjes";
+  var V=NLVERH[volg>>1],Q=V.vragen[volg%2];
+  inh.innerHTML='<div class="verhaal-tekst">'+V.tekst+'</div>'+
+   '<div class="card" style="max-width:440px;margin:12px auto 0;cursor:default"><b>'+Q[0]+'</b></div><div id="lb-fb" class="sub2"></div>';
+  if(volg%2===0)zeg(V.tekst);else zeg(Q[0]);
+  var ans=document.createElement("div");
+  ans.style.cssText="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:520px;margin:12px auto 0";
+  shuffle(Q[2].slice()).forEach(function(o){
+   var b=document.createElement("button");b.className="optie";b.textContent=o;
+   b.onclick=function(){
+    if(o===Q[1]){b.classList.add("goed");staat.sterren++;bewaar();speelJubel();
+     document.getElementById("lb-fb").textContent="🎉 Goed gelezen!";volg++;setTimeout(stap,1500);}
+    else{b.classList.add("fout");b.disabled=true;speelJammer();
+     document.getElementById("lb-fb").textContent="Kijk nog eens in het verhaaltje…";zeg("Kijk nog eens in het verhaaltje");}
+   };
+   ans.appendChild(b);});
+  inh.appendChild(ans);}
+ stap();toon("scherm-spel");
+}
 // ====== OEFENINGEN
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 function shuffle(a){a.sort(function(){return Math.random()-0.5});return a;}
