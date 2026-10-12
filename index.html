@@ -420,6 +420,7 @@ function bouwHome(){
   });
   el.appendChild(g);
  });
+ avontuurKaart(el);
  heldKaart(el);
  slimmeKaarten(el);
  seizoensKaart(el);
@@ -428,6 +429,25 @@ function bouwHome(){
  var mj3=document.getElementById("maatje");if(mj3)mj3.textContent=heldIc();
  bewaar();
 }
+// ====== AVONTUUR-KAART: jouw held reist door het Schoolspelen-land
+function avontuurKaart(el){
+ var hi=heldIc(),hn=heldNaam();
+ var h=document.createElement("div");h.className="niveau";
+ h.innerHTML='🗺️ '+hi+' Avontuur van '+(hn||(wie()||"jouw held"))+'<span class="tag">speel eilanden vrij</span>';
+ el.appendChild(h);
+ var g=document.createElement("div");g.className="grid";
+ NIVEAUS.forEach(function(n,ix){
+  var gs=groepScore(n);
+  var open=ix===0||groepScore(NIVEAUS[ix-1]).gedaan>0||staat.bewijs[NIVEAUS[ix-1].id];
+  var c=document.createElement("div");c.className="card";
+  if(!open){c.style.opacity=".55";c.innerHTML='<span class="ic">🔒</span><b>'+n.naam+"</b><small>speel vorig eiland vrij</small>";}
+  else if(gs.klaar){c.innerHTML='<span class="ic">🏅</span><b>'+n.naam+"</b><small>beheerst — echt niveau!</small>";c.style.borderColor="var(--goud)";}
+  else{c.innerHTML='<span class="ic">'+hi+"</span><b>"+n.naam+"</b><small>"+gs.gedaan+"/"+gs.tot+" vakken beheerst</small>";
+   c.onclick=function(){var s=[].slice.call(document.querySelectorAll(".niveau")).find(function(x){return x.textContent.indexOf(n.naam)>-1;});if(s)s.scrollIntoView({behavior:"smooth"});};}
+  g.appendChild(c);});
+ el.appendChild(g);
+}
+
 // ====== HELD-KAART: kies je eigen speelfiguur
 function heldKaart(el){
  var h=document.createElement("div");h.className="niveau";
@@ -517,7 +537,8 @@ function spelKaarten(el){
  [["🃏","Memory","vind dezelfde plaatjes",spelMemory],
   ["📚","Leesmemory","koppel het woord aan het plaatje",spelLeesmemory],
   ["⚡","Reken-race","30 tellen — zoveel sommen als je kan",spelRekenrace],
-  ["📖","Verhaal-dictee","hoor een boekwoord en typ het",spelDictee]]
+  ["📖","Verhaal-dictee","hoor een boekwoord en typ het",spelDictee],
+  ["🎯","Woord-bingo","hoor het woord — tik het vakje",spelBingo]]
  .forEach(function(sp){
   var c=document.createElement("div");c.className="card";
   c.innerHTML='<span class="ic">'+sp[0]+"</span><b>"+sp[1]+"</b><small>"+sp[2]+"</small>";
@@ -1116,6 +1137,47 @@ function spelDictee(){
   setTimeout(function(){inp.focus();},100);
  }
  toon("scherm-spel");ronde();
+}
+
+// ====== SPEL: WOORD-BINGO — hoor het woord, tik het juiste vakje (3x3)
+function spelBingo(){
+ var S=seizoensInfo();
+ var pool=S.woorden.concat(["zon","bloem","boom","huis","boot","schaap"]);
+ var uniek=[];pool.forEach(function(w){if(uniek.indexOf(w)<0)uniek.push(w);});
+ shuffle(uniek);var woorden=uniek.slice(0,9);
+ var geraakt=0;
+ document.getElementById("spel-titel").textContent="🎯 Woord-bingo";
+ var inh=document.getElementById("spel-inhoud");
+ var doel=0;
+ function nieuweVraag(){
+  if(geraakt>=9){
+   inh.innerHTML='<div class="medal">🏆</div><h2>BINGO!</h2>'+
+    '<p class="sub2">Alle 9 woorden gevonden'+(wie()?", "+wie():"")+'!</p>'+
+    '<div class="acties"><button class="pill" onclick="spelBingo()">🔁 nog eens</button> '+
+    '<button class="pill grijs" onclick="naarHome()">← terug</button></div>';
+   feestConfetti(80);speelLiedje();
+   zeg("BINGO"+(wie()?", "+wie():"")+" — alle woorden gevonden!");
+   return;
+  }
+  doel=woorden[geraakt];
+  zeg("Tik het woord: "+doel);
+  document.getElementById("bing-doel").textContent="🎧 "+doel;
+ }
+ inh.innerHTML='<p class="sub2">De app leest een woord — tik het juiste vakje aan. Volle kaart = BINGO!</p>'+
+  '<p style="font-size:1.5rem;font-weight:700;color:var(--zeed)" id="bing-doel"></p>'+
+  '<div id="bing-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:420px;margin:0 auto"></div>'+
+  '<div class="acties"><button class="pill" id="bing-hoor">🔊 hoor opnieuw</button></div>';
+ var grid=document.getElementById("bing-grid");
+ woorden.forEach(function(w){
+  var b=document.createElement("button");b.className="optie";b.style.minWidth="0";b.style.fontSize="1.1rem";b.textContent=w;
+  b.onclick=function(){
+   if(b.disabled)return;
+   if(w===doel){geraakt++;b.classList.add("goed");b.disabled=true;speelJubel();setTimeout(nieuweVraag,700);}
+   else{b.classList.add("fout");speelJammer();setTimeout(function(){b.classList.remove("fout");},400);}
+  };
+  grid.appendChild(b);});
+ document.getElementById("bing-hoor").onclick=function(){herhaalZeg();};
+ toon("scherm-spel");nieuweVraag();
 }
 
 // ====== SPEL 2: REKEN-RACE — 30 tellen, zoveel sommen als je kan
