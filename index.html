@@ -413,7 +413,7 @@ function feestdag(){
   if(f[0]===m&&d>=f[1]&&d<=f[2])return {ic:f[3],naam:f[4],woorden:f[5]};}
  return null;}
 // ====== NIEUWS van de app — klein berichtje dat via auto-update bij gebruikers komt
-var NIEUWS={titel:"Nieuw: Klanken & Splitsen!",tekst:"🔊 Leer de beginklank van woorden en ✂️ splits getallen — en voer elke dag je huisdier voor een ⭐!"};
+var NIEUWS={titel:"Nieuw: Badges & meer verhalen!",tekst:"🏆 Verdien alle 9 badges — van eerste ronde tot week-streak — en 4 nieuwe verhaaltjes bij Verhaal begrijpen!"};
 // ====== LESJES: mini-uitleg vóór het oefenen — leren vóór trainen, zoals een echte methode
 var LESJES={
  tellen:"Tel één voor één — wijs elk plaatje aan terwijl je telt. Het láátste getal dat je zegt, is hoeveel er zijn!",
@@ -445,7 +445,24 @@ function lesVoor(vak){ // exacte sleutel, dan prefix zonder cijfers (plus1→plu
  if(LESJES[vak])return LESJES[vak];
  var p=vak.replace(/[0-9]+$/,"");
  return LESJES[p]||"";}
-function bewaar(){dagStreak();localStorage.setItem(staatKey(),JSON.stringify(staat));
+// ====== BADGES: verzamel-prestaties — checkt zichzelf bij elke bewaar
+var BADGES=[
+ {id:"ronde",ic:"🌟",naam:"Eerste ronde!",test:function(s){return totaalAntw(s)>=8;}},
+ {id:"ster10",ic:"⭐",naam:"10 sterren!",test:function(s){return s.sterren>=10;}},
+ {id:"ster50",ic:"🌠",naam:"50 sterren gespaard!",test:function(s){return s.sterren>=50;}},
+ {id:"streak3",ic:"🔥",naam:"3 dagen op rij!",test:function(s){return Object.keys(s.dagen||{}).length>=3;}},
+ {id:"streak7",ic:"🔥",naam:"Week op rij!",test:function(s){return Object.keys(s.dagen||{}).length>=7;}},
+ {id:"held",ic:"🦸",naam:"Held gekozen!",test:function(s){return !!s.held;}},
+ {id:"shop",ic:"🛍️",naam:"Eerste aankoop!",test:function(s){return (s.winkel||[]).length>0;}},
+ {id:"huisdier",ic:"🐾",naam:"Huisdier-eigenaar!",test:function(s){return !!s.huisdier;}},
+ {id:"talent",ic:"🌍",naam:"Wereldreiziger!",test:function(s){return !!s.talenGespeeld;}}];
+function totaalAntw(s){var t=0;Object.keys(s.goed||{}).forEach(function(k){t+=s.goed[k]||0;});Object.keys(s.fouten||{}).forEach(function(k){t+=s.fouten[k]||0;});return t;}
+function checkBadges(){
+ staat.badges=staat.badges||{};var had=Object.keys(staat.badges).length;
+ BADGES.forEach(function(b){if(!staat.badges[b.id]&&b.test(staat)){staat.badges[b.id]=true;
+  setTimeout(function(){zeg("Nieuwe badge verdiend: "+b.naam);feestConfetti(20);},1300);}});
+}
+function bewaar(){dagStreak();localStorage.setItem(staatKey(),JSON.stringify(staat));checkBadges();
  document.getElementById("sterren").textContent="⭐ "+staat.sterren;}
 
 // ====== STEM (gratis, ingebouwd in de browser — spreekt NL)
@@ -841,6 +858,7 @@ function spelKaarten(el){
   ["🌍","Talen","hoor & leer 6 talen — kies je favoriet!",spelTalen],
   ["🎨","Kleuren-jacht","tik alles wat de kleur is",spelKleuren],
   ["🛍️","Sterren-winkel","koop iets leuks voor je held — betaal met ⭐",toonWinkel],
+  ["🏆","Mijn badges","verzamel alle prestaties",badgeScherm],
   ["📖","Verhaal begrijpen","kort verhaaltje + vragen erover",spelLeesbegrip]]
  .forEach(function(sp){
   var c=document.createElement("div");c.className="card";
@@ -881,6 +899,26 @@ function toonWinkel(){
  t.innerHTML='<button class="pill grijs" onclick="naarHome()">← terug</button>';
  inh.appendChild(t);toon("scherm-spel");
 }
+// ====== BADGE-KAST
+function badgeScherm(){
+ document.getElementById("spel-titel").textContent="🏆 Mijn badges";
+ var n=Object.keys(staat.badges||{}).length;
+ document.getElementById("spel-teller").textContent=n+" van "+BADGES.length;
+ var inh=document.getElementById("spel-inhoud");
+ inh.innerHTML='<p class="sub2">Verdien ze allemaal door te spelen, sparen en terugkomen!</p>';
+ var g=document.createElement("div");
+ g.style.cssText="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:520px;margin:14px auto 0";
+ BADGES.forEach(function(b){
+  var ok=(staat.badges||{})[b.id];
+  var c=document.createElement("div");c.className="mem-kaart woord";
+  if(!ok)c.style.filter="grayscale(1) opacity(.45)";
+  c.innerHTML='<span style="font-size:1.8rem">'+b.ic+"</span><br>"+b.naam+"<br><small>"+(ok?"✔️ verdiend":"🔒 nog niet")+"</small>";
+  g.appendChild(c);});
+ inh.appendChild(g);
+ var t=document.createElement("div");t.className="acties";t.style.marginTop="14px";
+ t.innerHTML='<button class="pill grijs" onclick="naarHome()">← terug</button>';
+ inh.appendChild(t);toon("scherm-spel");
+}
 // ====== VERHAAL BEGRIJPEN: korte NL-tekstjes + begripsvragen (cito-stof)
 var NLVERH=[
  {tekst:"Mila vindt een verloren poes in de tuin. Ze zet een bakje water neer en maakt een doos met een zachte deken. De poes drinkt en gaat slapen.",
@@ -890,7 +928,15 @@ var NLVERH=[
  {tekst:"Oma stuurt Finn een doos briefpapier en postzegels. Finn schrijft meteen zijn eerste echte brief terug, met een tekening van zijn hond erbij.",
   vragen:[["Wat stuurt oma naar Finn?","briefpapier en postzegels",["snoep","speelgoed","briefpapier en postzegels"]],["Wat doet Finn daarna?","hij schrijft terug",["hij schrijft terug","hij gooit het weg","hij belt oma"]]]},
  {tekst:"Klas 4 verzamelt vier weken lang lege flessen. Van het statiegeld kopen ze een picknicktafel voor op het schoolplein.",
-  vragen:[["Wat verzamelt klas 4?","lege flessen",["blikjes","lege flessen","doppen"]],["Wat kopen ze van het geld?","een picknicktafel",["een picknicktafel","ijsjes voor iedereen","nieuwe ballen"]]]}];
+  vragen:[["Wat verzamelt klas 4?","lege flessen",["blikjes","lege flessen","doppen"]],["Wat kopen ze van het geld?","een picknicktafel",["een picknicktafel","ijsjes voor iedereen","nieuwe ballen"]]]},
+ {tekst:"Noor ziet een egeltje onder de struik in de tuin. Ze blijft still, laat hem met rust en vertelt het zachtjes aan haar vader.",
+  vragen:[["Wat ziet Noor in de tuin?","een egeltje",["een eekhoorn","een egeltje","een vogel"]],["Wat doet Noor?","laat hem met rust",["pakt hem op","laat hem met rust","rent erop af"]]]},
+ {tekst:"Meester Thom zet planten in de klas. Elke week mag een andere leerling de water-geef-beurt doen. De planten groeien goed.",
+  vragen:[["Wat staat er in de klas?","planten",["vissen","planten","schilderijen"]],["Wie geeft de planten water?","elke week een andere leerling",["altijd de meester","elke week een andere leerling","niemand"]]]},
+ {tekst:"Bas eet een boterham en voelt iets wiebelen — zijn eerste tand valt eruit! 's Avonds legt hij hem onder zijn kussen voor de tandenfee.",
+  vragen:[["Wanneer verliest Bas zijn tand?","bij een boterham",["op school","bij een boterham","tijdens het sporten"]],["Waar legt hij zijn tand?","onder zijn kussen",["in de koelkast","onder zijn kussen","op tafel"]]]},
+ {tekst:"De hele buurt ruimt samen het park op. Daarna smullen ze van een picknick die iedereen zelf heeft meegenomen.",
+  vragen:[["Wat doet de buurt samen?","het park opruimen",["het park opruimen","voetballen","barbecueën"]],["Wat doen ze daarna?","picknicken",["naar huis gaan","picknicken","zwemmen"]]]}];
 function spelLeesbegrip(){
  document.getElementById("spel-titel").textContent="📖 Verhaal begrijpen";
  var inh=document.getElementById("spel-inhoud");
@@ -1733,6 +1779,7 @@ var TAALV=[
  {tekst:["Sam tiene un perro.","El perro es negro.","Sam quiere a su perro."],vragen:[["¿Qué tiene Sam?","un perro",["un gato","un perro","un pez"]],["¿De qué color?","negro",["blanco","marrón","negro"]]]}
 ];
 function spelTalen(){
+ staat.talenGespeeld=true;bewaar();
  document.getElementById("spel-titel").textContent="🌍 Talen";
  var inh=document.getElementById("spel-inhoud");
  inh.innerHTML='<p class="sub2">Welke taal wil je leren? Van eerste woordjes tot echt verhaaltje — 4 niveaus!</p><div class="acties" id="taal-kies"></div>';
