@@ -216,6 +216,14 @@ var BOEKEN=[
   zinnen:[{zin:"Sunny vaart met haar ___ over de zee.",goed:"boot",opties:["boot","fiets","auto"]},
    {zin:"De ___ waait door de zeilen.",goed:"wind",opties:["wind","deur","hond"]},
    {zin:"De ___ springt uit het water.",goed:"dolfijn",opties:["dolfijn","stoel","pen"]}]},
+ {id:"ziggy",naam:"Ziggy en de Kleurenrace",ic:"🦓",
+  woorden:["ziggy","zebra","regenboog","dansen","kleuren","finish","start","vlag","feest","trofee","lopen","wolk"],
+  zinnen:[{zin:"Ziggy stond klaar op de ___.",goed:"startlijn",opties:["startlijn","zee","keuken"]},
+   {zin:"Overal wapperden ___ in alle kleuren.",goed:"vlaggetjes",opties:["vlaggetjes","schoenen","pannen"]},
+   {zin:"Klaar voor de start — ___ maar, Ziggy!",goed:"ren",opties:["ren","slaap","eet"]},
+   {zin:"Ziggy rent over een weg van ___.",goed:"regenboog",opties:["regenboog","steen","ijs"]},
+   {zin:"Na de race krijgt Ziggy een gouden ___.",goed:"trofee",opties:["trofee","wortel","sok"]},
+   {zin:"Ziggy is een vrolijke ___.",goed:"zebra",opties:["zebra","kikker","muis"]}]},
  {id:"keesje",naam:"De avonturen van Keesje Konijn",ic:"🐰",
   woorden:["keesje","konijn","bos","huppelen","eekhoorn","bes","vlinder","beek","picknick","vrienden","vijver","appel"],
   zinnen:[{zin:"Keesje huppelde door het ___.",goed:"bos",opties:["bos","water","huis"]},
@@ -231,7 +239,8 @@ var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",z
  bal:"⚽",bloem:"🌸",boom:"🌳",huis:"🏠",melk:"🥛",boot:"⛵",schaap:"🐑",vlinder:"🦋",
  fietsen:"🚲",school:"🏫",lepel:"🥄",pizza:"🍕",zebra:"🦓",poes:"🐱",vriend:"👫",zeilen:"⛵",tafel:"🍽️",
  keesje:"🐰",konijn:"🐰",bos:"🌲",huppelen:"🐇",eekhoorn:"🐿️",bes:"🫐",beek:"💧",picknick:"🧺",
- vrienden:"👫",vijver:"🦆",appel:"🍎",metro:"🚇",noten:"🌰",bessen:"🫐",kikker:"🐸",golven:"🌊",wind:"💨",dolfijn:"🐬",walvis:"🐳",eiland:"🏝️",anker:"⚓",haven:"⚓",sunny:"☀️",water:"💧"};
+ vrienden:"👫",vijver:"🦆",appel:"🍎",metro:"🚇",noten:"🌰",bessen:"🫐",kikker:"🐸",golven:"🌊",wind:"💨",dolfijn:"🐬",walvis:"🐳",eiland:"🏝️",anker:"⚓",haven:"⚓",sunny:"☀️",water:"💧",
+ ziggy:"🦓",regenboog:"🌈",dansen:"💃",kleuren:"🎨",finish:"🏁",start:"🏁",vlag:"🚩",feest:"🎉",trofee:"🏆",lopen:"🏃",wolk:"☁️"};
 
 // ====== NAVIGATIE
 var huidigVak="",huidigNiv="",vraagNr=0,goedTeller=0,RONDE=8;
@@ -263,7 +272,11 @@ function toonBoek(bk){
  [["boekWoord","Welk boekwoord?"],["boekSpel","Typ het boekwoord"],["boekZin","Boekzin aanvullen"],["boekPuz","Boekwoord-puzzel"]]
  .forEach(function(vv){
   var v=VAKKEN[vv[0]],c=document.createElement("div");c.className="card";
-  c.innerHTML='<span class="ic">'+v.ic+"</span><b>"+v.naam+"</b><small>"+vv[1]+"</small>";
+  var key="boek:"+bk.id+":"+vv[0];
+  var tot=((staat.goed[key]||0)+(staat.fouten[key]||0));
+  var pct=tot?Math.round((staat.goed[key]||0)/tot*100):0;
+  c.innerHTML='<span class="ic">'+v.ic+"</span><b>"+v.naam+"</b><small>"+vv[1]+"</small>"+
+   '<div class="balkje"><i style="width:'+pct+'%"></i></div>';
   c.onclick=function(){startOefening({id:"boek:"+bk.id,naam:bk.naam},vv[0]);};
   g.appendChild(c);});
  el.appendChild(g);
@@ -414,10 +427,16 @@ function toonUitdager(){
   '<button class="pill grijs" onclick="this.parentNode.remove()">nee, later</button></div>';
  zeg("Hé"+(wie()?" "+wie():"")+"! Durf je een moeilijker level? Wie niet waagt, wie niet wint!");}
 function durfAan(){
+ zeg("Yes! Succes — jij kan het!");
+ if(huidigNiv.indexOf("boek:")===0){
+  var vks=["boekWoord","boekSpel","boekZin","boekPuz"];
+  var bk=huidigBoek||BOEKEN[0];
+  speelClip("groei.mp4",function(){startOefening({id:huidigNiv,naam:bk.naam},vks[rnd(0,vks.length-1)]);});
+  return;
+ }
  var idx=-1;NIVEAUS.forEach(function(n,i){if(n.id===huidigNiv)idx=i;});
  var volg=NIVEAUS[Math.min(idx+1,NIVEAUS.length-1)];
  var vk=volg.vakken[rnd(0,volg.vakken.length-1)];
- zeg("Yes! Succes — jij kan het!");
  speelClip("groei.mp4",function(){startOefening(volg,vk);});}
 // interactieve clip-momenten: speelt clips/<naam>.mp4 af; ontbreekt hij, dan gaat alles gewoon door
 function speelClip(naam,klaar){

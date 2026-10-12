@@ -18,7 +18,12 @@ Geen installatie, geen account, geen internet nodig na het laden.
 - **🔊 Nederlandse stem**: de app leest voor (dictee, letters,
   mee-tellen) via de ingebouwde browser-stem — gratis, werkt meteen.
 - **⭐ Motivatie**: sterren verzamelen, voortgangsbalkjes per vak,
-  medaillescherm na elke ronde van 8.
+  medaillescherm na elke ronde van 8 — mét beloningsclips van jouw
+  eigen boekfiguren (Ziggy danst bij 100%, feestclip bij 80%+, groeiclip
+  bij de uitdager).
+- **📚 Mijn boeken**: de G2B-boeken (Sunny, Ziggy, Keesje) worden
+  oefeningen — woorden, spelling, zinnen en letterpuzzels uit de
+  verhalen zelf, met eigen voortgangsbalkjes per boek.
 
 ## Zo gebruik je hem
 
