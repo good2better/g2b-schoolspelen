@@ -235,8 +235,8 @@ if("serviceWorker" in navigator){
 <script>
 // ====== NIVEAU-LADDER: groep 1-8 → middelbaar → uni → master → genius
 var NIVEAUS=[
- {id:"g12",naam:"Groep 1–2",tag:"start",vakken:["tellen","letters"]},
- {id:"g34",naam:"Groep 3–4",tag:"basis",vakken:["tellen","plus1","woorden","spelling","klok","puzzel"]},
+ {id:"g12",naam:"Groep 1–2",tag:"start",vakken:["tellen","letters","klanken"]},
+ {id:"g34",naam:"Groep 3–4",tag:"basis",vakken:["tellen","plus1","split","woorden","spelling","klok","puzzel"]},
  {id:"g56",naam:"Groep 5–6",tag:"door",vakken:["plus2","min2","tafels","spelling","klok","zin","puzzel"]},
  {id:"g78",naam:"Groep 7–8",tag:"gevorderd",vakken:["plus3","min3","tafels","spelling2","zin","puzzel"]},
  {id:"mb",naam:"Middelbaar 1–5",tag:"verder",vakken:["tafels","procent","spelling2","zin2"]},
@@ -269,7 +269,9 @@ var VAKKEN={
  klok:{ic:"🕐",naam:"Klokkijken",info:"hoe laat is het?"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
  seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
- feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"}
+ feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"},
+ klanken:{ic:"🔊",naam:"Klanken",info:"met welke klank begint het woord?"},
+ split:{ic:"✂️",naam:"Splitsen",info:"hoeveel mist er om het getal te maken?"}
 };
 
 // ====== SLIM BREIN: leert van fouten, onthoudt per kind (localStorage)
@@ -411,7 +413,7 @@ function feestdag(){
   if(f[0]===m&&d>=f[1]&&d<=f[2])return {ic:f[3],naam:f[4],woorden:f[5]};}
  return null;}
 // ====== NIEUWS van de app — klein berichtje dat via auto-update bij gebruikers komt
-var NIEUWS={titel:"Nieuw: Sterren-winkel & profielen!",tekst:"🛍️ Koop kleding, huisdieren en wereldjes met je ⭐ — en nu kan óók je broertje of zusje met eigen voortgang spelen!"};
+var NIEUWS={titel:"Nieuw: Klanken & Splitsen!",tekst:"🔊 Leer de beginklank van woorden en ✂️ splits getallen — en voer elke dag je huisdier voor een ⭐!"};
 // ====== LESJES: mini-uitleg vóór het oefenen — leren vóór trainen, zoals een echte methode
 var LESJES={
  tellen:"Tel één voor één — wijs elk plaatje aan terwijl je telt. Het láátste getal dat je zegt, is hoeveel er zijn!",
@@ -435,6 +437,8 @@ var LESJES={
  boekZin:"Zinnen uit jouw verhaal — welk woord mist er?",
  boekPuz:"Zet de letters in de goede volgorde — het plaatje helpt je!",
  puzzel:"Zet de letters in de goede volgorde — het plaatje is je hint.",
+ klanken:"Luister goed naar het woord. Welke klank hoor je aan het BEGIN? Zeg het woord maar zachtjes na.",
+ split:"Splitsen = het getal in twee stukjes verdelen. 10 splits je in 4 en 6: samen weer 10!",
  fouten:"Dit zijn jouw moeilijke stukjes — hier word je het allersterkst van!"
 };
 function lesVoor(vak){ // exacte sleutel, dan prefix zonder cijfers (plus1→plus)
@@ -676,6 +680,7 @@ function bouwHome(){
  slimmeKaarten(el);
  seizoensKaart(el);
  feestKaart(el);
+ voerKaart(el);
  nieuwsKaart(el);
  boekKaarten(el);
  spelKaarten(el);
@@ -742,6 +747,20 @@ function feestKaart(el){
  c.innerHTML='<span class="ic">'+F.ic+"</span><b>"+F.naam+"-woorden</b><small>vandaag speciaal!</small>";
  c.onclick=function(){startOefening({id:"feest",naam:F.naam},"feest");};
  gg.appendChild(c);el.appendChild(gg);
+}
+// ====== HUISDIER VOEREN: elke dag 1x voeren = ⭐ — kom dagelijks terug
+function voerKaart(el){
+ if(!staat.huisdier||staat.laatstGevoerd===vandaag())return;
+ var h=document.createElement("div");h.className="niveau";
+ h.innerHTML='🐾 Jouw huisdier<span class="tag">honger!</span>';el.appendChild(h);
+ var g=document.createElement("div");g.className="grid";
+ var c=document.createElement("div");c.className="card";c.style.borderColor="var(--goud)";
+ c.innerHTML='<span class="ic">'+staat.huisdier+'</span><b>Voer je huisdier!</b><small>hij heeft honger — kom elke dag</small>';
+ c.onclick=function(){
+  staat.laatstGevoerd=vandaag();staat.sterren++;bewaar();feestConfetti(40);speelJubel();
+  zeg("Nom nom nom! Jouw huisdier is blij — en jij krijgt een ster!");bouwHome();
+ };
+ g.appendChild(c);el.appendChild(g);
 }
 // ====== NIEUWS-KAART: klein bericht van de makers (via auto-update verspreid)
 function nieuwsKaart(el){
@@ -1267,6 +1286,34 @@ var makers={
   var hb=document.createElement("button");hb.className="pill klein";hb.textContent="🔊 luister";
   hb.onclick=function(){staat.stijl.luister++;bewaar();zeg(woord);};v.appendChild(hb);
   zeg("Welk woord past bij "+F.naam+"?");
+ },
+ klanken:function(v,a){
+  var woord=shuffle(WOORDEN1.slice())[0];
+  window._huidigItem=woord;
+  var em=EMOJI[woord]||"🐾";
+  v.innerHTML="<b>Met welke klank BEGINT dit woord?</b><div class='plaatjes'>"+em+"</div><div class='big'>"+woord+"</div>";
+  var goed=woord[0];
+  var pool="abcdefghjklmnoprstvwz".split("").filter(function(l){return l!==goed;});
+  var opties=shuffle(pool.slice()).slice(0,2).concat([goed]);opties=shuffle(opties);
+  opties.forEach(function(l){
+   var b=document.createElement("button");b.className="optie";b.textContent=l.toUpperCase();
+   b.onclick=function(){check(l===goed,b,{woord:woord,uitleg:"'"+woord+"' begint met letter "+goed.toUpperCase()+" — dat is de klank van "+goed+"."});};
+   a.appendChild(b);});
+  var hb=document.createElement("button");hb.className="pill klein";hb.textContent="🔊 luister";
+  hb.onclick=function(){staat.stijl.luister++;bewaar();zeg(woord);};v.appendChild(hb);
+  zeg("Luister: "+woord+". Met welke klank begint het?");
+ },
+ split:function(v,a){
+  var n=rnd(5,10),deel=rnd(1,n-1),goed=n-deel;
+  window._huidigItem=n+"-"+deel;
+  v.innerHTML="<b>Splitsen — hoeveel mist er?</b><div class='plaatjes' style='font-size:1.5rem'>"+
+   "🟦".repeat(deel)+"⬜".repeat(goed)+"</div><div class='big'>"+n+" = "+deel+" + ?</div>";
+  var set=[goed];while(set.length<3){var x=goed+rnd(-2,2);if(x>0&&x!==goed&&set.indexOf(x)<0)set.push(x);}
+  shuffle(set).forEach(function(x){
+   var b=document.createElement("button");b.className="optie";b.textContent=x;
+   b.onclick=function(){check(x===goed,b,{woord:n+"="+deel+"+"+goed,uitleg:n+" splits je in "+deel+" en "+goed+" — samen weer "+n+"!"});};
+   a.appendChild(b);});
+  zeg("Hoeveel mist er om "+n+" te maken? "+deel+" en hoeveel?");
  },
  seizoen:function(v,a){
   var S=seizoensInfo();
