@@ -293,6 +293,7 @@ function zeg(t){
  var u=new SpeechSynthesisUtterance(t);u.lang="nl-NL";u.rate=0.92;
  speechSynthesis.speak(u);}catch(e){}
 }
+function zegTaal(t,lang){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.rate=0.85;speechSynthesis.speak(u);}catch(e){}}
 var laatsteZeg="";
 function zegHoud(t){laatsteZeg=t;zeg(t);}
 function herhaalZeg(){staat.stijl.luister++;bewaar();if(laatsteZeg)zeg(laatsteZeg);}
@@ -538,7 +539,8 @@ function spelKaarten(el){
   ["📚","Leesmemory","koppel het woord aan het plaatje",spelLeesmemory],
   ["⚡","Reken-race","30 tellen — zoveel sommen als je kan",spelRekenrace],
   ["📖","Verhaal-dictee","hoor een boekwoord en typ het",spelDictee],
-  ["🎯","Woord-bingo","hoor het woord — tik het vakje",spelBingo]]
+  ["🎯","Woord-bingo","hoor het woord — tik het vakje",spelBingo],
+  ["🌍","Talen","hoor & leer Engels, Duits, Frans",spelTalen]]
  .forEach(function(sp){
   var c=document.createElement("div");c.className="card";
   c.innerHTML='<span class="ic">'+sp[0]+"</span><b>"+sp[1]+"</b><small>"+sp[2]+"</small>";
@@ -1096,6 +1098,57 @@ function memKlaar(){
    '<button class="pill grijs" onclick="naarHome()">← terug</button></div>';
   feestConfetti(70);zeg("Yes! Alle zes paren"+(wie()?", "+wie():"")+" — klasse!");
  },500);
+}
+
+// ====== SPEL: TALEN — hoor & leer Engels, Duits en Frans
+var TALEN=[{ic:"🇬🇧",naam:"Engels",lang:"en-US"},{ic:"🇩🇪",naam:"Duits",lang:"de-DE"},{ic:"🇫🇷",naam:"Frans",lang:"fr-FR"}];
+var TAALW=[["hond","dog","Hund","chien"],["kat","cat","Katze","chat"],["huis","house","Haus","maison"],
+ ["appel","apple","Apfel","pomme"],["water","water","Wasser","eau"],["school","school","Schule","école"],
+ ["vriend","friend","Freund","ami"],["zon","sun","Sonne","soleil"],["boek","book","Buch","livre"],
+ ["melk","milk","Milch","lait"],["bloem","flower","Blume","fleur"],["bedankt","thank you","danke","merci"]];
+function spelTalen(){
+ document.getElementById("spel-titel").textContent="🌍 Talen";
+ var inh=document.getElementById("spel-inhoud");
+ inh.innerHTML='<p class="sub2">Welke taal wil je oefenen? De stem spreekt het woord in die taal!</p><div class="acties" id="taal-kies"></div>';
+ var zk=document.getElementById("taal-kies");
+ TALEN.forEach(function(t,ti){
+  var b=document.createElement("button");b.className="pill";b.textContent=t.ic+" "+t.naam;
+  b.onclick=function(){taalRonde(ti);};zk.appendChild(b);});
+ toon("scherm-spel");
+}
+function taalRonde(ti){
+ var taal=TALEN[ti],nr=0,goed=0;
+ var woorden=shuffle(TAALW.slice()).slice(0,6);
+ var inh=document.getElementById("spel-inhoud");
+ function ronde(){
+  if(nr>=woorden.length){
+   inh.innerHTML='<div class="medal">'+(goed>=5?"🏆":goed>=3?"🏅":"💪")+'</div><h2>'+taal.naam+' geoefend!</h2>'+
+    '<p class="sub2">'+goed+" van de "+woorden.length+" goed"+(wie()?", "+wie():"")+'!</p>'+
+    '<div class="acties"><button class="pill" onclick="taalRonde('+ti+')">🔁 nog eens</button> '+
+    '<button class="pill" onclick="spelTalen()">🌍 andere taal</button> '+
+    '<button class="pill grijs" onclick="naarHome()">← terug</button></div>';
+   if(goed>=3)feestConfetti(60);return;
+  }
+  var w=woorden[nr],vreemd=w[ti+1];
+  var fouten=shuffle(TAALW.filter(function(x){return x[ti+1]!==vreemd;})).slice(0,3).map(function(x){return x[ti+1];});
+  var opties=shuffle(fouten.concat([vreemd]));
+  inh.innerHTML='<p class="sub2">woord '+(nr+1)+" van "+woorden.length+" — <b>"+taal.naam+"</b></p>"+
+   '<p style="font-size:1.6rem;color:var(--zeed)"><b>'+w[0]+"</b> = wat in het "+taal.naam+"?</p>"+
+   '<div class="acties"><button class="pill" id="taal-hoor">'+taal.ic+' hoor het woord</button></div>'+
+   '<div class="knoppen" id="taal-opt"></div><p class="sub2" id="taal-fb"></p>';
+  document.getElementById("taal-hoor").onclick=function(){staat.stijl.luister++;bewaar();zegTaal(vreemd,taal.lang);};
+  zeg("Wat is "+w[0]+" in het "+taal.naam+"?");
+  var zo=document.getElementById("taal-opt");
+  opties.forEach(function(o){
+   var b=document.createElement("button");b.className="optie";b.textContent=o;
+   b.onclick=function(){
+    if(b.disabled)return;
+    if(o===vreemd){goed++;b.classList.add("goed");document.getElementById("taal-fb").textContent="🎉 "+w[0]+" = "+vreemd+"!";speelJubel();zegTaal(vreemd,taal.lang);}
+    else{b.classList.add("fout");document.getElementById("taal-fb").textContent="Bijna — het was '"+vreemd+"'";speelJammer();}
+    nr++;setTimeout(ronde,1400);};
+   zo.appendChild(b);});
+ }
+ ronde();
 }
 
 // ====== SPEL: VERHAAL-DICTEE — stem spreekt boekwoord, kind typt het
