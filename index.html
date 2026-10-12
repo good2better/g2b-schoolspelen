@@ -642,7 +642,7 @@ function spelKaarten(el){
   ["⚡","Reken-race","30 tellen — zoveel sommen als je kan",spelRekenrace],
   ["📖","Verhaal-dictee","hoor een boekwoord en typ het",spelDictee],
   ["🎯","Woord-bingo","hoor het woord — tik het vakje",spelBingo],
-  ["🌍","Talen","hoor & leer 5 talen — ook Hebreeuws!",spelTalen],
+  ["🌍","Talen","hoor & leer 6 talen — kies je favoriet!",spelTalen],
   ["🎨","Kleuren-jacht","tik alles wat de kleur is",spelKleuren]]
  .forEach(function(sp){
   var c=document.createElement("div");c.className="card";
@@ -1383,11 +1383,11 @@ function spelKleuren(){
 }
 
 // ====== SPEL: TALEN — hoor & leer Engels, Duits en Frans
-var TALEN=[{ic:"🇬🇧",naam:"Engels",lang:"en-US"},{ic:"🇩🇪",naam:"Duits",lang:"de-DE"},{ic:"🇫🇷",naam:"Frans",lang:"fr-FR"},{ic:"🇸🇷",naam:"Sranan",lang:"nl-NL"},{ic:"🇮🇱",naam:"Hebreeuws",lang:"he-IL"}];
-var TAALW=[["hond","dog","Hund","chien","dagu","כלב — kelev"],["kat","cat","Katze","chat","pusi","חתול — khatul"],["huis","house","Haus","maison","oso","בית — bayit"],
- ["appel","apple","Apfel","pomme","apra","תפוח — tapuakh"],["water","water","Wasser","eau","watra","מים — mayim"],["school","school","Schule","école","skoro","בית ספר — beit sefer"],
- ["vriend","friend","Freund","ami","mati","חבר — khaver"],["zon","sun","Sonne","soleil","son","שמש — shemesh"],["boek","book","Buch","livre","buku","ספר — sefer"],
- ["melk","milk","Milch","lait","merki","חלב — khalav"],["bloem","flower","Blume","fleur","blom","פרח — perakh"],["bedankt","thank you","danke","merci","danki","תודה — toda"]];
+var TALEN=[{ic:"🇬🇧",naam:"Engels",lang:"en-US"},{ic:"🇩🇪",naam:"Duits",lang:"de-DE"},{ic:"🇫🇷",naam:"Frans",lang:"fr-FR"},{ic:"🇸🇷",naam:"Sranan",lang:"nl-NL"},{ic:"🇮🇱",naam:"Hebreeuws",lang:"he-IL"},{ic:"🇪🇸",naam:"Spaans",lang:"es-ES"}];
+var TAALW=[["hond","dog","Hund","chien","dagu","כלב — kelev","perro"],["kat","cat","Katze","chat","pusi","חתול — khatul","gato"],["huis","house","Haus","maison","oso","בית — bayit","casa"],
+ ["appel","apple","Apfel","pomme","apra","תפוח — tapuakh","manzana"],["water","water","Wasser","eau","watra","מים — mayim","agua"],["school","school","Schule","école","skoro","בית ספר — beit sefer","escuela"],
+ ["vriend","friend","Freund","ami","mati","חבר — khaver","amigo"],["zon","sun","Sonne","soleil","son","שמש — shemesh","sol"],["boek","book","Buch","livre","buku","ספר — sefer","libro"],
+ ["melk","milk","Milch","lait","merki","חלב — khalav","leche"],["bloem","flower","Blume","fleur","blom","פרח — perakh","flor"],["bedankt","thank you","danke","merci","danki","תודה — toda","gracias"]];
 function spelTalen(){
  document.getElementById("spel-titel").textContent="🌍 Talen";
  var inh=document.getElementById("spel-inhoud");
