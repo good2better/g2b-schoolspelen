@@ -866,7 +866,7 @@ var makers={
   foute=foute.sort(function(){return Math.random()-0.5;}).slice(0,3);
   var opties=foute.concat([woord]).sort(function(){return Math.random()-0.5;});
   opties.forEach(function(w2){
-   var b=document.createElement("button");b.className="knop";b.textContent=w2;
+   var b=document.createElement("button");b.className="optie";b.textContent=w2;
    b.onclick=function(){check(w2===woord,b,{woord:woord,uitleg:"Dit is '"+woord+"' — dat hoort bij "+S.titel.toLowerCase()+". "+S.tip+"!"});};
    a.appendChild(b);});
   var hb=document.createElement("button");hb.className="pill klein";hb.textContent="🔊 luister";
