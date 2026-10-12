@@ -259,7 +259,8 @@ var VAKKEN={
  boekPuz:{ic:"🔀",naam:"Boekpuzzel",info:"boekwoorden puzzelen"},
  klok:{ic:"🕐",naam:"Klokkijken",info:"hoe laat is het?"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
- seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"}
+ seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
+ feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"}
 };
 
 // ====== SLIM BREIN: leert van fouten, onthoudt per kind (localStorage)
@@ -320,6 +321,33 @@ function vakantieHint(){
   10:"Kerstvakantie ±19 dec–4 jan \ud83c\udf84",11:"Kerstvakantie ±19 dec–4 jan \ud83c\udf84"};
  return V[new Date().getMonth()]||"";
 }
+// ====== FEESTDAGEN: de app weet welke feestdag er vandaag/vlakbij is
+// [maand(0-11), dagVan, dagTm, icoon, naam, woorden] — Pasen rekent hij zelf uit
+var FEEST=[
+ [0,1,1,"🎆","Nieuwjaar",["vuurwerk","nieuw","jaar","oliebol","wens","klok"]],
+ [3,27,27,"🧡","Koningsdag",["koning","oranje","vlag","feest","kroon","vrijmarkt"]],
+ [4,10,11,"💐","Moederdag",["mama","bloem","knuffel","ontbijt","lief","bedankt"]],
+ [5,15,21,"👔","Vaderdag",["papa","stropdas","cadeau","ontbijt","lief","knuffel"]],
+ [9,31,31,"🎃","Halloween",["pompoen","spook","heks","eng","verkleed","snoep"]],
+ [10,11,11,"🏮","Sint-Maarten",["lampion","lied","snoep","lantaarn","avond","deur"]],
+ [11,5,6,"🎁","Sinterklaas",["sinterklaas","piet","cadeau","schoen","stoomboot","pepernoot"]],
+ [11,24,26,"🎄","Kerst",["kerstboom","ster","sneeuw","cadeau","kerstman","engel"]]
+];
+function paasZondag(jaar){ // Anonymous Gregorian — Pasen ligt elk jaar anders
+ var a=jaar%19,b=Math.floor(jaar/100),c=jaar%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),
+ g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,
+ l=(32+2*e+2*i-h-k)%7,m2=Math.floor((a+11*h+22*l)/451),
+ mo=Math.floor((h+l-7*m2+114)/31),da=((h+l-7*m2+114)%31)+1;
+ return new Date(jaar,mo-1,da);}
+function feestdag(){
+ var n=new Date(),m=n.getMonth(),d=n.getDate();
+ var pz=paasZondag(n.getFullYear());var pd=pz.getMonth()*31+pz.getDate(),nd=m*31+d;
+ if(nd>=pd-7&&nd<=pd+1)return {ic:"🐣",naam:"Pasen",woorden:["paasei","paashaas","lam","lente","kuiken","zoeken"]};
+ for(var i=0;i<FEEST.length;i++){var f=FEEST[i];
+  if(f[0]===m&&d>=f[1]&&d<=f[2])return {ic:f[3],naam:f[4],woorden:f[5]};}
+ return null;}
+// ====== NIEUWS van de app — klein berichtje dat via auto-update bij gebruikers komt
+var NIEUWS={titel:"Nieuw: Talen-niveaus!",tekst:"🌍 Talen heeft nu 4 niveaus: woorden, thema's, zinnetjes en een echt verhaaltje — in 6 talen!"};
 function bewaar(){dagStreak();localStorage.setItem("g2b_playlearn",JSON.stringify(staat));
  document.getElementById("sterren").textContent="⭐ "+staat.sterren;}
 
@@ -543,6 +571,8 @@ function bouwHome(){
  heldKaart(el);
  slimmeKaarten(el);
  seizoensKaart(el);
+ feestKaart(el);
+ nieuwsKaart(el);
  boekKaarten(el);
  spelKaarten(el);
  var mj3=document.getElementById("maatje");if(mj3)mj3.textContent=heldIc();
@@ -594,6 +624,29 @@ function seizoensKaart(el){
  g.appendChild(c);
  var gs=groepScoreKaart();if(gs)g.appendChild(gs);
  el.appendChild(g);
+}
+// ====== FEEST-KAART: feestdag van vandaag (+ 🐣 Pasen uitgerekend)
+function feestKaart(el){
+ var F=feestdag();if(!F)return;
+ var g=document.querySelectorAll("#niveau-lijst .grid");
+ var gg=document.createElement("div");gg.className="grid";
+ var h=document.createElement("div");h.className="niveau";
+ h.innerHTML=F.ic+" Vandaag: "+F.naam+'<span class="tag">feest-woorden!</span>';
+ el.appendChild(h);
+ var c=document.createElement("div");c.className="card";c.style.borderColor="var(--goud)";
+ c.innerHTML='<span class="ic">'+F.ic+"</span><b>"+F.naam+"-woorden</b><small>vandaag speciaal!</small>";
+ c.onclick=function(){startOefening({id:"feest",naam:F.naam},"feest");};
+ gg.appendChild(c);el.appendChild(gg);
+}
+// ====== NIEUWS-KAART: klein bericht van de makers (via auto-update verspreid)
+function nieuwsKaart(el){
+ if(!NIEUWS||!NIEUWS.titel)return;
+ var h=document.createElement("div");h.className="niveau";
+ h.innerHTML='📰 Nieuws<span class="tag">van de makers</span>';el.appendChild(h);
+ var g=document.createElement("div");g.className="grid";
+ var c=document.createElement("div");c.className="card";
+ c.innerHTML='<span class="ic">📰</span><b>'+NIEUWS.titel+"</b><small>"+NIEUWS.tekst+"</small>";
+ g.appendChild(c);el.appendChild(g);
 }
 // ====== GROEP-BEWIJS: alle vakken van een groep ≥80% = echt schoolniveau
 function groepScore(n){
@@ -1016,6 +1069,22 @@ var makers={
   window._forceItem=q.item;
   huidigVak=q.vak;makers[q.vak](v,a);huidigVak="fouten"; // blijf in de fouten-ronde
  },
+ feest:function(v,a){
+  var F=feestdag()||{ic:"🎉",naam:"Feest",woorden:["feest","ballon","cadeau","taart","muziek","dansen"]};
+  var woord=F.woorden[vraagNr%F.woorden.length];
+  window._huidigItem=woord;
+  v.innerHTML="<b>Welk woord past bij "+F.naam+"?</b>";
+  var foute=F.woorden.filter(function(w){return w!==woord;});
+  foute=foute.sort(function(){return Math.random()-0.5;}).slice(0,3);
+  var opties=foute.concat([woord]).sort(function(){return Math.random()-0.5;});
+  opties.forEach(function(w2){
+   var b=document.createElement("button");b.className="optie";b.textContent=w2;
+   b.onclick=function(){check(w2===woord,b,{woord:woord,uitleg:"Dit is '"+woord+"' — dat hoort bij "+F.naam+"!"});};
+   a.appendChild(b);});
+  var hb=document.createElement("button");hb.className="pill klein";hb.textContent="🔊 luister";
+  hb.onclick=function(){staat.stijl.luister++;bewaar();zeg(woord);};v.appendChild(hb);
+  zeg("Welk woord past bij "+F.naam+"?");
+ },
  seizoen:function(v,a){
   var S=seizoensInfo();
   var woord=S.woorden[vraagNr%S.woorden.length];
@@ -1226,7 +1295,7 @@ function ouderRapport(){
  keys.forEach(function(key){
   var g=staat.goed[key]||0,f=staat.fouten[key]||0,tot=g+f,pct=tot?Math.round(100*g/tot):0;
   var ps=key.split(":"),niv=ps[0]==="boek"?"boek:"+ps[1]:ps[0],vak=ps[ps.length-1];
-  var nnaam=niv.indexOf("boek:")===0?((BOEKEN.find(function(b){return "boek:"+b.id===niv;})||{naam:niv}).naam):niv==="fouten"?"🎯 foutenronde":niv==="seizoen"?"🍂 seizoen":((NIVEAUS.find(function(n){return n.id===niv;})||{naam:niv}).naam);
+  var nnaam=niv.indexOf("boek:")===0?((BOEKEN.find(function(b){return "boek:"+b.id===niv;})||{naam:niv}).naam):niv==="fouten"?"🎯 foutenronde":niv==="seizoen"?"🍂 seizoen":niv==="feest"?"🎉 feestdag":((NIVEAUS.find(function(n){return n.id===niv;})||{naam:niv}).naam);
   var regel=nnaam+" · "+(VAKKEN[vak]||{naam:vak}).naam+" — "+pct+"% ("+tot+"x)";
   (pct>=70?sterk:oefen).push(regel);
  });
@@ -1746,7 +1815,7 @@ function oudersOverzicht(){
   var g=staat.goed[key]||0,f=staat.fouten[key]||0,tot=g+f;
   var pct=tot?Math.round(100*g/tot):0;
   var ps=key.split(":"),niv=ps[0]==="boek"?"boek:"+ps[1]:ps[0],vak=ps[ps.length-1];
-  var nnaam=niv==="fouten"?"🎯 foutenronde":niv==="seizoen"?"🍂 seizoen":niv.indexOf("boek:")===0?((BOEKEN.find(function(b){return "boek:"+b.id===niv;})||{naam:niv}).naam):((NIVEAUS.find(function(n){return n.id===niv;})||{naam:niv}).naam);
+  var nnaam=niv==="fouten"?"🎯 foutenronde":niv==="seizoen"?"🍂 seizoen":niv==="feest"?"🎉 feestdag":niv.indexOf("boek:")===0?((BOEKEN.find(function(b){return "boek:"+b.id===niv;})||{naam:niv}).naam):((NIVEAUS.find(function(n){return n.id===niv;})||{naam:niv}).naam);
   var vnaam=(VAKKEN[vak]||{naam:vak}).naam;
   var kleur=pct>=80?"var(--groen)":pct>=50?"var(--zee)":"var(--rood)";
   rows+='<tr><td>'+nnaam+'</td><td>'+vnaam+'</td><td>'+pct+"%</td>"+
