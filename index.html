@@ -480,19 +480,35 @@ function stemVoor(lang){
  var key=(lang||"nl").split("-")[0].toLowerCase();
  if(_stemmen[key]!==undefined)return _stemmen[key];
  var vs=[];try{vs=speechSynthesis.getVoices().filter(function(v){return (v.lang||"").toLowerCase().indexOf(key)===0;});}catch(e){}
- _stemmen[key]=vs.find(function(v){return /google|microsoft|natural|online|samantha|ellen|claire|xander|anna|iris|eva|mark|thomas/i.test(v.name);})||vs[0]||null;
+ _stemmen[key]=vs.find(function(v){return /google|microsoft|natural|online|samantha|ellen|claire|xander|anna|iris|eva|mark|thomas|maarten|laura|fenna|colette|denise|frank/i.test(v.name);})||vs[0]||null;
  return _stemmen[key];}
 try{speechSynthesis.onvoiceschanged=function(){_stemmen={};};}catch(e){}
 function zeg(t){
  if(staat.geluid===false)return;
+ stopBoekAudio();
  try{speechSynthesis.cancel();
  var u=new SpeechSynthesisUtterance(t);u.lang="nl-NL";u.rate=0.92;u.pitch=1.06;
  var v=stemVoor("nl");if(v)u.voice=v;
  speechSynthesis.speak(u);}catch(e){}
 }
-function zegTaal(t,lang){if(staat.geluid===false)return;try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.rate=0.85;var v=stemVoor(lang);if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}}
-var laatsteZeg="";
+function zegTaal(t,lang){if(staat.geluid===false)return;stopBoekAudio();try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.rate=0.85;var v=stemVoor(lang);if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}}
+var laatsteZeg="",_boekAudio=null;
 function zegHoud(t){laatsteZeg=t;zeg(t);}
+var AUDIO_BASE="https://good2better.github.io/g2b-winkel/schoolspelen/audio/";
+function stopBoekAudio(){if(_boekAudio){try{_boekAudio.pause();_boekAudio.src="";}catch(e){}_boekAudio=null;}}
+function zegBoek(bk,pag){
+ if(staat.geluid===false)return;
+ stopBoekAudio();
+ try{speechSynthesis.cancel();}catch(e){}
+ var txt=bk.verhaal[pag][0];
+ try{
+  var a=new Audio(AUDIO_BASE+bk.id+"-p"+pag+".mp3");
+  a.onerror=function(){_boekAudio=null;zeg(txt);};
+  var pr=a.play();
+  if(pr&&pr.catch)pr.catch(function(){_boekAudio=null;zeg(txt);});
+  _boekAudio=a;
+ }catch(e){zeg(txt);}
+}
 function herhaalZeg(){staat.stijl.luister++;bewaar();if(laatsteZeg)zeg(laatsteZeg);}
 
 // ====== WOORDENLIJSTEN (NL, niveau-stijgend)
@@ -722,7 +738,7 @@ function toon(id){
   document.getElementById(s).classList.toggle("hidden",s!==id);});
  window.scrollTo(0,0);
 }
-function naarHome(){speechSynthesis.cancel();if(raceTijd)clearInterval(raceTijd);document.body.classList.remove("alleen-diploma");bouwHome();toon("scherm-home");}
+function naarHome(){stopBoekAudio();speechSynthesis.cancel();if(raceTijd)clearInterval(raceTijd);document.body.classList.remove("alleen-diploma");bouwHome();toon("scherm-home");}
 
 function boekKaarten(el){
  var h=document.createElement("div");h.className="niveau";
@@ -1919,10 +1935,10 @@ function verhaalLezer(bk){
    '<div class="acties"><button class="pill" id="vh-hoor">🔊 lees voor</button> '+
    (pag>0?'<button class="pill grijs" id="vh-vorige">◀ vorige</button> ':"")+
    '<button class="pill" id="vh-volgende">'+(pag===bk.verhaal.length-1?"⭐ naar de vragen":"volgende ▶")+"</button></div>";
-  document.getElementById("vh-hoor").onclick=function(){staat.stijl.luister++;bewaar();zeg(bk.verhaal[pag][0]);};
+  document.getElementById("vh-hoor").onclick=function(){staat.stijl.luister++;bewaar();zegBoek(bk,pag);};
   document.getElementById("vh-volgende").onclick=function(){pag++;pagina();};
   var vp=document.getElementById("vh-vorige");if(vp)vp.onclick=function(){pag--;pagina();};
-  zeg(bk.verhaal[pag][0]);
+  zegBoek(bk,pag);
  }
  pagina();toon("scherm-spel");
 }
