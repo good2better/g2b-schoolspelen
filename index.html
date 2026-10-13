@@ -235,8 +235,8 @@ if("serviceWorker" in navigator){
 <script>
 // ====== NIVEAU-LADDER: groep 1-8 → middelbaar → uni → master → genius
 var NIVEAUS=[
- {id:"g12",naam:"Groep 1–2",tag:"start",vakken:["tellen","letters","klanken","eindklank"]},
- {id:"g34",naam:"Groep 3–4",tag:"basis",vakken:["tellen","plus1","split","woorden","spelling","klok","klinker","puzzel"]},
+ {id:"g12",naam:"Groep 1–2",tag:"start",vakken:["tellen","letters","klanken","eindklank","vormen"]},
+ {id:"g34",naam:"Groep 3–4",tag:"basis",vakken:["tellen","plus1","split","woorden","spelling","klok","klinker","vormen","puzzel"]},
  {id:"g56",naam:"Groep 5–6",tag:"door",vakken:["plus2","min2","tafels","spelling","klok","klok2","zin","puzzel"]},
  {id:"g78",naam:"Groep 7–8",tag:"gevorderd",vakken:["plus3","min3","tafels","spelling2","zin","puzzel"]},
  {id:"mb",naam:"Middelbaar 1–5",tag:"verder",vakken:["tafels","procent","spelling2","zin2"]},
@@ -270,6 +270,7 @@ var VAKKEN={
  klok2:{ic:"🕰️",naam:"Klok gevorderd",info:"kwartieren en hoe laat later?"},
  eindklank:{ic:"🔚",naam:"Eindklank",info:"met welke klank eindigt het woord?"},
  klinker:{ic:"🗣️",naam:"Klinkers",info:"welke klinker hoor je in het woord?"},
+ vormen:{ic:"🔷",naam:"Vormen",info:"welke vorm is dit?"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
  seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
  feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"},
@@ -416,7 +417,7 @@ function feestdag(){
   if(f[0]===m&&d>=f[1]&&d<=f[2])return {ic:f[3],naam:f[4],woorden:f[5]};}
  return null;}
 // ====== NIEUWS van de app — klein berichtje dat via auto-update bij gebruikers komt
-var NIEUWS={titel:"Nieuw: Klok-kwartieren & klinkers!",tekst:"🕰️ Kwart over en kwart voor op de echte klok, 🔚 eindklanken, 🗣️ klinkers — en ouders zien nu een 📆 weekoverzicht!"};
+var NIEUWS={titel:"Nieuw: De Vormen-Safari! 🦊",tekst:"🦊 Nieuw boek: De Vormen-Safari in de bibliotheek + 🔷 Vormen oefenen in groep 1–4! Bezoek ook de nieuwe verkooppagina: good2better.github.io/g2b-winkel/schoolspelen/"};
 // ====== LESJES: mini-uitleg vóór het oefenen — leren vóór trainen, zoals een echte methode
 var LESJES={
  tellen:"Tel één voor één — wijs elk plaatje aan terwijl je telt. Het láátste getal dat je zegt, is hoeveel er zijn!",
@@ -561,6 +562,26 @@ var BOEKEN=[
    {vraag:"Wie gaf Ziggy de uitdaging?",goed:"Meneer Regenboog",opties:["Meneer Regenboog","De schoolmeester","Zijn mama"]},
    {vraag:"Welke kleurlanden bezocht Ziggy?",goed:"Rood, geel, blauw en groen",opties:["Rood, geel, blauw en groen","Alleen grijs en zwart","Roze en paars"]},
    {vraag:"Wat deed Ziggy aan het einde?",goed:"Dansen met al zijn nieuwe vrienden",opties:["Dansen met al zijn nieuwe vrienden","Slapen in zijn bed","Huilen om de race"]}]},
+ {id:"vormen",naam:"De Vormen-Safari",ic:"🦊",
+  woorden:["cirkel","vierkant","driehoek","rechthoek","ovaal","ruit","ster","hart","vorm","vera","vos","safari"],
+  zinnen:[{zin:"De zon is een ___ — mooi rond als een bal.",goed:"cirkel",opties:["cirkel","vierkant","ruit"]},
+   {zin:"Het raam is een ___ — vier even lange zijden.",goed:"vierkant",opties:["vierkant","ovaal","ster"]},
+   {zin:"De berg is een ___ — drie hoeken, spits naar boven.",goed:"driehoek",opties:["driehoek","rechthoek","hart"]},
+   {zin:"De vlieger is een ___ — als een vierkant op zijn punt.",goed:"ruit",opties:["ruit","cirkel","ovaal"]}],
+  verhaal:[
+   ["Vera de Vos keek omhoog. 'De zon is een CIRKEL — mooi rond als een bal!'"],
+   ["Bij het huisje zag Vera het raam. 'Dat is een VIERKANT — vier even lange zijden!'"],
+   ["Daar piekte de berg in de lucht. 'De berg is een DRIEHOEK — drie hoeken, spits naar boven!'"],
+   ["Voor de deur bleef Vera staan. 'De deur is een RECHTHOEK — lang, met vier hoeken!'"],
+   ["Bij de vijver plofte een eendje in het water. 'De vijver is een OVAAL — rond, maar een beetje lang!'"],
+   ["Hoog aan de hemel danste een vlieger. 'De vlieger is een RUIT — als een vierkant op zijn punt!'"],
+   ["Toen de avond viel, knipoogde een ster. 'Die fonkeling is een STER — vijf punten die stralen!'"],
+   ["Aan het einde van de safari glunderde Vera. 'En dit is het HART — de vorm van liefde en vrienden!'"]],
+  vragen:[
+   {vraag:"Welke vorm is de zon volgens Vera?",goed:"Een cirkel",opties:["Een cirkel","Een vierkant","Een ruit"]},
+   {vraag:"Hoeveel zijden heeft een vierkant?",goed:"Vier even lange",opties:["Vier even lange","Drie","Vijf"]},
+   {vraag:"Welke vorm danste hoog aan de hemel?",goed:"De vlieger — een ruit",opties:["De vlieger — een ruit","De ster — een ovaal","Het hart — een rechthoek"]},
+   {vraag:"Welke vorm staat voor liefde en vrienden?",goed:"Het hart",opties:["Het hart","De driehoek","De ovaal"]}]},
  {id:"sam",naam:"Samen Sterk — het verhaal van Sam",ic:"🛡️",
   woorden:["sam","pesten","vriend","moedig","verdrietig","helpen","samen","sorry","lachen","luisteren","sterk","plein"],
   zinnen:[{zin:"Sam was ___ op zijn nieuwe school.",goed:"alleen",opties:["alleen","druk","laat"]},
@@ -632,7 +653,7 @@ function naarHome(){speechSynthesis.cancel();if(raceTijd)clearInterval(raceTijd)
 
 function boekKaarten(el){
  var h=document.createElement("div");h.className="niveau";
- h.innerHTML='📚 Mijn boeken<span class="tag">oefenen met jouw verhalen</span>';
+ h.innerHTML='📚 De Schoolbibliotheek<span class="tag">elke school heeft er een — kies je boek</span>';
  el.appendChild(h);
  var g=document.createElement("div");g.className="grid";
  BOEKEN.forEach(function(bk){
@@ -663,11 +684,11 @@ function toonBoek(bk){
   c.onclick=function(){startOefening({id:"boek:"+bk.id,naam:bk.naam},vv[0]);};
   g.appendChild(c);});
  el.appendChild(g);
- var promo=document.createElement("div");promo.className="card";
+ if(bk.id!=="vormen"){var promo=document.createElement("div");promo.className="card";
  promo.style.cssText="max-width:460px;margin:14px auto 0;border:2px dashed var(--goud)";
  promo.innerHTML='<span class="ic">📚</span><b>Koop het echte boek</b><small>"'+bk.naam+'" als echt prentenboek in de G2B-winkel</small><br>'+
   '<a class="pill" href="https://good2better.github.io/g2b-winkel/gsbooks/#winkel" target="_blank" rel="noopener">🛒 naar de winkel</a>';
- el.appendChild(promo);
+ el.appendChild(promo);}
  var terug=document.createElement("button");terug.className="pill grijs";
  terug.textContent="← alle niveaus";terug.style.margin="10px 0";terug.onclick=bouwHome;
  el.appendChild(terug);}
@@ -1405,6 +1426,34 @@ var makers={
   var hb=document.createElement("button");hb.className="pill klein";hb.textContent="🔊 luister";
   hb.onclick=function(){staat.stijl.luister++;bewaar();zeg(woord);};v.appendChild(hb);
   zeg("Luister: "+woord+". Welke klinker hoor je?");
+ },
+ vormen:function(v,a){
+  var VORMEN={
+   cirkel:{naam:"cirkel",svg:"<circle cx='50' cy='50' r='42' fill='#F5A623'/>",dingen:["de zon","een bal","een appel"]},
+   vierkant:{naam:"vierkant",svg:"<rect x='10' y='10' width='80' height='80' rx='8' fill='#4A90D9'/>",dingen:["een raam","een doos","een tegel"]},
+   driehoek:{naam:"driehoek",svg:"<polygon points='50,8 92,88 8,88' fill='#E2574C'/>",dingen:["een berg","een dak","een stuk pizza"]},
+   rechthoek:{naam:"rechthoek",svg:"<rect x='6' y='26' width='88' height='48' rx='6' fill='#2E9E5B'/>",dingen:["een deur","een boek","een tafel"]},
+   ovaal:{naam:"ovaal",svg:"<ellipse cx='50' cy='50' rx='45' ry='30' fill='#9B59B6'/>",dingen:["een vijver","een ei","een meloen"]},
+   ruit:{naam:"ruit",svg:"<polygon points='50,6 92,50 50,94 8,50' fill='#E67E22'/>",dingen:["een vlieger","een verkeersbord"]},
+   ster:{naam:"ster",svg:"<polygon points='50,4 62,36 96,37 69,58 78,92 50,73 22,92 31,58 4,37 38,36' fill='#F1C40F'/>",dingen:["een ster aan de hemel","een visster","een snoepje"]},
+   hart:{naam:"hart",svg:"<path d='M50 90 C20 62 8 44 8 30 C8 16 20 8 32 8 C41 8 47 13 50 20 C53 13 59 8 68 8 C80 8 92 16 92 30 C92 44 80 62 50 90 Z' fill='#E2578C'/>",dingen:["een valentijnskaart","een knuffel","liefde"]}};
+  var keys=Object.keys(VORMEN);
+  var goed=keys[rnd(0,keys.length-1)];
+  window._huidigItem="vorm-"+goed;
+  var svg="<svg viewBox='0 0 100 100' style='width:110px;height:110px;vertical-align:middle'>"+VORMEN[goed].svg+"</svg>";
+  if(vraagNr%2===0){
+   v.innerHTML="<b>Welke vorm is dit?</b><div class='plaatjes'>"+svg+"</div>";
+  }else{
+   var ding=VORMEN[goed].dingen[rnd(0,VORMEN[goed].dingen.length-1)];
+   v.innerHTML="<b>Welke vorm is "+ding+"?</b><div class='plaatjes'>❓</div><div class='big'>"+ding+"</div>";
+  }
+  var pool=keys.filter(function(k){return k!==goed;});
+  var opties=shuffle(pool.slice()).slice(0,2).concat([goed]);opties=shuffle(opties);
+  opties.forEach(function(k){
+   var b=document.createElement("button");b.className="optie";b.textContent=VORMEN[k].naam;
+   b.onclick=function(){check(k===goed,b,{woord:VORMEN[goed].naam,uitleg:"Dat is een "+VORMEN[goed].naam+"! Elke vorm heeft zijn eigen naam en hoeken."});};
+   a.appendChild(b);});
+  zeg("Welke vorm zie je?");
  },
  klok2:function(v,a){
   if(vraagNr%2===0){
