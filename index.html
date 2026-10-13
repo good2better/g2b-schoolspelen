@@ -235,8 +235,8 @@ if("serviceWorker" in navigator){
 <script>
 // ====== NIVEAU-LADDER: groep 1-8 → middelbaar → uni → master → genius
 var NIVEAUS=[
- {id:"g12",naam:"Groep 1–2",tag:"start",vakken:["tellen","letters","klanken","eindklank","vormen"]},
- {id:"g34",naam:"Groep 3–4",tag:"basis",vakken:["tellen","plus1","split","woorden","spelling","klok","klinker","vormen","puzzel"]},
+ {id:"g12",naam:"Groep 1–2",tag:"start",vakken:["tellen","letters","klanken","eindklank","vormen","gevoelens"]},
+ {id:"g34",naam:"Groep 3–4",tag:"basis",vakken:["tellen","plus1","split","woorden","spelling","klok","klinker","vormen","gevoelens","puzzel"]},
  {id:"g56",naam:"Groep 5–6",tag:"door",vakken:["plus2","min2","tafels","spelling","klok","klok2","zin","puzzel"]},
  {id:"g78",naam:"Groep 7–8",tag:"gevorderd",vakken:["plus3","min3","tafels","spelling2","zin","puzzel"]},
  {id:"mb",naam:"Middelbaar 1–5",tag:"verder",vakken:["tafels","procent","spelling2","zin2"]},
@@ -271,6 +271,7 @@ var VAKKEN={
  eindklank:{ic:"🔚",naam:"Eindklank",info:"met welke klank eindigt het woord?"},
  klinker:{ic:"🗣️",naam:"Klinkers",info:"welke klinker hoor je in het woord?"},
  vormen:{ic:"🔷",naam:"Vormen",info:"welke vorm is dit?"},
+ gevoelens:{ic:"💗",naam:"Gevoelens",info:"welk gevoel past hier?"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
  seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
  feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"},
@@ -1021,6 +1022,7 @@ function spelPauze(){
   ["🦸 Samen Sterk — Sam","sam-videoboek.mp4","b"],
   ["🐰 De avonturen van Keesje","keesje-videoboek.mp4","b"],
   ["🦊 De Vormen-Safari","vormen-videoboek.mp4","b"],
+ ["🐨 Kiki de Koala Voelt Alles","kiki-videoboek.mp4","b"],
   ["🦓 Ziggy — De Magische Kleurenrace","ziggy-kleurenrace","v"],
   ["🦓 Ziggy en de Dansende Kleuren","ziggy-dansende-kleuren","v"],
   ["🦓 Ziggy en de Grijze Schaduw","ziggy-grijze-schaduw","v"],
@@ -1509,6 +1511,32 @@ var makers={
   var hb=document.createElement("button");hb.className="pill klein";hb.textContent="🔊 luister";
   hb.onclick=function(){staat.stijl.luister++;bewaar();zeg(woord);};v.appendChild(hb);
   zeg("Luister: "+woord+". Welke klinker hoor je?");
+ },
+ gevoelens:function(v,a){
+  var GEV=[
+   {emotie:"blij",emo:"😊",scen:"Je bent jarig en iedereen zingt voor jou.",img:0},
+   {emotie:"verdrietig",emo:"😢",scen:"Je lievelingsknuffel is kwijt.",img:1},
+   {emotie:"boos",emo:"😠",scen:"Iemand duwt jouw zandkasteel omver.",img:2},
+   {emotie:"bang",emo:"😨",scen:"Het is donker en je hoort een gek geluid.",img:3},
+   {emotie:"trots",emo:"🌟",scen:"Je klom helemaal alleen in de hoge boom.",img:4},
+   {emotie:"verlegen",emo:"🙈",scen:"Op een feestje ken je bijna niemand.",img:5},
+   {emotie:"liefde",emo:"❤️",scen:"Je geeft je mama een grote zachte knuffel.",img:6},
+   {emotie:"kalm",emo:"😌",scen:"Je zit stil tussen de bladeren met je ogen bijna dicht.",img:7}];
+  var goed=rnd(0,GEV.length-1);
+  window._huidigItem="gevoel-"+GEV[goed].emotie;
+  if(vraagNr%2===0){
+   v.innerHTML="<b>"+GEV[goed].scen+"</b><div class='plaatjes'>🤔</div><div class='sub2'>Hoe voel je je dan?</div>";
+   zeg(GEV[goed].scen+" Hoe voel je je dan?");
+  }else{
+   v.innerHTML='<img src="gevoelens/p'+GEV[goed].img+'.jpg" style="width:170px;border-radius:14px;margin:6px auto;display:block">'+"<div class='sub2'>Welk gevoel heeft Kiki hier?</div>";
+   zeg("Welk gevoel heeft Kiki hier?");
+  }
+  var pool=GEV.map(function(g,i){return i;}).filter(function(i){return i!==goed;});
+  var opties=shuffle(pool.slice()).slice(0,2).concat([goed]);opties=shuffle(opties);
+  opties.forEach(function(i){
+   var b=document.createElement("button");b.className="optie";b.innerHTML=GEV[i].emo+" "+GEV[i].emotie;
+   b.onclick=function(){check(i===goed,b,{woord:GEV[goed].emotie,uitleg:"Dat gevoel heet "+GEV[goed].emotie+" — Kiki leerde dat in zijn boek!"});};
+   a.appendChild(b);});
  },
  vormen:function(v,a){
   var VORMEN={
