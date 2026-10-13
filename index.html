@@ -967,17 +967,33 @@ var NLVERH=[
   vragen:[["Wat doet de buurt samen?","het park opruimen",["het park opruimen","voetballen","barbecueën"]],["Wat doen ze daarna?","picknicken",["naar huis gaan","picknicken","zwemmen"]]]}];
 function spelPauze(){
  document.getElementById("spel-titel").textContent="📺 Pauze-hoek";
- var VIDS=[["🦓 Ziggy en de Kleurenrace","ziggy-videoboek.mp4"],
-  ["⛵ Sunny's Sailing Adventures","sunny-videoboek.mp4"],
-  ["🦸 Samen Sterk — Sam","sam-videoboek.mp4"],
-  ["🐰 De avonturen van Keesje","keesje-videoboek.mp4"],
-  ["🦊 De Vormen-Safari","vormen-videoboek.mp4"]];
+ var VIDS=[["🦓 Ziggy en de Kleurenrace","ziggy-videoboek.mp4","b"],
+  ["⛵ Sunny's Sailing Adventures","sunny-videoboek.mp4","b"],
+  ["🦸 Samen Sterk — Sam","sam-videoboek.mp4","b"],
+  ["🐰 De avonturen van Keesje","keesje-videoboek.mp4","b"],
+  ["🦊 De Vormen-Safari","vormen-videoboek.mp4","b"],
+  ["🦓 Ziggy — De Magische Kleurenrace","ziggy-kleurenrace","v"],
+  ["🦓 Ziggy en de Dansende Kleuren","ziggy-dansende-kleuren","v"],
+  ["🦓 Ziggy en de Grijze Schaduw","ziggy-grijze-schaduw","v"],
+  ["🐨 Bodhi en de Kleine Koala","bodhi-avontuur","v"],
+  ["🐑 Bram en het Verloren Lammetje","bram-avontuur","v"],
+  ["🦭 Flip en de Zeehondpup","flip-avontuur","v"],
+  ["🐭 Ollie en het Verloren Muisje","ollie-avontuur","v"],
+  ["🐦 Pippa en het Vogelnest","pippa-avontuur","v"],
+  ["🦜 Ravi en de Verdwaalde Papegaai","ravi-avontuur","v"],
+  ["🐣 Sterre en het Kuikentje","sterre-avontuur","v"],
+  ["🐱 Vonk en het Katje in de Boom","vonk-avontuur","v"],
+  ["⛵ Dana en de Verdwaalde Boot","dana-avontuur","v"],
+  ["⛵ Sunny's Zeilboot Avonturen","sunny-avontuur","v"],
+  ["⭐ Sunny en de Reis naar de Sterren","sunny-sterren","v"],
+  ["👨‍🍳 De Kleurrijke Keuken van Chef Kokos","kokos-keuken","v"]];
  var BASE="https://good2better.github.io/g2b-winkel/schoolspelen/assets/";
+ var VBASE="https://good2better.github.io/g2b-winkel/gsbooks/vb/";
  var inh=document.getElementById("spel-inhoud");
- inh.innerHTML='<p class="sub2">Even pauze? Kijk een videoboek — voorgelezen met Nederlandse stem. (heeft internet nodig)</p>'+
+ inh.innerHTML='<p class="sub2">Even pauze? Kijk een videoboek — voorgelezen met Nederlandse stem. — 20 videoboeken! (heeft internet nodig)</p>'+
   '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">'+
   VIDS.map(function(v){return '<div class="card" style="cursor:default"><b>'+v[0]+'</b>'+
-   '<video controls preload="none" src="'+BASE+v[1]+'" style="width:100%;border-radius:12px;margin-top:8px"></video></div>';}).join("")+"</div>";
+   '<video controls preload="none" src="'+(v[2]==="v"?VBASE+v[1]+"/preview.mp4":BASE+v[1])+'" style="width:100%;border-radius:12px;margin-top:8px"></video></div>';}).join("")+"</div>";
  inh.querySelectorAll("video").forEach(function(el){el.addEventListener("error",function(){
   el.outerHTML='<small class="sub2">📵 offline — later kijken</small>';});});
  toon("scherm-spel");
