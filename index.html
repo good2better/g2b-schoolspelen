@@ -886,7 +886,8 @@ function spelKaarten(el){
   ["🎨","Kleuren-jacht","tik alles wat de kleur is",spelKleuren],
   ["🛍️","Sterren-winkel","koop iets leuks voor je held — betaal met ⭐",toonWinkel],
   ["🏆","Mijn badges","verzamel alle prestaties",badgeScherm],
-  ["📖","Verhaal begrijpen","kort verhaaltje + vragen erover",spelLeesbegrip]]
+  ["📖","Verhaal begrijpen","kort verhaaltje + vragen erover",spelLeesbegrip],
+  ["📺","Pauze-hoek","kijk een videoboek op de tv",spelPauze]]
  .forEach(function(sp){
   var c=document.createElement("div");c.className="card";
   c.innerHTML='<span class="ic">'+sp[0]+"</span><b>"+sp[1]+"</b><small>"+sp[2]+"</small>";
@@ -964,6 +965,23 @@ var NLVERH=[
   vragen:[["Wanneer verliest Bas zijn tand?","bij een boterham",["op school","bij een boterham","tijdens het sporten"]],["Waar legt hij zijn tand?","onder zijn kussen",["in de koelkast","onder zijn kussen","op tafel"]]]},
  {tekst:"De hele buurt ruimt samen het park op. Daarna smullen ze van een picknick die iedereen zelf heeft meegenomen.",
   vragen:[["Wat doet de buurt samen?","het park opruimen",["het park opruimen","voetballen","barbecueën"]],["Wat doen ze daarna?","picknicken",["naar huis gaan","picknicken","zwemmen"]]]}];
+function spelPauze(){
+ document.getElementById("spel-titel").textContent="📺 Pauze-hoek";
+ var VIDS=[["🦓 Ziggy en de Kleurenrace","ziggy-videoboek.mp4"],
+  ["⛵ Sunny's Sailing Adventures","sunny-videoboek.mp4"],
+  ["🦸 Samen Sterk — Sam","sam-videoboek.mp4"],
+  ["🐰 De avonturen van Keesje","keesje-videoboek.mp4"],
+  ["🦊 De Vormen-Safari","vormen-videoboek.mp4"]];
+ var BASE="https://good2better.github.io/g2b-winkel/schoolspelen/assets/";
+ var inh=document.getElementById("spel-inhoud");
+ inh.innerHTML='<p class="sub2">Even pauze? Kijk een videoboek — voorgelezen met Nederlandse stem. (heeft internet nodig)</p>'+
+  '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">'+
+  VIDS.map(function(v){return '<div class="card" style="cursor:default"><b>'+v[0]+'</b>'+
+   '<video controls preload="none" src="'+BASE+v[1]+'" style="width:100%;border-radius:12px;margin-top:8px"></video></div>';}).join("")+"</div>";
+ inh.querySelectorAll("video").forEach(function(el){el.addEventListener("error",function(){
+  el.outerHTML='<small class="sub2">📵 offline — later kijken</small>';});});
+ toon("scherm-spel");
+}
 function spelLeesbegrip(){
  document.getElementById("spel-titel").textContent="📖 Verhaal begrijpen";
  var inh=document.getElementById("spel-inhoud");
