@@ -676,7 +676,28 @@ var BOEKEN=[
    {vraag:"Welk gevoel heeft Kiki als de zon schijnt?",goed:"Blij",opties:["Blij","Boos","Bang"]},
    {vraag:"Wat helpt als je boos bent?",goed:"Diep ademhalen",opties:["Diep ademhalen","Hard schreeuwen","Wegrennen"]},
    {vraag:"Welk gevoel voelt als een warm zonnetje in je borst?",goed:"Trots",opties:["Trots","Verlegen","Verdrietig"]},
-   {vraag:"Wat is het allerliefste gevoel volgens Kiki?",goed:"Liefde",opties:["Liefde","Boosheid","Bang zijn"]}]}
+   {vraag:"Wat is het allerliefste gevoel volgens Kiki?",goed:"Liefde",opties:["Liefde","Boosheid","Bang zijn"]}]},
+ {id:"weekdagen",naam:"De Zeven Dagen van Milo",ic:"🐭",
+  woorden:["maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag","zondag","week","vandaag","morgen","gisteren","kalender"],
+  zinnen:[{zin:"Na maandag komt ___.",goed:"dinsdag",opties:["dinsdag","donderdag","zaterdag"]},
+   {zin:"Op ___ gaat Milo weer naar school.",goed:"maandag",opties:["maandag","zaterdag","zondag"]},
+   {zin:"Zwemles heeft Milo op ___.",goed:"woensdag",opties:["woensdag","vrijdag","dinsdag"]},
+   {zin:"De dag na vrijdag is ___.",goed:"zaterdag",opties:["zaterdag","woensdag","zondag"]},
+   {zin:"Op zondag eet Milo ___.",goed:"pannenkoeken",opties:["pannenkoeken","spruitjes","gras"]}],
+  verhaal:[
+   ["Dit is Milo de muis. Milo heeft net een eigen kalender gekregen! Er zijn zeven dagen in een week — en elke dag is een avontuur. Kom mee!"],
+   ["MAANDAG — De week begint! Milo pakt zijn rugzak en gaat weer naar school. Maandag is de eerste dag: nieuwe plannen, nieuwe dingen leren."],
+   ["DINSDAG — Sportdag! Milo trapt de bal naar het doel. Op dinsdag beweegt de hele klas — springen, rennen, scoren!"],
+   ["WOENSDAG — Zwemles! Milo drijft in zijn roze zwemband. Woensdag is het midden van de week — bijna op de helft!"],
+   ["DONDERDAG — Muziekdag! Milo trommelt een ritme op zijn grote drum: boem, boem, ratata-boem!"],
+   ["VRIJDAG — Bijna weekend! Milo krijgt een ijsje als traktatie. Vrijdag is de laatste schooldag van de week."],
+   ["ZATERDAG — Speeldag! Milo schommelt zo hoog hij kan in het park. Op zaterdag hoeft niemand naar school."],
+   ["ZONDAG — Rustdag. Milo eet pannenkoeken met zijn familie. Daarna begint de week weer opnieuw: maandag, dinsdag, woensdag..."]],
+  vragen:[
+   {vraag:"Welke dag komt na woensdag?",goed:"Donderdag",opties:["Donderdag","Zaterdag","Maandag"]},
+   {vraag:"Wat doet Milo op woensdag?",goed:"Zwemles",opties:["Zwemles","Voetballen","Pannenkoeken eten"]},
+   {vraag:"Op welke dag eet Milo pannenkoeken?",goed:"Zondag",opties:["Zondag","Maandag","Vrijdag"]},
+   {vraag:"Hoeveel dagen heeft een week?",goed:"Zeven",opties:["Zeven","Vijf","Tien"]}]}
 ];
 var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",zon:"☀️",ster:"⭐",
  bal:"⚽",bloem:"🌸",boom:"🌳",huis:"🏠",melk:"🥛",boot:"⛵",schaap:"🐑",vlinder:"🦋",
@@ -689,7 +710,9 @@ var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",z
  gevoel:"💗",blij:"😊",boos:"😠",bang:"😨",trots:"🌟",verlegen:"🙈",liefde:"❤️",kalm:"😌",glimlach:"😊",knuffel:"🤗",koala:"🐨",ademhalen:"🌬️",
  sam:"👦",pesten:"😢",moedig:"💪",verdrietig:"😢",helpen:"🤝",samen:"🤝",sorry:"🙏",lachen:"😄",luisteren:"👂",sterk:"💪",plein:"🏫",
  sneeuw:"❄️",schaatsen:"⛸️",handschoen:"🧤",muts:"🧢",kerstboom:"🎄",cadeau:"🎁",aardbei:"🍓",zwemmen:"🏊",ijsje:"🍦",
- koffer:"🧳",strand:"🏖️",boek:"📖",pen:"🖊️",rugzak:"🎒",klas:"🏫",juf:"👩‍🏫",blad:"🍂",regen:"🌧️",paddestoel:"🍄",lam:"🐑",vogel:"🐦",kaars:"🕯️"};
+ koffer:"🧳",strand:"🏖️",boek:"📖",pen:"🖊️",rugzak:"🎒",klas:"🏫",juf:"👩‍🏫",blad:"🍂",regen:"🌧️",paddestoel:"🍄",lam:"🐑",vogel:"🐦",kaars:"🕯️",
+ maandag:"📅",dinsdag:"📅",woensdag:"📅",donderdag:"📅",vrijdag:"📅",zaterdag:"📅",zondag:"📅",week:"📅",vandaag:"📆",morgen:"📆",gisteren:"📆",kalender:"📅",
+ trommel:"🥁",schommel:"🛝",pannenkoeken:"🥞",zwemband:"🛟",milo:"🐭"};
 
 // ====== NAVIGATIE
 var huidigVak="",huidigNiv="",vraagNr=0,goedTeller=0,goedRij=0,RONDE=8,rondeMax=RONDE;
@@ -734,7 +757,7 @@ function toonBoek(bk){
   c.onclick=function(){startOefening({id:"boek:"+bk.id,naam:bk.naam},vv[0]);};
   g.appendChild(c);});
  el.appendChild(g);
- if(bk.id!=="vormen"&&bk.id!=="gevoelens"){var promo=document.createElement("div");promo.className="card";
+ if(bk.id!=="vormen"&&bk.id!=="gevoelens"&&bk.id!=="weekdagen"){var promo=document.createElement("div");promo.className="card";
  promo.style.cssText="max-width:460px;margin:14px auto 0;border:2px dashed var(--goud)";
  promo.innerHTML='<span class="ic">📚</span><b>Koop het echte boek</b><small>"'+bk.naam+'" als echt prentenboek in de G2B-winkel</small><br>'+
   '<a class="pill" href="https://good2better.github.io/g2b-winkel/gsbooks/#winkel" target="_blank" rel="noopener">🛒 naar de winkel</a>';
