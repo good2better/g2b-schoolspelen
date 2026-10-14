@@ -713,7 +713,31 @@ var BOEKEN=[
    {vraag:"Welke dag komt na woensdag?",goed:"Donderdag",opties:["Donderdag","Zaterdag","Maandag"]},
    {vraag:"Wat doet Milo op woensdag?",goed:"Zwemles",opties:["Zwemles","Voetballen","Pannenkoeken eten"]},
    {vraag:"Op welke dag eet Milo pannenkoeken?",goed:"Zondag",opties:["Zondag","Maandag","Vrijdag"]},
-   {vraag:"Hoeveel dagen heeft een week?",goed:"Zeven",opties:["Zeven","Vijf","Tien"]}]}
+   {vraag:"Hoeveel dagen heeft een week?",goed:"Zeven",opties:["Zeven","Vijf","Tien"]}]},
+ {id:"tellen",naam:"Tellen met Tig",ic:"🐯",
+  woorden:["tellen","tijger","een","twee","drie","vier","vijf","zes","zeven","acht","negen","tien"],
+  zinnen:[{zin:"Tig telt ___ zon aan de hemel.",goed:"één",opties:["één","twee","drie"]},
+   {zin:"Er zwemmen ___ visjes in de vijver.",goed:"drie",opties:["drie","vijf","zeven"]},
+   {zin:"Aan de boom hangen ___ appels.",goed:"vijf",opties:["vijf","tien","twee"]},
+   {zin:"Op de taart staan ___ kaarsjes.",goed:"negen",opties:["negen","acht","tien"]},
+   {zin:"Na negen komt het getal ___.",goed:"tien",opties:["tien","acht","elf"]}],
+  verhaal:[
+   ["Dit is Tig de tijger. Tig houdt van tellen! Vandaag telt hij alles wat hij ziet — van één tot tien. Tel je mee?"],
+   ["ÉÉN zon schijnt aan de hemel. 1 — de zon lacht naar Tig!"],
+   ["TWEE ballen stuiteren over het gras. 1, 2 — Tig speelt er lekker mee!"],
+   ["DRIE visjes zwemmen in de vijver. 1, 2, 3 — rondjes zwemmen ze!"],
+   ["VIER bloemen kleuren de tuin. 1, 2, 3, 4 — rood, geel, roze en blauw!"],
+   ["VIJF appels hangen aan de boom. 1, 2, 3, 4, 5 — zo lekker knapperig!"],
+   ["ZES ballonnen zweven in de lucht. 1, 2, 3, 4, 5, 6 — wat een feest!"],
+   ["ZEVEN sterren fonkelen in de nacht. 1, 2, 3, 4, 5, 6, 7 — welterusten, Tig!"],
+   ["ACHT eendjes dobberen in het water. 1, 2, 3, 4, 5, 6, 7, 8 — kwak, kwak, kwak!"],
+   ["NEGEN kaarsjes staan op de taart. 1, 2, 3, 4, 5, 6, 7, 8, 9 — blaas ze maar uit!"],
+   ["TIEN vlinders dansen door de lucht. 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 — Tig heeft alles geteld. En jij? Jij kan het ook!"]],
+  vragen:[
+   {vraag:"Wie houdt van tellen?",goed:"Tig de tijger",opties:["Tig de tijger","Kiki de koala","Milo de muis"]},
+   {vraag:"Hoeveel ballonnen zweven er bij het feest?",goed:"Zes",opties:["Zes","Vier","Tien"]},
+   {vraag:"Hoeveel eendjes kwaken in het water?",goed:"Acht",opties:["Acht","Vijf","Drie"]},
+   {vraag:"Wat telt Tig als allerlaatste?",goed:"Tien vlinders",opties:["Tien vlinders","Zeven sterren","Eén zon"]}]}
 ];
 var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",zon:"☀️",ster:"⭐",
  bal:"⚽",bloem:"🌸",boom:"🌳",huis:"🏠",melk:"🥛",boot:"⛵",schaap:"🐑",vlinder:"🦋",
@@ -728,7 +752,9 @@ var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",z
  sneeuw:"❄️",schaatsen:"⛸️",handschoen:"🧤",muts:"🧢",kerstboom:"🎄",cadeau:"🎁",aardbei:"🍓",zwemmen:"🏊",ijsje:"🍦",
  koffer:"🧳",strand:"🏖️",boek:"📖",pen:"🖊️",rugzak:"🎒",klas:"🏫",juf:"👩‍🏫",blad:"🍂",regen:"🌧️",paddestoel:"🍄",lam:"🐑",vogel:"🐦",kaars:"🕯️",
  maandag:"📅",dinsdag:"📅",woensdag:"📅",donderdag:"📅",vrijdag:"📅",zaterdag:"📅",zondag:"📅",week:"📅",vandaag:"📆",morgen:"📆",gisteren:"📆",kalender:"📅",
- trommel:"🥁",schommel:"🛝",pannenkoeken:"🥞",zwemband:"🛟",milo:"🐭"};
+ trommel:"🥁",schommel:"🛝",pannenkoeken:"🥞",zwemband:"🛟",milo:"🐭",
+ tellen:"🔢",tijger:"🐯",een:"1️⃣",twee:"2️⃣",drie:"3️⃣",vier:"4️⃣",vijf:"5️⃣",zes:"6️⃣",zeven:"7️⃣",acht:"8️⃣",negen:"9️⃣",tien:"🔟",
+ ballon:"🎈",eendje:"🦆",kaarsje:"🕯️"};
 
 // ====== NAVIGATIE
 var huidigVak="",huidigNiv="",vraagNr=0,goedTeller=0,goedRij=0,RONDE=8,rondeMax=RONDE;
@@ -773,7 +799,7 @@ function toonBoek(bk){
   c.onclick=function(){startOefening({id:"boek:"+bk.id,naam:bk.naam},vv[0]);};
   g.appendChild(c);});
  el.appendChild(g);
- if(bk.id!=="vormen"&&bk.id!=="gevoelens"&&bk.id!=="weekdagen"){var promo=document.createElement("div");promo.className="card";
+ if(bk.id!=="vormen"&&bk.id!=="gevoelens"&&bk.id!=="weekdagen"&&bk.id!=="tellen"){var promo=document.createElement("div");promo.className="card";
  promo.style.cssText="max-width:460px;margin:14px auto 0;border:2px dashed var(--goud)";
  promo.innerHTML='<span class="ic">📚</span><b>Koop het echte boek</b><small>"'+bk.naam+'" als echt prentenboek in de G2B-winkel</small><br>'+
   '<a class="pill" href="https://good2better.github.io/g2b-winkel/gsbooks/#winkel" target="_blank" rel="noopener">🛒 naar de winkel</a>';
