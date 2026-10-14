@@ -786,7 +786,32 @@ var BOEKEN=[
    {vraag:"Hoe heet de uil die je de letters leert?",goed:"Oli",opties:["Oli","Tig","Kamiel"]},
    {vraag:"Hoeveel letters heeft het alfabet?",goed:"26",opties:["26","10","100"]},
    {vraag:"Welke letter hoort bij 'fiets'?",goed:"F",opties:["F","V","B"]},
-   {vraag:"Welke letter hoort bij 'zebra'?",goed:"Z",opties:["Z","S","E"]}]}
+   {vraag:"Welke letter hoort bij 'zebra'?",goed:"Z",opties:["Z","S","E"]}]},
+ {id:"verkeer",naam:"Verkeer met Mila",ic:"🚲",
+  woorden:["fiets","helm","verkeerslicht","zebrapad","stoep","fietspad","stop","bord","auto","bel","vestje","straat"],
+  zinnen:[{zin:"Op je hoofd draag je altijd een ___.",goed:"helm",opties:["helm","pet","hoed"]},
+   {zin:"Bij rood licht moet je ___.",goed:"stoppen",opties:["stoppen","rijden","springen"]},
+   {zin:"Oversteken doe je op het ___.",goed:"zebrapad",opties:["zebrapad","gras","water"]},
+   {zin:"Voetgangers lopen op de ___.",goed:"stoep",opties:["stoep","weg","fietspad"]},
+   {zin:"Fietsers rijden ___ van de weg.",goed:"rechts",opties:["rechts","links","in het midden"]},
+   {zin:"Met een wit ___ ben je goed zichtbaar in het donker.",goed:"vestje",opties:["vestje","sokje","handschoen"]}],
+  verhaal:[
+   ["Dit is Mila. Mila gaat vandaag op de fiets naar school. Onderweg leert ze jou de regels van het verkeer. Fiets je mee?"],
+   ["Eerst: je helm op! Altijd je helm op de fiets — die beschermt je hoofd als je valt."],
+   ["Kijk, een verkeerslicht! Rood betekent: stoppen. Oranje betekent: wachten. En bij groen mag je gaan!"],
+   ["Daar is een zebrapad — witte strepen op de weg, net als bij een zebra! Hier mogen voetgangers oversteken."],
+   ["Maar eerst: kijken! Links kijken, rechts kijken, en nog een keer links. Komt er niets aan? Dan mag je oversteken."],
+   ["Voetgangers lopen op de stoep — dat stukje naast de weg. Op de weg zelf horen alleen auto's en fietsen."],
+   ["Mila fietst op het fietspad, aan de rechterkant van de weg. Zo kan iedereen haar zien."],
+   ["Mila gaat linksaf! Ze steekt haar linkerarm uit — zo weten de auto's waar ze heen wil."],
+   ["Een stopbord! Dan moet je ALTIJD helemaal stoppen, ook als er geen auto's zijn."],
+   ["In het donker draagt Mila een wit vestje, en ze heeft een bel en een lampje — dan ziet en hoort iedereen haar."],
+   ["En daar is school! 'Jij kent nu de weg', lacht Mila. 'Verkeer is makkelijk als je goed kijkt en de regels kent!'"]],
+  vragen:[
+   {vraag:"Wat draagt Mila op haar hoofd?",goed:"Een helm",opties:["Een helm","Een pet","Een muts"]},
+   {vraag:"Wat betekent rood licht?",goed:"Stoppen",opties:["Stoppen","Gas geven","Slapen"]},
+   {vraag:"Waar steek je over?",goed:"Op het zebrapad",opties:["Op het zebrapad","Overal waar je wilt","Tussen geparkeerde auto's"]},
+   {vraag:"Hoe laat je zien dat je linksaf gaat?",goed:"Je arm uitsteken",opties:["Je arm uitsteken","Hard roepen","Je ogen dichtdoen"]}]}
 ];
 var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",zon:"☀️",ster:"⭐",
  bal:"⚽",bloem:"🌸",boom:"🌳",huis:"🏠",melk:"🥛",boot:"⛵",schaap:"🐑",vlinder:"🦋",
@@ -805,7 +830,8 @@ var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",z
  tellen:"🔢",tijger:"🐯",een:"1️⃣",twee:"2️⃣",drie:"3️⃣",vier:"4️⃣",vijf:"5️⃣",zes:"6️⃣",zeven:"7️⃣",acht:"8️⃣",negen:"9️⃣",tien:"🔟",
  ballon:"🎈",eendje:"🦆",kaarsje:"🕯️",
  kleur:"🎨",kameleon:"🦎",kamiel:"🦎",winkel:"🏪",rood:"🔴",geel:"🟡",blauw:"🔵",groen:"🟢",oranje:"🟠",paars:"🟣",bruin:"🟤",roze:"🩷",wit:"⚪",zwart:"⚫",mengen:"🥣",
- alfabet:"🔤",letter:"🔡",appel:"🍎",banaan:"🍌",fiets:"🚲",ijsje:"🍦",regenboog:"🌈",clown:"🤡",druif:"🍇",ei:"🥚",geit:"🐐",jurk:"👗",leeuw:"🦁",neus:"👃",olifant:"🐘",paraplu:"☂️",quiz:"❓",slang:"🐍",uil:"🦉",oli:"🦉",wolk:"☁️",xylofoon:"🎵",yoga:"🧘"};
+ alfabet:"🔤",letter:"🔡",appel:"🍎",banaan:"🍌",fiets:"🚲",ijsje:"🍦",regenboog:"🌈",clown:"🤡",druif:"🍇",ei:"🥚",geit:"🐐",jurk:"👗",leeuw:"🦁",neus:"👃",olifant:"🐘",paraplu:"☂️",quiz:"❓",slang:"🐍",uil:"🦉",oli:"🦉",wolk:"☁️",xylofoon:"🎵",yoga:"🧘",
+ helm:"⛑️",verkeerslicht:"🚦",zebrapad:"🚸",stoep:"🚶",fietspad:"🚲",stop:"🛑",bord:"🪧",auto:"🚗",bel:"🔔",vestje:"🦺",straat:"🛣️",mila:"🚴‍♀️",verkeer:"🚦"};
 
 // ====== NAVIGATIE
 var huidigVak="",huidigNiv="",vraagNr=0,goedTeller=0,goedRij=0,RONDE=8,rondeMax=RONDE;
@@ -850,7 +876,8 @@ function toonBoek(bk){
   c.onclick=function(){startOefening({id:"boek:"+bk.id,naam:bk.naam},vv[0]);};
   g.appendChild(c);});
  el.appendChild(g);
- if(bk.id!=="vormen"&&bk.id!=="gevoelens"&&bk.id!=="weekdagen"&&bk.id!=="tellen"&&bk.id!=="kleuren"&&bk.id!=="letters"){var promo=document.createElement("div");promo.className="card";
+ var eigen=["vormen","gevoelens","weekdagen","tellen","kleuren","letters","verkeer","seizoenen","boerderij","klas","topo","koreaans"];
+ if(eigen.indexOf(bk.id)===-1){var promo=document.createElement("div");promo.className="card";
  promo.style.cssText="max-width:460px;margin:14px auto 0;border:2px dashed var(--goud)";
  promo.innerHTML='<span class="ic">📚</span><b>Koop het echte boek</b><small>"'+bk.naam+'" als echt prentenboek in de G2B-winkel</small><br>'+
   '<a class="pill" href="https://good2better.github.io/g2b-winkel/gsbooks/#winkel" target="_blank" rel="noopener">🛒 naar de winkel</a>';
