@@ -836,7 +836,32 @@ var BOEKEN=[
    {vraag:"Hoeveel seizoenen heeft een jaar?",goed:"Vier",opties:["Vier","Drie","Vijf"]},
    {vraag:"In welk seizoen vallen de bladeren?",goed:"Herfst",opties:["Herfst","Lente","Zomer"]},
    {vraag:"Wanneer worden lammetjes geboren?",goed:"In de lente",opties:["In de lente","In de winter","In de herfst"]},
-   {vraag:"Wat komt er na de winter?",goed:"De lente",opties:["De lente","De zomer","Nog een winter"]}]}
+   {vraag:"Wat komt er na de winter?",goed:"De lente",opties:["De lente","De zomer","Nog een winter"]}]},
+ {id:"boerderij",naam:"Boerderij van Boer Bob",ic:"🚜",
+  woorden:["boerderij","koe","varken","kip","paard","schaap","geit","eend","haan","hond","boer","melk"],
+  zinnen:[{zin:"De ___ zegt boeee en geeft melk.",goed:"koe",opties:["koe","kip","geit"]},
+   {zin:"Het ___ rolt graag in de modder.",goed:"varken",opties:["varken","paard","schaap"]},
+   {zin:"De kip legt een ___.",goed:"ei",opties:["ei","bal","steen"]},
+   {zin:"De ___ maakt iedereen wakker: kukelekuu!",goed:"haan",opties:["haan","eend","poes"]},
+   {zin:"Van de ___ komt de wol voor je trui.",goed:"schaap",opties:["schaap","koe","varken"]},
+   {zin:"De ___ zwemt kwak-kwak in de sloot.",goed:"eend",opties:["eend","geit","hond"]}],
+  verhaal:[
+   ["Goeiemorgen! Welkom op de boerderij van Boer Bob. De zon komt op en alle dieren zijn wakker. Kom mee de stal in!"],
+   ["Hier staat de KOE. Ze zegt boeee! Van de koe komt de melk voor je cornflakes."],
+   ["Daar is het VARKEN — knor knor! Hij rolt het liefste hele dag in de modder. Zo blijft hij lekker koel."],
+   ["De KIP loopt te tokken in de tuin. Elke dag legt ze een ei — lekker voor op je boterham!"],
+   ["In de wei staat het PAARD. Hinnik hinnik! Met zijn lange benen kan hij superhard rennen."],
+   ["Het SCHAAP zegt bèèè. Zijn vacht is wol — daar worden truien en dekens van gemaakt."],
+   ["Kijk omhoog: de GEIT staat op het dak van de schuur! Geiten klimmen overal op. Meeeh!"],
+   ["Bij de sloot zwemt de EEND — kwak kwak! Met zijn zwemvoeten peddelt hij door het water."],
+   ["En de HAAN? Die stond vanochtend al op de hoge stok: KUKELEKUU! Zo maakt hij de hele boerderij wakker."],
+   ["De BOERDERIJHOND en de POES passen op: de hond bewaakt, de poes vangt muizen. Beste vrienden!"],
+   ["De dag is om. 'Bedankt voor je bezoek!', zwaait Boer Bob. Nu ken jij alle boerderijdieren!"]],
+  vragen:[
+   {vraag:"Welk dier geeft melk?",goed:"De koe",opties:["De koe","De kip","Het paard"]},
+   {vraag:"Welk dier rolt in de modder?",goed:"Het varken",opties:["Het varken","Het schaap","De eend"]},
+   {vraag:"Wie maakt de boerderij wakker?",goed:"De haan",opties:["De haan","De hond","De geit"]},
+   {vraag:"Waar zwemt de eend?",goed:"In de sloot",opties:["In de sloot","In de stal","In de wei"]}]}
 ];
 var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",zon:"☀️",ster:"⭐",
  bal:"⚽",bloem:"🌸",boom:"🌳",huis:"🏠",melk:"🥛",boot:"⛵",schaap:"🐑",vlinder:"🦋",
@@ -857,7 +882,8 @@ var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",z
  kleur:"🎨",kameleon:"🦎",kamiel:"🦎",winkel:"🏪",rood:"🔴",geel:"🟡",blauw:"🔵",groen:"🟢",oranje:"🟠",paars:"🟣",bruin:"🟤",roze:"🩷",wit:"⚪",zwart:"⚫",mengen:"🥣",
  alfabet:"🔤",letter:"🔡",appel:"🍎",banaan:"🍌",fiets:"🚲",ijsje:"🍦",regenboog:"🌈",clown:"🤡",druif:"🍇",ei:"🥚",geit:"🐐",jurk:"👗",leeuw:"🦁",neus:"👃",olifant:"🐘",paraplu:"☂️",quiz:"❓",slang:"🐍",uil:"🦉",oli:"🦉",wolk:"☁️",xylofoon:"🎵",yoga:"🧘",
  helm:"⛑️",verkeerslicht:"🚦",zebrapad:"🚸",stoep:"🚶",fietspad:"🚲",stop:"🛑",bord:"🪧",auto:"🚗",bel:"🔔",vestje:"🦺",straat:"🛣️",mila:"🚴‍♀️",verkeer:"🚦",
- seizoen:"🗓️",lente:"🌷",zomer:"☀️",herfst:"🍂",winter:"⛄",sneeuw:"❄️",lammetje:"🐑",schaatsen:"⛸️",zonnebloem:"🌻"};
+ seizoen:"🗓️",lente:"🌷",zomer:"☀️",herfst:"🍂",winter:"⛄",sneeuw:"❄️",lammetje:"🐑",schaatsen:"⛸️",zonnebloem:"🌻",
+ boerderij:"🚜",koe:"🐄",varken:"🐷",paard:"🐴",eend:"🦆",haan:"🐓",boer:"🧑‍🌾"};
 
 // ====== NAVIGATIE
 var huidigVak="",huidigNiv="",vraagNr=0,goedTeller=0,goedRij=0,RONDE=8,rondeMax=RONDE;
