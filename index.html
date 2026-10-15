@@ -1098,6 +1098,7 @@ function bouwHome(){
   });
   el.appendChild(g);
  });
+ dagopKaart(el);
  avontuurKaart(el);
  heldKaart(el);
  slimmeKaarten(el);
@@ -1110,6 +1111,47 @@ function bouwHome(){
  maatjeUpdate();applyThema();
  var gkk=document.getElementById("geluid-knop");if(gkk)gkk.textContent=geluidAan()?"🔊":"🔇";
  bewaar();
+}
+// ====== DAGOPDRACHT — elke dag 3 kleine missies, alle 3 = +10 bonus-sterren
+function dagopTaken(){
+ var d=Math.floor(Date.now()/864e5);
+ var vakken=["tellen","kleuren","letters","vormen","gevoelens","klanken"];
+ var vk=vakken[d%vakken.length],v=VAKKEN[vk];
+ return [
+  {id:"lees",ic:"📖",t:"Lees een pagina uit een boek"},
+  {id:"ronde",ic:v.ic,t:"Speel een ronde "+v.naam,vak:vk},
+  {id:"sterren",ic:"⭐",t:"Verdien 5 sterren"}];
+}
+function dagop(){
+ var key=vandaag();
+ if(!staat.dagop||staat.dagop.dag!==key){staat.dagop={dag:key,gedaan:{},ster0:staat.sterren,klaar:false};}
+ return staat.dagop;
+}
+function dagopMark(id){
+ var dp=dagop();if(dp.klaar||dp.gedaan[id])return;
+ dp.gedaan[id]=true;
+ if(Object.keys(dp.gedaan).length>=3){
+  dp.klaar=true;staat.sterren+=10;
+  feestConfetti(60);speelJubel();
+  zeg("Dagopdracht af"+(wie()?", "+wie():"")+"! Je krijgt er tien sterren bij!");
+ }else{zeg("Goed zo — dagopdracht gehaald!");}
+ bewaar();
+}
+function dagopKaart(el){
+ var dp=dagop(),taken=dagopTaken(),klaar=0;
+ if(!dp.gedaan.sterren&&staat.sterren-dp.ster0>=5)dagopMark("sterren");
+ taken.forEach(function(t){if(dp.gedaan[t.id])klaar++;});
+ var h=document.createElement("div");h.className="niveau";
+ h.innerHTML='🎯 Dagopdracht'+(dp.klaar?'<span class="tag">af! +10⭐</span>':'<span class="tag">'+klaar+" van "+taken.length+"</span>");
+ el.appendChild(h);
+ var g=document.createElement("div");g.className="grid";
+ taken.forEach(function(t){
+  var ok=dp.gedaan[t.id],c=document.createElement("div");c.className="card";
+  c.innerHTML='<span class="ic">'+t.ic+"</span><b>"+t.t+"</b><small>"+(ok?"✔️ gehaald":"nog te doen")+"</small>";
+  if(ok)c.style.cssText="opacity:.55;border-color:var(--groen)";
+  g.appendChild(c);
+ });
+ el.appendChild(g);
 }
 // ====== AVONTUUR-KAART: jouw held reist door het Schoolspelen-land
 function avontuurKaart(el){
@@ -1524,6 +1566,8 @@ function weekDagen(){var d=new Date(),ma=new Date(d);ma.setDate(d.getDate()-((d.
  var s=ma.toISOString().slice(0,10);return Object.keys(staat.dagen||{}).filter(function(k){return k>=s;}).length;}
 function eindRonde(){
  var pct=Math.round(goedTeller/rondeMax*100);
+ var _tv=dagopTaken()[1].vak;
+ if(huidigVak===_tv&&pct>=50)dagopMark("ronde");
  var ic=pct>=80?"🏆":pct>=50?"🏅":"💪";
  document.getElementById("medal-ic").textContent=ic;
  document.getElementById("klaar-titel").textContent=
@@ -2347,6 +2391,7 @@ function verhaalLezer(bk){
    '<div class="acties"><button class="pill" id="vh-hoor">🔊 lees voor</button> '+
    (pag>0?'<button class="pill grijs" id="vh-vorige">◀ vorige</button> ':"")+
    '<button class="pill" id="vh-volgende">'+(pag===bk.verhaal.length-1?"⭐ naar de vragen":"volgende ▶")+"</button></div>";
+  dagopMark("lees");
   document.getElementById("vh-hoor").onclick=function(){staat.stijl.luister++;bewaar();zegBoek(bk,pag);};
   document.getElementById("vh-volgende").onclick=function(){pag++;pagina();};
   var vp=document.getElementById("vh-vorige");if(vp)vp.onclick=function(){pag--;pagina();};
