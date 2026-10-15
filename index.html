@@ -38,6 +38,7 @@ h2{color:var(--zeed);margin-bottom:6px}
 .card .balkje{height:6px;background:var(--tint);border-radius:4px;margin-top:8px;overflow:hidden}
 .card .balkje i{display:block;height:100%;background:var(--groen)}
 .niveau{margin:18px 0 8px;font-weight:700;color:var(--zeed)}
+.boek-clip{width:100%;max-width:430px;border-radius:14px;display:block;margin:4px auto 12px;box-shadow:0 4px 14px rgba(0,0,0,.15);background:#cdeffd}
 .niveau .tag{font-size:.7rem;background:var(--tint);color:var(--zeed);border-radius:8px;padding:2px 8px;margin-left:6px;vertical-align:middle}
 .vraag{background:#fff;border-radius:16px;padding:22px;box-shadow:0 4px 18px rgba(8,78,124,.10);text-align:center;margin-top:6px}
 .vraag .big{font-size:2.6rem;font-weight:700;color:var(--zeed);margin:10px 0}
@@ -1029,10 +1030,16 @@ function boekKaarten(el){
   g.appendChild(c);});
  el.appendChild(g);}
 var huidigBoek=null,laatsteBoek=null;
+// boek-helden met een geanimeerde Wan-clip (clips/<id>.mp4)
+var CLIPS={boerderij:1,dierenhelden:1,gevoelens:1,keesje:1,klas:1,kleuren:1,koreaans:1,letters:1,sam:1,seizoenen:1,sunny:1,tellen:1,topo:1,verkeer:1,vormen:1,weekdagen:1,ziggy:1};
 function toonBoek(bk){
  huidigBoek=bk;var el=document.getElementById("niveau-lijst");el.innerHTML="";
  var h=document.createElement("div");h.className="niveau";
  h.innerHTML=bk.ic+" "+bk.naam+'<span class="tag">kies een oefening</span>';el.appendChild(h);
+ if(CLIPS[bk.id]){
+  var cv=document.createElement("video");cv.className="boek-clip";
+  cv.src="clips/"+bk.id+".mp4";cv.autoplay=true;cv.muted=true;cv.loop=true;cv.setAttribute("playsinline","");cv.setAttribute("muted","");
+  el.appendChild(cv);}
  var g=document.createElement("div");g.className="grid";
  if(bk.verhaal){
   var vc=document.createElement("div");vc.className="card";
