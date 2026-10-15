@@ -1354,7 +1354,7 @@ function spelPauze(){
  var BASE="https://good2better.github.io/g2b-winkel/schoolspelen/assets/";
  var VBASE="https://good2better.github.io/g2b-winkel/gsbooks/vb/";
  var inh=document.getElementById("spel-inhoud");
- inh.innerHTML='<p class="sub2">Even pauze? Kijk een videoboek — voorgelezen met Nederlandse stem. — 20 videoboeken! (heeft internet nodig)</p>'+
+ inh.innerHTML='<p class="sub2">Even pauze? Kijk een videoboek — voorgelezen met Nederlandse stem. — 32 videoboeken! (heeft internet nodig)</p>'+
   '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">'+
   VIDS.map(function(v){return '<div class="card" style="cursor:default"><b>'+v[0]+'</b>'+
    '<video controls preload="none" src="'+(v[2]==="v"?VBASE+v[1]+"/preview.mp4":BASE+v[1])+'" style="width:100%;border-radius:12px;margin-top:8px"></video></div>';}).join("")+"</div>";
