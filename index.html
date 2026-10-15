@@ -51,6 +51,9 @@ h2{color:var(--zeed);margin-bottom:6px}
  .wb-rij{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:18px}
  .wb-lijntje{flex:1;border-bottom:2px dashed #999;height:26px}
  .wb-som{font-size:20px;margin:14px 0}
+ .wb-boekpagina{page-break-after:always;text-align:center;padding-top:8px}
+ .wb-boekpagina img{max-width:100%;max-height:14cm;border-radius:8px}
+ .wb-boekpagina .zin{font-size:17px;margin-top:8px;line-height:1.5}
  .wb-foot{margin-top:18px;font-size:11px;color:#789;text-align:center}
 }
 .verhaal-tekst{max-width:560px;margin:10px auto;font-size:1.2rem;line-height:1.6}
@@ -1023,7 +1026,11 @@ function toonBoek(bk){
   var vc=document.createElement("div");vc.className="card";
   vc.innerHTML='<span class="ic">📖</span><b>Lees het verhaal</b><small>met plaatjes, stem en vragen</small>';
   vc.onclick=function(){verhaalLezer(bk);};
-  g.appendChild(vc);}
+  g.appendChild(vc);
+  var pc=document.createElement("div");pc.className="card";
+  pc.innerHTML='<span class="ic">🖨️</span><b>Print het boek</b><small>jouw eigen A4-prentenboek</small>';
+  pc.onclick=function(){printBoek(bk);};
+  g.appendChild(pc);}
  [["boekWoord","Welk boekwoord?"],["boekSpel","Typ het boekwoord"],["boekZin","Boekzin aanvullen"],["boekPuz","Boekwoord-puzzel"]]
  .forEach(function(vv){
   var v=VAKKEN[vv[0]],c=document.createElement("div");c.className="card";
@@ -2213,6 +2220,12 @@ function wbToon(titel,html){
   '<div class="wb-naam">Naam: ______________________ &nbsp; Datum: ____________</div>'+html+
   '<div class="wb-foot">Gemaakt met G2B Schoolspelen — good2better.github.io/g2b-schoolspelen — gratis les-materiaal</div>';
  window.print();
+}
+function printBoek(bk){
+ var paginas=bk.verhaal.map(function(p,i){
+  return '<div class="wb-boekpagina"><img src="'+bk.id+'/p'+i+'.jpg"><div class="zin">'+p[0]+'</div></div>';}).join("");
+ wbToon(bk.ic+" "+bk.naam+" — jouw eigen prentenboek",paginas);
+ zeg("Het hele boek van "+bk.naam+" staat klaar voor de printer — pagina voor pagina!");
 }
 function gatig(woord){
  var t=woord.split(""),n=Math.max(1,Math.floor(t.length/3));
