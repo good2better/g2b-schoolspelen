@@ -4,7 +4,8 @@ name: Android AAB (TWA via Bubblewrap)
 # Secrets nodig (Settings -> Secrets and variables -> Actions):
 #   ANDROID_KEYSTORE_BASE64 - base64 van je upload-keystore (.jks)
 #   ANDROID_KEYSTORE_PASSWORD / ANDROID_KEY_PASSWORD - wachtwoorden
-# Daarna: Actions -> deze workflow -> Run workflow -> download de 'aab' artifact.
+# Daarna: Actions -> deze workflow -> Run workflow -> download artifact 'aab'.
+# Zie store/README.md voor de volledige stappen (en de simpelere PWABuilder-route).
 
 on:
   workflow_dispatch:
@@ -27,26 +28,28 @@ jobs:
       - name: Install Bubblewrap
         run: npm install -g @bubblewrap/cli
 
+      - name: Point Bubblewrap at the runner's JDK + Android SDK
+        run: |
+          mkdir -p "$HOME/.bubblewrap"
+          printf '{"jdkPath":"%s","androidSdkPath":"%s"}\n' "$JAVA_HOME" "${ANDROID_SDK_ROOT:-$ANDROID_HOME}" > "$HOME/.bubblewrap/config.json"
+
       - name: Restore signing keystore
         run: |
           if [ -z "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
-            echo "ANDROID_KEYSTORE_BASE64 secret ontbreekt — zie store/README.md"; exit 1;
+            echo "::error::ANDROID_KEYSTORE_BASE64 secret ontbreekt — zie store/README.md"; exit 1;
           fi
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > store/android-keystore.jks
-
-      - name: Init Android project from twa-manifest
-        run: |
           mkdir -p android-app
-          cd android-app
-          bubblewrap init --manifest ../store/twa-manifest.json --directory . <<EOF
-          Y
-          EOF
-          printf '%s\n%s\n' "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" "${{ secrets.ANDROID_KEY_PASSWORD }}" | bubblewrap update --skipVersionUpgrade || true
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > android-app/android-keystore.jks
+          cp store/twa-manifest.json android-app/twa-manifest.json
+          sed -i 's#store/android-keystore.jks#android-keystore.jks#' android-app/twa-manifest.json
 
-      - name: Build signed AAB
+      - name: Generate Android project + build signed AAB
         run: |
           cd android-app
-          printf '%s\n%s\n' "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" "${{ secrets.ANDROID_KEY_PASSWORD }}" | bubblewrap build
+          printf '%s\n%s\n' "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" "${{ secrets.ANDROID_KEY_PASSWORD }}" \
+            | bubblewrap update --skipVersionUpgrade
+          printf '%s\n%s\n' "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" "${{ secrets.ANDROID_KEY_PASSWORD }}" \
+            | bubblewrap build
 
       - uses: actions/upload-artifact@v4
         with:
