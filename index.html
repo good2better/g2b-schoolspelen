@@ -20,6 +20,8 @@ body.thema-oceaan{background:linear-gradient(180deg,#d8f3ff,#a9dcf7)}
 body.thema-lente{background:linear-gradient(180deg,#ffedf5,#ffd9ea)}
 body.thema-regenboog{background:linear-gradient(180deg,#ffe9f0,#fff7dc,#e6ffe6,#e0f4ff)}
 body.thema-ruimte{background:linear-gradient(180deg,#d9d4f7,#b9aee8)}
+body.thema-winter{background:linear-gradient(180deg,#eef6ff,#d6e9ff)}
+body.thema-herfst{background:linear-gradient(180deg,#fff3e0,#ffd9b3)}
 header{background:linear-gradient(135deg,var(--zeed),var(--zee));color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 header h1{font-size:1.35rem}
 header .sub{opacity:.85;font-size:.85rem}
@@ -360,9 +362,16 @@ var WINKEL=[
  {id:"hond",ic:"🐶",naam:"Puppy",prijs:35,soort:"dier"},{id:"kat",ic:"🐱",naam:"Katje",prijs:35,soort:"dier"},
  {id:"hamster",ic:"🐹",naam:"Hamster",prijs:40,soort:"dier"},{id:"konijn",ic:"🐰",naam:"Konijn",prijs:40,soort:"dier"},
  {id:"papegaai",ic:"🦜",naam:"Papegaai",prijs:55,soort:"dier"},
+ {id:"tijger",ic:"🐯",naam:"Tijger (als Tig)",prijs:45,soort:"dier"},{id:"panda",ic:"🐼",naam:"Panda (als Mina)",prijs:45,soort:"dier"},
+ {id:"uil",ic:"🦉",naam:"Uil (als Oli)",prijs:50,soort:"dier"},{id:"egel",ic:"🦔",naam:"Egel (als Dikkie)",prijs:50,soort:"dier"},
+ {id:"zebra",ic:"🦓",naam:"Zebra (als Ziggy)",prijs:55,soort:"dier"},{id:"vos",ic:"🦊",naam:"Vos (als Vera)",prijs:55,soort:"dier"},
+ {id:"kameleon",ic:"🦎",naam:"Kameleon (als Kamiel)",prijs:60,soort:"dier"},
+ {id:"afstudeer",ic:"🎓",naam:"Af studeerhoed",prijs:70,soort:"kleding"},{id:"sjaal",ic:"🧣",naam:"Sjaal",prijs:15,soort:"kleding"},
+ {id:"vest",ic:"🦺",naam:"Veiligheidsvest",prijs:20,soort:"kleding"},{id:"sport",ic:"🎽",naam:"Sportshirt",prijs:25,soort:"kleding"},
  {id:"oceaan",ic:"🌊",naam:"Oceaan-wereld",prijs:30,soort:"thema"},{id:"lente",ic:"🌸",naam:"Lente-wereld",prijs:30,soort:"thema"},
- {id:"regenboog",ic:"🌈",naam:"Regenboog-wereld",prijs:45,soort:"thema"},{id:"ruimte",ic:"🌌",naam:"Ruimte-wereld",prijs:60,soort:"thema"}];
-var THEMAS=["oceaan","lente","regenboog","ruimte"];
+ {id:"regenboog",ic:"🌈",naam:"Regenboog-wereld",prijs:45,soort:"thema"},{id:"ruimte",ic:"🌌",naam:"Ruimte-wereld",prijs:60,soort:"thema"},
+ {id:"winter",ic:"❄️",naam:"Winter-wereld",prijs:35,soort:"thema"},{id:"herfst",ic:"🍂",naam:"Herfst-wereld",prijs:35,soort:"thema"}];
+var THEMAS=["oceaan","lente","regenboog","ruimte","winter","herfst"];
 function itemVeld(it){return it.soort==="dier"?"huisdier":it.soort==="thema"?"thema":"petje";}
 function itemWaarde(it){return it.soort==="thema"?it.id:it.ic;}
 function applyThema(){
@@ -1667,8 +1676,16 @@ function markeerFout(key,val){
 var makers={
  naSpreken:function(v,a){
   var bk=huidigBoek||BOEKEN[0];
-  var w=bk.woorden[vraagNr%bk.woorden.length];
-  v.innerHTML='<div style="font-size:58px">'+(EMOJI[w]||"🗣️")+'</div><b style="font-size:30px">'+w+'</b><br><small class="sub2">Klik op de microfoon en zeg het woord na!</small>';
+  var lijst=bk.woorden,alts=null;
+  if(bk.id==="koreaans"){
+   lijst=["annyeong (hallo)","kamsahamnida (dank je)","ne (ja)","aniyo (nee)","hana (een)","dul (twee)","gae (hond)","goyangi (kat)","sagwa (appel)","eomma (mama)","chingu (vriend)","sarang (liefde)"];
+   alts={"annyeong (hallo)":["annyeong","annjong","annyoung","anyong"],"kamsahamnida (dank je)":["kamsahamnida","kamsa","kamsamnida","kamsahamida"],"ne (ja)":["ne","nee","net"],"aniyo (nee)":["aniyo","anio","anieo"],"hana (een)":["hana","anna"],"dul (twee)":["dul","dool","tool"],"gae (hond)":["gae","ge"],"goyangi (kat)":["goyangi","koyangi","goyang"],"sagwa (appel)":["sagwa","sagua","sakwa"],"eomma (mama)":["eomma","omma","umma"],"chingu (vriend)":["chingu","tsjingu","cingu"],"sarang (liefde)":["sarang","salang"]};
+  }
+  var item=lijst[vraagNr%lijst.length];
+  var w=item,accept=null;
+  if(alts){accept=alts[item]||[item.split(" ")[0]];}
+  var norm=function(t){return t.toLowerCase().replace(/[^a-z]/g,"");};
+  v.innerHTML='<div style="font-size:58px">'+(EMOJI[w]||bk.ic||"🗣️")+'</div><b style="font-size:30px">'+w+'</b><br><small class="sub2">Klik op de microfoon en zeg het woord na!</small>';
   var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   var b=document.createElement("button");b.className="pill";
   var res=document.createElement("div");res.className="sub2";res.style.margin="8px 0";
@@ -1680,8 +1697,8 @@ var makers={
    b.innerHTML="🎙️ luisteren…";b.disabled=true;
    r.onresult=function(ev){
     var said="";for(var i=0;i<ev.results[0].length;i++)said+=" "+ev.results[0][i].transcript;
-    var s=(" "+said.toLowerCase().replace(/[^a-zà-ÿ ]/g,"")+" ").replace(/\s+/g," ");
-    var ok=s.indexOf(" "+w.toLowerCase()+" ")>-1;
+    var ns=norm(said);
+    var ok=(accept||[w]).some(function(t){return ns.indexOf(norm(t))>-1&&norm(t).length>0;});
     res.innerHTML='Jij zei: <b>"'+said.trim()+'"</b>'+(ok?"":" — bijna! Probeer het nog eens.");
     if(ok)check(true,b,a);
    };
@@ -1694,7 +1711,7 @@ var makers={
   sk.onclick=function(){check(false,sk,a,true);res.innerHTML='Het woord was: <b>'+w+"</b>";setTimeout(volgendeVraag,1400);};
   a.appendChild(sk);
   window._huidigItem=w;
-  zeg("Zeg na: "+w);
+  zeg("Zeg na: "+w.split(" (")[0]);
  },
  tellen:function(v,a){
   var dieren=["🐶","🐱","🐰","🦊","🐘","🐬","🦁"];
