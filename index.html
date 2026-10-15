@@ -1134,20 +1134,21 @@ function dagopMark(id){
   dp.klaar=true;staat.sterren+=10;
   feestConfetti(60);speelJubel();
   zeg("Dagopdracht af"+(wie()?", "+wie():"")+"! Je krijgt er tien sterren bij!");
- }else{zeg("Goed zo — dagopdracht gehaald!");}
+ }else{zeg("Goed zo — dagopdracht gehaald"+(heldNaam()?", "+heldNaam()+" is trots!":"!"));}
  bewaar();
 }
 function dagopKaart(el){
  var dp=dagop(),taken=dagopTaken(),klaar=0;
  if(!dp.gedaan.sterren&&staat.sterren-dp.ster0>=5)dagopMark("sterren");
  taken.forEach(function(t){if(dp.gedaan[t.id])klaar++;});
+ var hn=heldNaam()||"je held";
  var h=document.createElement("div");h.className="niveau";
- h.innerHTML='🎯 Dagopdracht'+(dp.klaar?'<span class="tag">af! +10⭐</span>':'<span class="tag">'+klaar+" van "+taken.length+"</span>");
+ h.innerHTML='🎯 '+heldIc()+' Dagopdracht van '+hn+(dp.klaar?'<span class="tag">af! +10⭐</span>':'<span class="tag">'+klaar+" van "+taken.length+"</span>");
  el.appendChild(h);
  var g=document.createElement("div");g.className="grid";
  taken.forEach(function(t){
   var ok=dp.gedaan[t.id],c=document.createElement("div");c.className="card";
-  c.innerHTML='<span class="ic">'+t.ic+"</span><b>"+t.t+"</b><small>"+(ok?"✔️ gehaald":"nog te doen")+"</small>";
+  c.innerHTML='<span class="ic">'+t.ic+"</span><b>"+t.t+"</b><small>"+(ok?"✔️ gehaald":hn+" vraagt het jou!")+"</small>";
   if(ok)c.style.cssText="opacity:.55;border-color:var(--groen)";
   g.appendChild(c);
  });

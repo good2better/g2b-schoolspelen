@@ -1,4 +1,4 @@
-const CACHE="g2b-schoolspelen-v6";
+const CACHE="g2b-schoolspelen-v7";
 const ASSETS=["./","./index.html","./clips/groei.mp4","./clips/feest.mp4","./clips/ziggy-hop.mp4"];
 ["sam","sunny","ziggy","keesje"].forEach(function(d){
  const n={sam:12,sunny:12,ziggy:9,keesje:6}[d];
