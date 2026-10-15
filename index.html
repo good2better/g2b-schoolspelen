@@ -235,12 +235,12 @@ if("serviceWorker" in navigator){
 <script>
 // ====== NIVEAU-LADDER: groep 1-8 → middelbaar → uni → master → genius
 var NIVEAUS=[
- {id:"g12",naam:"Groep 1–2",tag:"start",vakken:["tellen","letters","klanken","eindklank","vormen","gevoelens"]},
- {id:"g34",naam:"Groep 3–4",tag:"basis",vakken:["tellen","plus1","split","woorden","spelling","klok","klinker","vormen","gevoelens","puzzel"]},
- {id:"g56",naam:"Groep 5–6",tag:"door",vakken:["plus2","min2","tafels","spelling","klok","klok2","zin","puzzel"]},
- {id:"g78",naam:"Groep 7–8",tag:"gevorderd",vakken:["plus3","min3","tafels","spelling2","zin","puzzel"]},
- {id:"mb",naam:"Middelbaar 1–5",tag:"verder",vakken:["tafels","procent","spelling2","zin2"]},
- {id:"uni",naam:"Universiteit",tag:"hoog",vakken:["procent","breuk","zin2"]},
+ {id:"g12",naam:"Groep 1–2",tag:"start",vakken:["tellen","letters","klanken","eindklank","vormen","gevoelens","kleuren","letterwijs"]},
+ {id:"g34",naam:"Groep 3–4",tag:"basis",vakken:["tellen","plus1","split","woorden","spelling","klok","klinker","vormen","gevoelens","kleuren","puzzel"]},
+ {id:"g56",naam:"Groep 5–6",tag:"door",vakken:["plus2","min2","tafels","spelling","klok","klok2","zin","topo","puzzel"]},
+ {id:"g78",naam:"Groep 7–8",tag:"gevorderd",vakken:["plus3","min3","tafels","spelling2","zin","topo","puzzel"]},
+ {id:"mb",naam:"Middelbaar 1–5",tag:"verder",vakken:["tafels","procent","spelling2","zin2","topo"]},
+ {id:"uni",naam:"Universiteit",tag:"hoog",vakken:["procent","breuk","zin2","topo"]},
  {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica"]},
  {id:"genius",naam:"Genius",tag:"🏆",vakken:["logica","breuk","zin2"]}
 ];
@@ -272,12 +272,36 @@ var VAKKEN={
  klinker:{ic:"🗣️",naam:"Klinkers",info:"welke klinker hoor je in het woord?"},
  vormen:{ic:"🔷",naam:"Vormen",info:"welke vorm is dit?"},
  gevoelens:{ic:"💗",naam:"Gevoelens",info:"welk gevoel past hier?"},
+ kleuren:{ic:"🎨",naam:"Kleuren",info:"welke kleur is dit?"},
+ letterwijs:{ic:"🔠",naam:"Letters zien",info:"welke letter is dit?"},
+ topo:{ic:"🌍",naam:"Topografie",info:"de wereld en Nederland"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
  seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
  feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"},
  klanken:{ic:"🔊",naam:"Klanken",info:"met welke klank begint het woord?"},
  split:{ic:"✂️",naam:"Splitsen",info:"hoeveel mist er om het getal te maken?"}
 };
+
+// ====== TOPOGRAFIE-VRAGENBANK — echte schoolstof (wereld + Nederland)
+var TOPO_VRAGEN=[
+ ["Hoeveel continenten heeft de aarde?","7",["7","5","9"],"🌍","De aarde heeft 7 continenten: Afrika, Antarctica, Azië, Australië, Europa, Noord-Amerika en Zuid-Amerika."],
+ ["Welk continent is het grootst?","Azië",["Azië","Afrika","Europa"],"🗺️","Azië is met afstand het grootste continent — China en India liggen er."],
+ ["Op welk continent ligt Nederland?","Europa",["Europa","Azië","Noord-Amerika"],"🇪🇺","Nederland ligt in Europa — naast Duitsland en België."],
+ ["Hoeveel oceanen zijn er?","5",["5","3","7"],"🌊","Er zijn 5 oceanen: de Stille, Atlantische, Indische, Zuidelijke en Noordelijke IJszee."],
+ ["Welke oceaan is de grootste?","De Stille Oceaan",["De Stille Oceaan","De Atlantische Oceaan","De Indische Oceaan"],"🌊","De Stille Oceaan is zo groot dat alle continenten erin passen!"],
+ ["Wat is de hoofdstad van Nederland?","Amsterdam",["Amsterdam","Rotterdam","Den Haag"],"🇳🇱","Amsterdam is de hoofdstad — Den Haag is waar de regering zit."],
+ ["Hoeveel provincies heeft Nederland?","12",["12","10","14"],"🗺️","Nederland telt 12 provincies — van Groningen tot Zeeland."],
+ ["In welke provincie ligt Amsterdam?","Noord-Holland",["Noord-Holland","Zuid-Holland","Utrecht"],"📍","Amsterdam ligt in Noord-Holland — ondanks dat veel mensen 'Holland' voor heel Nederland zeggen."],
+ ["Welke grote rivier stroomt door Nederland?","De Rijn",["De Rijn","De Nijl","De Amazone"],"🏞️","De Rijn komt uit Zwitserland en stroomt via Duitsland Nederland binnen."],
+ ["In welke zee liggen de waddeneilanden?","De Waddenzee",["De Waddenzee","De Noordzee","De Oostzee"],"🏝️","Texel, Vlieland, Terschelling, Ameland en Schiermonnikoog liggen in de Waddenzee."],
+ ["Welk land ligt ten oosten van Nederland?","Duitsland",["Duitsland","België","Frankrijk"],"🇩🇪","Ten oosten van Nederland ligt Duitsland, ten zuiden België."],
+ ["Wat is de hoofdstad van België?","Brussel",["Brussel","Antwerpen","Gent"],"🇧🇪","Brussel is de hoofdstad van België én van Europa."],
+ ["Wat is de hoofdstad van Frankrijk?","Parijs",["Parijs","Lyon","Marseille"],"🇫🇷","Parijs — de stad van de Eiffeltoren."],
+ ["Welk continent is het koudst?","Antarctica",["Antarctica","Azië","Noord-Amerika"],"🧊","Antarctica is het koudste continent — het bestaat bijna helemaal uit ijs."],
+ ["Wat is de hoofdstad van Zuid-Korea?","Seoel",["Seoel","Busan","Peking"],"🇰🇷","Seoel (Seoul) is de hoofdstad van Zuid-Korea — 안녕하세요!"],
+ ["Welk eiland is het grootste waddeneiland?","Texel",["Texel","Ameland","Schiermonnikoog"],"🏝️","Texel is het grootste van de vijf waddeneilanden."],
+ ["Hoe heet de zee tussen Nederland en Engeland?","De Noordzee",["De Noordzee","De Waddenzee","De IJsselmeer"],"⚓","De Noordzee ligt tussen Nederland en Engeland — vroeger voeren er walvisvaarders!"],
+ ["Waar ligt de Sahara?","Afrika",["Afrika","Azië","Australië"],"🏜️","De Sahara is de grootste woestijn ter wereld en ligt in Noord-Afrika."]];
 
 // ====== SLIM BREIN: leert van fouten, onthoudt per kind (localStorage)
 // ====== PROFIELEN: broertje & zusje op dezelfde tablet — elk kind eigen voortgang
@@ -1790,6 +1814,59 @@ var makers={
    a.appendChild(b);});
   zeg("Welke vorm zie je?");
  },
+ kleuren:function(v,a){
+  var goed=rnd(0,KLEUREN.length-1),K=KLEUREN[goed];
+  window._huidigItem="kleurvak-"+K.naam;
+  if(vraagNr%2===0){
+   v.innerHTML="<b>Welke kleur is dit?</b><div class='plaatjes'><div style='width:110px;height:110px;border-radius:18px;background:"+K.css+";margin:0 auto;box-shadow:inset 0 -6px 0 rgba(0,0,0,.12)'></div></div>";
+   zeg("Welke kleur is dit?");
+  }else{
+   var it=K.items[rnd(0,K.items.length-1)];
+   v.innerHTML="<b>Welke kleur heeft de "+it[0]+"?</b><div class='plaatjes'>"+it[1]+"</div>";
+   zeg("Welke kleur heeft de "+it[0]+"?");
+  }
+  var pool=KLEUREN.map(function(k,i){return i;}).filter(function(i){return i!==goed;});
+  var opties=shuffle(pool.slice()).slice(0,2).concat([goed]);opties=shuffle(opties);
+  opties.forEach(function(i){
+   var b=document.createElement("button");b.className="optie";
+   b.innerHTML="<span style='display:inline-block;width:16px;height:16px;border-radius:4px;background:"+KLEUREN[i].css+";vertical-align:-2px;margin-right:6px'></span>"+KLEUREN[i].naam;
+   b.onclick=function(){check(i===goed,b,{woord:KLEUREN[goed].naam,uitleg:"Die kleur heet "+KLEUREN[goed].naam+" — net als in de kleurenwinkel van Kamiel!"});};
+   a.appendChild(b);});
+ },
+ letterwijs:function(v,a){
+  var ALF="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  var goed=ALF[rnd(0,25)];
+  window._huidigItem="letterwijs-"+goed+(vraagNr%2);
+  if(vraagNr%2===0){
+   v.innerHTML="<b>Welke letter is dit?</b><div class='plaatjes' style='font-size:5rem;font-weight:800;color:var(--zeed)'>"+goed+"</div>";
+   zeg("Welke letter is dit?");
+   var opties=shuffle(ALF.filter(function(l){return l!==goed;})).slice(0,2).concat([goed]);opties=shuffle(opties);
+   opties.forEach(function(l){
+    var b=document.createElement("button");b.className="optie";b.textContent=l;
+    b.onclick=function(){check(l===goed,b,{woord:goed,uitleg:"Dit is de letter "+goed+"!"});};
+    a.appendChild(b);});
+  }else{
+   var goed2=goed.toLowerCase();
+   v.innerHTML="<b>Welke kleine letter hoort bij <span style='font-size:2.4rem;color:var(--zeed)'>"+goed+"</span>?</b><div class='plaatjes'>🔍</div>";
+   zeg("Welke kleine letter hoort bij hoofdletter "+goed+"?");
+   var opties2=shuffle(ALF.filter(function(l){return l!==goed;})).slice(0,2).map(function(l){return l.toLowerCase();}).concat([goed2]);opties2=shuffle(opties2);
+   opties2.forEach(function(l){
+    var b=document.createElement("button");b.className="optie";b.textContent=l;
+    b.onclick=function(){check(l===goed2,b,{woord:goed,uitleg:"Bij hoofdletter "+goed+" hoort kleine letter "+goed2+" — ze zijn familie!"});};
+    a.appendChild(b);});
+  }
+ },
+ topo:function(v,a){
+  if(!window._topoDeck||!window._topoDeck.length)window._topoDeck=shuffle(TOPO_VRAGEN.slice());
+  var q=window._topoDeck.pop();
+  window._huidigItem="topo-"+q[0].slice(0,24);
+  v.innerHTML="<b>"+q[0]+"</b><div class='plaatjes'>"+q[3]+"</div>";
+  shuffle(q[2].slice()).forEach(function(o){
+   var b=document.createElement("button");b.className="optie";b.textContent=o;
+   b.onclick=function(){check(o===q[1],b,{woord:q[1],uitleg:q[4]});};
+   a.appendChild(b);});
+  zeg(q[0]);
+ },
  klok2:function(v,a){
   if(vraagNr%2===0){
    var uur=rnd(1,12),voor=rnd(0,1),min=voor?45:15;
@@ -2135,7 +2212,9 @@ function verhaalVragen(bk,nr,goed){
    '<div class="acties"><button class="pill" onclick="verhaalLezer(laatsteBoek)">🔁 lees opnieuw</button> '+
    '<button class="pill grijs" onclick="naarHome()">← terug</button></div>'+
    '<p class="sub2" style="margin-top:16px">📚 Meer G2B-boeken? <a href="https://good2better.github.io/g2b-winkel/gsbooks/" target="_blank" style="color:var(--zeed)">Kijk in de winkel →</a></p>';
-  if(goed>=3)feestConfetti(60);return;
+  if(goed>=3)feestConfetti(60);
+  if(goed>=bk.vragen.length)setTimeout(function(){boekMeester(bk);},1200);
+  return;
  }
  var v=bk.vragen[nr],opties=shuffle(v.opties.slice());
  inh.innerHTML='<p class="sub2">vraag '+(nr+1)+" van "+bk.vragen.length+" — over het verhaal</p>"+
@@ -2525,6 +2604,18 @@ function toonDiploma(){
  }else{
   document.getElementById("dip-tekst").innerHTML="voor het fantastisch oefenen van <b>"+VAKKEN[huidigVak].naam.toLowerCase()+"</b><br>met "+pct+"% goed in "+rondeMax+" vragen";
  }
+ document.getElementById("dip-datum").textContent=new Date().toLocaleDateString("nl-NL",{day:"numeric",month:"long",year:"numeric"});
+ document.body.classList.add("alleen-diploma");
+ toon("scherm-diploma");
+ feestConfetti(90);speelLiedje();
+}
+
+// ====== BOEK-MEESTER DIPLOMA — alle vragen van een boek goed = echt uitgelezen
+function boekMeester(bk){
+ staat.boekMeester=staat.boekMeester||{};
+ staat.boekMeester[bk.id]=true;bewaar();
+ document.getElementById("dip-naam").textContent=(heldIc()+" ")+(wie()||"jonge held");
+ document.getElementById("dip-tekst").innerHTML="is <b>BOEK-MEESTER</b> van <b>\u201C"+bk.naam+"\u201D</b><br>— het hele verhaal gelezen én <b>alle "+bk.vragen.length+" vragen goed!</b>";
  document.getElementById("dip-datum").textContent=new Date().toLocaleDateString("nl-NL",{day:"numeric",month:"long",year:"numeric"});
  document.body.classList.add("alleen-diploma");
  toon("scherm-diploma");
