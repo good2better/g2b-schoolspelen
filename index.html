@@ -375,6 +375,8 @@ var THEMAS=["oceaan","lente","regenboog","ruimte","winter","herfst"];
 function itemVeld(it){return it.soort==="dier"?"huisdier":it.soort==="thema"?"thema":"petje";}
 function itemWaarde(it){return it.soort==="thema"?it.id:it.ic;}
 function applyThema(){
+ var THEMA_EMOJI={"🌊":"oceaan","🌸":"lente","🌈":"regenboog","🌌":"ruimte","❄️":"winter","🍂":"herfst"};
+ if(staat.thema&&THEMAS.indexOf(staat.thema)<0){staat.thema=THEMA_EMOJI[staat.thema]||"";}
  THEMAS.forEach(function(t){document.body.classList.remove("thema-"+t);});
  if(staat.thema)document.body.classList.add("thema-"+staat.thema);
 }
@@ -2305,7 +2307,7 @@ function werkbladBoek(bk){
   oef='<p><b>Omcirkel elke letter A:</b></p><div style="font-size:26px;letter-spacing:10px;margin:6px 0">B A T E S A M K A D A</div>'+
    '<p><b>Schrijf de hoofdletter erbij:</b></p>'+["a","b","k","z"].map(function(l){return '<div class="wb-rij"><b style="font-size:26px">'+l+'</b><span class="wb-lijntje" style="max-width:180px"></span></div>';}).join("");
  }else if(bk.vragen&&bk.vragen.length){
-  oef='<p><b>Beantwoord de vragen over het boek:</b></p>'+bk.vragen.slice(0,2).map(function(v){return '<p style="margin:8px 0 4px">'+v[0]+'</p><div class="wb-lijntje"></div>';}).join("")+
+  oef='<p><b>Beantwoord de vragen over het boek:</b></p>'+bk.vragen.slice(0,2).map(function(v){return '<p style="margin:8px 0 4px">'+v.vraag+'</p><div class="wb-lijntje"></div>';}).join("")+
    '<p style="margin-top:10px"><b>Teken je lievelingsplaat uit het boek:</b></p><div style="border:2px dashed #999;border-radius:10px;height:160px"></div>';
  }
  wbToon(bk.ic+" Werkblad bij "+bk.naam,plaat+'<p style="margin-top:10px"><b>Vul de ontbrekende letters in en schrijf het woord over:</b></p>'+rijen+oef);
