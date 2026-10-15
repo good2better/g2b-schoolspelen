@@ -251,6 +251,7 @@ var NIVEAUS=[
 var VAKKEN={
  tellen:{ic:"🔢",naam:"Tellen",info:"tel de plaatjes"},
  letters:{ic:"🔤",naam:"Letters",info:"welke letter hoor je?"},
+ naSpreken:{ic:"🗣️",naam:"Naspreken",info:"zeg het woord na — de app luistert mee"},
  plus1:{ic:"➕",naam:"Plus t/m 10",info:"rekenen"},
  plus2:{ic:"➕",naam:"Plus t/m 100",info:"rekenen"},
  plus3:{ic:"➕",naam:"Plus t/m 1000",info:"rekenen"},
@@ -1030,7 +1031,15 @@ function toonBoek(bk){
   var pc=document.createElement("div");pc.className="card";
   pc.innerHTML='<span class="ic">🖨️</span><b>Print het boek</b><small>jouw eigen A4-prentenboek</small>';
   pc.onclick=function(){printBoek(bk);};
-  g.appendChild(pc);}
+  g.appendChild(pc);
+  var wc=document.createElement("div");wc.className="card";
+  wc.innerHTML='<span class="ic">🖍️</span><b>Werkblad</b><small>kleurplaat + woorden + opdracht op 1 A4</small>';
+  wc.onclick=function(){werkbladBoek(bk);};
+  g.appendChild(wc);
+  var sc=document.createElement("div");sc.className="card";
+  sc.innerHTML='<span class="ic">🗣️</span><b>Spreek na</b><small>zeg de boekwoorden na — de app luistert mee</small>';
+  sc.onclick=function(){startOefening({id:"boek:"+bk.id,naam:bk.naam},"naSpreken",4);};
+  g.appendChild(sc);}
  [["boekWoord","Welk boekwoord?"],["boekSpel","Typ het boekwoord"],["boekZin","Boekzin aanvullen"],["boekPuz","Boekwoord-puzzel"]]
  .forEach(function(vv){
   var v=VAKKEN[vv[0]],c=document.createElement("div");c.className="card";
@@ -1656,6 +1665,37 @@ function markeerFout(key,val){
 }
 
 var makers={
+ naSpreken:function(v,a){
+  var bk=huidigBoek||BOEKEN[0];
+  var w=bk.woorden[vraagNr%bk.woorden.length];
+  v.innerHTML='<div style="font-size:58px">'+(EMOJI[w]||"🗣️")+'</div><b style="font-size:30px">'+w+'</b><br><small class="sub2">Klik op de microfoon en zeg het woord na!</small>';
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var b=document.createElement("button");b.className="pill";
+  var res=document.createElement("div");res.className="sub2";res.style.margin="8px 0";
+  if(!SR){b.innerHTML="🔊 luister eerst";res.innerHTML="Naspreken werkt in Chrome, Edge of Safari — vraag even om zo'n browser.";}
+  else b.innerHTML="🎤 spreek in";
+  b.onclick=function(){
+   if(!SR){zeg(w);return;}
+   var r=new SR();r.lang="nl-NL";r.interimResults=false;r.maxAlternatives=3;
+   b.innerHTML="🎙️ luisteren…";b.disabled=true;
+   r.onresult=function(ev){
+    var said="";for(var i=0;i<ev.results[0].length;i++)said+=" "+ev.results[0][i].transcript;
+    var s=(" "+said.toLowerCase().replace(/[^a-zà-ÿ ]/g,"")+" ").replace(/\s+/g," ");
+    var ok=s.indexOf(" "+w.toLowerCase()+" ")>-1;
+    res.innerHTML='Jij zei: <b>"'+said.trim()+'"</b>'+(ok?"":" — bijna! Probeer het nog eens.");
+    if(ok)check(true,b,a);
+   };
+   r.onerror=function(){res.textContent="Ik hoorde je niet — spreek dichtbij de microfoon en probeer opnieuw.";};
+   r.onend=function(){b.innerHTML="🎤 spreek in";b.disabled=false;};
+   try{r.start();}catch(e){b.innerHTML="🎤 spreek in";b.disabled=false;}
+  };
+  a.appendChild(b);a.appendChild(res);
+  var sk=document.createElement("button");sk.className="pill grijs";sk.innerHTML="→ overslaan";
+  sk.onclick=function(){check(false,sk,a,true);res.innerHTML='Het woord was: <b>'+w+"</b>";setTimeout(volgendeVraag,1400);};
+  a.appendChild(sk);
+  window._huidigItem=w;
+  zeg("Zeg na: "+w);
+ },
  tellen:function(v,a){
   var dieren=["🐶","🐱","🐰","🦊","🐘","🐬","🦁"];
   var dier=dieren[rnd(0,dieren.length-1)];
@@ -2233,10 +2273,25 @@ function gatig(woord){
  return t.join(" ");
 }
 function werkbladBoek(bk){
- var rijen=bk.woorden.slice(0,8).map(function(w){
+ var plaat='<p><b>Kleur de plaat:</b></p><img src="'+bk.id+'/p0.jpg" style="width:100%;max-width:400px;display:block;margin:0 auto;filter:grayscale(1) brightness(1.15) contrast(1.05);border:2px solid #ccc;border-radius:10px">';
+ var rijen=bk.woorden.slice(0,6).map(function(w){
   return '<div class="wb-rij"><span style="font-size:26px">'+(EMOJI[w]||"✏️")+"</span><b>"+gatig(w)+"</b><span class=wb-lijntje></span></div>";
  }).join("");
- wbToon(bk.ic+" Woorden bij "+bk.naam,'<p>Vul de ontbrekende letters in en schrijf het woord over:</p>'+rijen);
+ var oef="";
+ if(bk.id==="tellen"){
+  var em=["🐯","🍎","⭐"];
+  oef='<p><b>Tel en schrijf het cijfer op:</b></p>'+em.map(function(e,i){var n=i+2;return '<div class="wb-rij"><span style="font-size:22px;letter-spacing:5px">'+e.repeat(n)+'</span><span class="wb-lijntje" style="max-width:120px"></span></div>';}).join("");
+ }else if(bk.id==="kleuren"){
+  var kl=["#e74c3c","#f1c40f","#3498db","#2ecc71","#e67e22","#9b59b6"];
+  oef='<p><b>Welke kleur is dit? Schrijf het op:</b></p>'+kl.map(function(k){return '<div class="wb-rij"><span style="display:inline-block;width:32px;height:32px;border-radius:8px;background:'+k+';border:1px solid #999"></span><span class="wb-lijntje"></span></div>';}).join("");
+ }else if(bk.id==="letters"){
+  oef='<p><b>Omcirkel elke letter A:</b></p><div style="font-size:26px;letter-spacing:10px;margin:6px 0">B A T E S A M K A D A</div>'+
+   '<p><b>Schrijf de hoofdletter erbij:</b></p>'+["a","b","k","z"].map(function(l){return '<div class="wb-rij"><b style="font-size:26px">'+l+'</b><span class="wb-lijntje" style="max-width:180px"></span></div>';}).join("");
+ }else if(bk.vragen&&bk.vragen.length){
+  oef='<p><b>Beantwoord de vragen over het boek:</b></p>'+bk.vragen.slice(0,2).map(function(v){return '<p style="margin:8px 0 4px">'+v[0]+'</p><div class="wb-lijntje"></div>';}).join("")+
+   '<p style="margin-top:10px"><b>Teken je lievelingsplaat uit het boek:</b></p><div style="border:2px dashed #999;border-radius:10px;height:160px"></div>';
+ }
+ wbToon(bk.ic+" Werkblad bij "+bk.naam,plaat+'<p style="margin-top:10px"><b>Vul de ontbrekende letters in en schrijf het woord over:</b></p>'+rijen+oef);
  zeg("Werkblad van "+bk.naam+" klaar — de printer doet de rest!");
 }
 // kleurplaten — eenvoudige zwarte lijnen op wit, printen en inkleuren
