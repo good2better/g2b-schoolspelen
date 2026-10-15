@@ -235,6 +235,7 @@ if("serviceWorker" in navigator){
 <script>
 // ====== NIVEAU-LADDER: groep 1-8 → middelbaar → uni → master → genius
 var NIVEAUS=[
+ {id:"peuter",naam:"Peuter 3–4",tag:"mini",vakken:["tellen","kleuren","vormen","gevoelens","letterwijs"]},
  {id:"g12",naam:"Groep 1–2",tag:"start",vakken:["tellen","letters","klanken","eindklank","vormen","gevoelens","kleuren","letterwijs"]},
  {id:"g34",naam:"Groep 3–4",tag:"basis",vakken:["tellen","plus1","split","woorden","spelling","klok","klinker","vormen","gevoelens","kleuren","puzzel"]},
  {id:"g56",naam:"Groep 5–6",tag:"door",vakken:["plus2","min2","tafels","spelling","klok","klok2","zin","topo","puzzel"]},
@@ -1004,7 +1005,11 @@ function boekKaarten(el){
  var g=document.createElement("div");g.className="grid";
  BOEKEN.forEach(function(bk){
   var c=document.createElement("div");c.className="card";
-  c.innerHTML='<span class="ic">'+bk.ic+"</span><b>"+bk.naam+"</b><small>oefenen met dit boek</small>";
+  var meester=staat.boekMeester&&staat.boekMeester[bk.id];
+  var bezig=(staat.goed["boek:"+bk.id+":verhaal"]||0)>0;
+  var badge=meester?' <span class="tag" style="background:var(--goud);color:#4a3500">⭐ Boek-meester</span>':(bezig?' <span class="tag">📖 bezig</span>':"");
+  c.innerHTML='<span class="ic">'+bk.ic+"</span><b>"+bk.naam+"</b>"+badge+"<small>oefenen met dit boek</small>";
+  if(meester)c.style.border="2px solid var(--goud)";
   c.onclick=function(){toonBoek(bk);};
   g.appendChild(c);});
  el.appendChild(g);}
@@ -1397,7 +1402,7 @@ function zetNaam(){
  staat.naam=v;bewaar();zeg("Hoi "+v+"! Welkom bij Schoolspelen — kies een spel!");
  bouwHome();}
 function startOefening(niv,vak,max){
- huidigNiv=niv.id;huidigVak=vak;vraagNr=0;goedTeller=0;rondeMax=max||RONDE;
+ huidigNiv=niv.id;huidigVak=vak;vraagNr=0;goedTeller=0;rondeMax=max||(niv.id==="peuter"?4:RONDE);
  if(niv.id.indexOf("boek:")===0){var _b=BOEKEN.find(function(b){return "boek:"+b.id===niv.id;});if(_b)huidigBoek=_b;}
  pauzeStart=Date.now();pauzeGedaan=false;
  document.getElementById("uitdager").innerHTML="";
