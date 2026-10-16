@@ -1191,11 +1191,13 @@ var BOEKEN=[
    ["En het allerleukst: KOEKJES BAKKEN! Deeg maken, vormpjes uitsteken en dan de oven in. Soms een traktatie is helemaal prima."],
    ["RECEPT van de Chef — fruitsalade in 4 stapjes: was het fruit, snijd het (samen met een volwassene!), meng het in een kom… en smul!"],
    ["Goed SLAPEN hoort er ook bij: op tijd naar bed, dan ben je morgen weer vol energie. Zzz…"],
+   ["MUZIEK & ONTSPANNING: een rustig muziekje luisteren maakt je blij en kalm — dansen mag ook, en even stil zitten ook!"],
    ["GYM en bewegen: elke dag rennen, springen, klimmen of fietsen — zo blijf je sterk en gezond."],
    ["THUIS-OEFENINGEN — simpel, zonder spullen: 10x springen, 5x hurken, armen zwaaien en een dansje doen. Elke dag een beetje!"],
    ["SAMEN DOEN is het leukst: samen spelen, samen koken, samen opruimen — veel dingen zijn leuker (of kunnen alleen maar) mét meer dan één."],
-   ["Van KLAS naar UNIVERSITEIT: elke dag op school leer je iets nieuws — en wie doorleert, kan zelfs master worden!"],
-   ["Later word je… jij kiest je eigen PAD: arts, bioloog of voedseldeskundige — maar ook kok, technicus (auto-onderdelen, vliegtuigen!) of sportcoach. Verschillende paden, net als in het echte leven."],
+   ["SPREEKBEURT: JIJ staat voor de klas en vertelt over KOEKJES BAKKEN — Chef Kokos heeft je geholpen met voorbereiden! Een beetje spannend maar heel dapper; de chef kijkt trots toe."],
+   ["Van KLAS naar UNIVERSITEIT: je begint met kleine lessen (abc, 1+1) en die worden steeds groter — wie doorleert, kan zelfs master worden met een eigen onderzoek!"],
+   ["Later word je… jij kiest je eigen PAD: arts, bioloog of voedseldeskundige — of beroepen die iedereen tegenkomt: dierenverzorger, juf of meester, verpleegkundige — en ook kok, technicus (auto-onderdelen, vliegtuigen!) of muzikant. Verschillende paden, net als in het echte leven."],
    ["En tot slot: OPRUIMEN hoort erbij, plus de teken-wedstrijd van Chef Kokos — iedereen wint, want meedoen is het belangrijkst. Jij bent nu een echte gezonde chef. Smakelijk!"]],
   vragen:[{vraag:"Wie is de chef van dit boek?",goed:"Chef Kokos",opties:["Chef Kokos","Raket Roos","Tig de tijger"]},
    {vraag:"Wat is de beste dorst-lesser?",goed:"Water",opties:["Water","Frisdrank","Koffie"]},
@@ -1467,7 +1469,7 @@ function wisEigenBoek(bi){
 }
 var huidigBoek=null,laatsteBoek=null;
 // boek-helden met een geanimeerde Wan-clip (clips/<id>.mp4)
-var CLIPS={balto:1,boerderij:1,dierenhelden:1,gevoelens:1,helden:1,keesje:1,klas:1,kleuren:1,koreaans:1,letters:1,moed:1,moed2:1,sam:1,seizoenen:1,sunny:1,tellen:1,topo:1,verkeer:1,vormen:1,weekdagen:1,ziggy:1,ruimte:1};
+var CLIPS={balto:1,boerderij:1,dierenhelden:1,gevoelens:1,helden:1,keesje:1,klas:1,kleuren:1,koreaans:1,letters:1,moed:1,moed2:1,sam:1,seizoenen:1,sunny:1,tellen:1,topo:1,verkeer:1,vormen:1,weekdagen:1,ziggy:1,ruimte:1,kokos:1};
 function toonBoek(bk){
  huidigBoek=bk;var el=document.getElementById("niveau-lijst");el.innerHTML="";
  var h=document.createElement("div");h.className="niveau";
