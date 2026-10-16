@@ -1319,6 +1319,7 @@ function toonEigenBoekBoek(bi){
   '<button class="pill" onclick="ebLeesModus('+bi+',0)">📖 lees</button>'+
   '<button class="pill" onclick="leesEigenBoek('+bi+')">🔊 lees voor</button>'+
   '<button class="pill" onclick="printEigenBoek('+bi+')">🖨️ print</button>'+
+  '<button class="pill" onclick="downloadEigenBoek('+bi+')">💾 bewaar</button>'+
   '<button class="pill grijs" onclick="wisEigenBoek('+bi+')">🗑️</button></div>'+
   '<button class="pill grijs" style="margin-top:8px" onclick="toonEigenBoek()">✍️ nog een boek maken</button>';
  toon("scherm-eigenboek");
@@ -1358,6 +1359,21 @@ function printEigenBoek(bi){
   '<div style="font-size:16px;margin-top:10px">geschreven door <b>'+bk.auteur+"</b></div>"+
   '<div style="font-size:13px;margin-top:30px;color:#666">G2B Schoolspelen — Schrijf je eigen heldenboek</div></div>'+pags);
  zeg("Je boek wordt geprint — blad voor blad, jouw eigen heldenboek!");
+}
+function downloadEigenBoek(bi){
+ var bk=staat.eigenBoeken[bi];
+ var html='<!DOCTYPE html><html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'+
+ '<title>'+bk.titel+'</title><style>body{font-family:Comic Sans MS,Verdana,sans-serif;background:#fff8e7;color:#333;max-width:560px;margin:0 auto;padding:20px}'+
+ '.cover{text-align:center;padding:20px;background:linear-gradient(160deg,#ffe9b3,#ffd166);border-radius:14px}'+
+ '.pag{display:flex;gap:12px;align-items:center;margin:14px 0;padding:14px;background:#fffaf0;border-radius:12px}'+
+ '.em{font-size:2.4rem}.foot{text-align:center;color:#999;font-size:12px;margin-top:20px}</style></head><body>'+
+ '<div class="cover">'+(bk.tekening?'<img src="'+bk.tekening+'" style="max-width:100%;border-radius:10px">':'<div style="font-size:64px">'+bk.dierIc+"</div>")+
+ '<h1>'+bk.titel+"</h1><p>geschreven door <b>"+bk.auteur+"</b></p></div>"+
+ bk.paginas.map(function(p){return '<div class="pag"><div class="em">'+p.em+"</div><p>"+p.zin+"</p></div>";}).join("")+
+ '<div class="foot">Gemaakt met G2B Schoolspelen · good2better.github.io/g2b-schoolspelen</div></body></html>';
+ var a=document.createElement("a");a.href=URL.createObjectURL(new Blob([html],{type:"text/html"}));
+ a.download=bk.titel.replace(/[^a-zA-Z0-9 .-]/g,"").trim().replace(/ /g,"-")+".html";a.click();
+ zeg("Je boek is bewaard als bestand — je kunt het aan iedereen laten zien!");
 }
 function wisEigenBoek(bi){
  if(!confirm("Weet je zeker dat je dit boek weggooit?"))return;
