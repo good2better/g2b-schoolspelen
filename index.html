@@ -1316,11 +1316,30 @@ function toonEigenBoekBoek(bi){
   '<div class="sub2">geschreven door <b>'+bk.auteur+"</b> · G2B Heldenboek</div></div>"+
   bk.paginas.map(function(p){return '<div class="eb-pag"><div class="em">'+p.em+"</div><p>"+p.zin+"</p></div>";}).join("")+
   '<div class="knoppen">'+
+  '<button class="pill" onclick="ebLeesModus('+bi+',0)">📖 lees</button>'+
   '<button class="pill" onclick="leesEigenBoek('+bi+')">🔊 lees voor</button>'+
   '<button class="pill" onclick="printEigenBoek('+bi+')">🖨️ print</button>'+
   '<button class="pill grijs" onclick="wisEigenBoek('+bi+')">🗑️</button></div>'+
   '<button class="pill grijs" style="margin-top:8px" onclick="toonEigenBoek()">✍️ nog een boek maken</button>';
  toon("scherm-eigenboek");
+}
+function ebLeesModus(bi,pag){
+ var bk=staat.eigenBoeken[bi];var el=document.getElementById("eb-inhoud");
+ if(pag<0)pag=0;
+ if(pag>bk.paginas.length){toonEigenBoekBoek(bi);return;}
+ var cover=pag===0;
+ var body=cover
+  ?'<div class="eb-cover">'+(bk.tekening?'<img src="'+bk.tekening+'" style="max-width:280px;border-radius:10px;background:#fff">':'<div style="font-size:4rem">'+bk.dierIc+"</div>")+
+    '<h2 style="margin:6px 0 2px">'+bk.titel+"</h2>"+
+    '<div class="sub2">geschreven door <b>'+bk.auteur+"</b></div></div>"
+  :'<div style="text-align:center;padding:20px 0"><div style="font-size:4.5rem">'+bk.paginas[pag-1].em+"</div>"+
+    '<p style="font-size:1.35rem;line-height:1.6;max-width:520px;margin:14px auto 0">'+bk.paginas[pag-1].zin+"</p></div>";
+ el.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'+
+  '<button class="pill grijs" onclick="ebLeesModus('+bi+","+(pag-1)+')">◀</button>'+
+  '<span class="sub2">'+(cover?"cover":"pagina "+pag+" van "+bk.paginas.length)+"</span>"+
+  '<button class="pill" onclick="ebLeesModus('+bi+","+(pag+1)+')">'+(cover?"openen ▶":"▶")+"</button></div>"+body+
+  '<div class="knoppen" style="margin-top:14px"><button class="pill grijs" onclick="toonEigenBoekBoek('+bi+')">✕ sluiten</button>'+
+  (cover?"":'<button class="pill" onclick="zeg(\''+bk.paginas[pag-1].zin.replace(/'/g,"\\'")+'\')">🔊</button>')+"</div>";
 }
 function leesEigenBoek(bi){
  var bk=staat.eigenBoeken[bi];
