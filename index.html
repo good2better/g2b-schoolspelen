@@ -1232,6 +1232,7 @@ function toonEigenBoek(){
  '<label class="eb-label">2. Hoe heet je held?</label><input class="eb-vak" id="eb-naam" maxlength="14" placeholder="bv. Bink">'+
  '<label class="eb-label">3. Wat was er aan de hand?</label><select class="eb-vak" id="eb-gevaar"></select>'+
  '<label class="eb-label">4. Hoe hielp jouw held?</label><select class="eb-vak" id="eb-hulp"></select>'+
+ '<label class="eb-label">5. Wie is de schrijver? (jouw naam — mag leeg)</label><input class="eb-vak" id="eb-auteur" maxlength="20" placeholder="bv. Giorgio">'+
  '<div class="knoppen"><button class="pill" onclick="maakEigenBoek()">✨ maak mijn boek!</button></div>'+
  '<div id="eb-waarschuw" class="sub2" style="margin-top:8px"></div>';
  var dd=document.getElementById("eb-dieren");
@@ -1254,14 +1255,15 @@ function maakEigenBoek(){
  var naam=(document.getElementById("eb-naam").value||"").trim();
  if(!naam){document.getElementById("eb-waarschuw").textContent="⚠️ Verzin eerst een naam voor je held!";zeg("Verzin eerst een naam!");return;}
  staat.heldNaam=naam;
+ var auteur=(document.getElementById("eb-auteur").value||"").trim()||"jij";
  var d=EB_DIEREN[ebKeuze.dier],g=EB_GEVAAR[ebKeuze.gevaar],h=EB_HULP[ebKeuze.hulp];
  var bk={dierIc:d[0],dierWoord:d[1],naam:naam,gevaar:ebKeuze.gevaar,hulp:ebKeuze.hulp,
-  titel:naam+", de "+d[1]+"-held",auteur:wie()||"jij",
+  titel:naam+", de "+d[1]+"-held",auteur:auteur,
   paginas:[
    {em:d[0],zin:"Er was eens een "+d[1]+" die "+naam+" heette. "+naam+" was geen gewone "+d[1]+" — "+naam+" was een held!"},
    {em:g.ic,zin:g.zin},
    {em:h.ic,zin:h.zin(naam)},
-   {em:"🏅",zin:"Iedereen juichte: '"+naam+" is een echte held!' En "+(wie()||"jij")+" had dit boek helemaal zelf geschreven."}]};
+   {em:"🏅",zin:"Iedereen juichte: '"+naam+" is een echte held!' En "+auteur+" had dit boek helemaal zelf geschreven."}]};
  (staat.eigenBoeken=staat.eigenBoeken||[]).unshift(bk);
  if(staat.eigenBoeken.length>10)staat.eigenBoeken=staat.eigenBoeken.slice(0,10);
  staat.sterren+=5;bewaar();feestConfetti(60);speelJubel();
