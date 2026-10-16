@@ -22,6 +22,7 @@ body.thema-regenboog{background:linear-gradient(180deg,#ffe9f0,#fff7dc,#e6ffe6,#
 body.thema-ruimte{background:linear-gradient(180deg,#d9d4f7,#b9aee8)}
 body.thema-winter{background:linear-gradient(180deg,#eef6ff,#d6e9ff)}
 body.thema-herfst{background:linear-gradient(180deg,#fff3e0,#ffd9b3)}
+body.thema-helden{background:linear-gradient(180deg,#fff8e0,#ffe0b8)}
 header{background:linear-gradient(135deg,var(--zeed),var(--zee));color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 header h1{font-size:1.35rem}
 header .sub{opacity:.85;font-size:.85rem}
@@ -374,6 +375,7 @@ var WINKEL=[
  {id:"oceaan",ic:"🌊",naam:"Oceaan-wereld",prijs:30,soort:"thema"},{id:"lente",ic:"🌸",naam:"Lente-wereld",prijs:30,soort:"thema"},
  {id:"regenboog",ic:"🌈",naam:"Regenboog-wereld",prijs:45,soort:"thema"},{id:"ruimte",ic:"🌌",naam:"Ruimte-wereld",prijs:60,soort:"thema"},
  {id:"winter",ic:"❄️",naam:"Winter-wereld",prijs:35,soort:"thema"},{id:"herfst",ic:"🍂",naam:"Herfst-wereld",prijs:35,soort:"thema"},
+ {id:"helden-wereld",ic:"\ud83d\udc3e",naam:"Helden-wereld",prijs:50,soort:"thema"},
  {id:"st-balto",ic:"\ud83d\udc3a",naam:"Balto-sticker",prijs:15,soort:"sticker"},
  {id:"st-cherami",ic:"\ud83d\udd4a\ufe0f",naam:"Cher Ami-sticker",prijs:15,soort:"sticker"},
  {id:"st-koko",ic:"\ud83e\udd8d",naam:"Koko-sticker",prijs:20,soort:"sticker"},
@@ -383,12 +385,20 @@ var WINKEL=[
  {id:"st-gertjie",ic:"\ud83e\udd8f",naam:"Gertjie-sticker",prijs:30,soort:"sticker"},
  {id:"st-mike",ic:"\ud83d\udc14",naam:"Miracle Mike-sticker",prijs:30,soort:"sticker"},
  {id:"st-winter",ic:"\ud83d\udc2c",naam:"Winter-sticker",prijs:35,soort:"sticker"},
- {id:"st-buttercup",ic:"\ud83e\udd86",naam:"Buttercup-sticker",prijs:40,soort:"sticker"}];
-var THEMAS=["oceaan","lente","regenboog","ruimte","winter","herfst"];
+ {id:"st-buttercup",ic:"\ud83e\udd86",naam:"Buttercup-sticker",prijs:40,soort:"sticker"},
+ {id:"st-stubby",ic:"\ud83d\udc15\u200d\ud83e\uddba",naam:"Stubby-sticker",prijs:20,soort:"sticker"},
+ {id:"st-lucca",ic:"\ud83c\udf96\ufe0f",naam:"Lucca-sticker",prijs:25,soort:"sticker"},
+ {id:"st-ricochet",ic:"\ud83c\udfc4",naam:"Ricochet-sticker",prijs:25,soort:"sticker"},
+ {id:"st-dory",ic:"\ud83d\ude9f",naam:"Dory-sticker",prijs:30,soort:"sticker"},
+ {id:"st-koala",ic:"\ud83d\udc28",naam:"Brandverkenner-sticker",prijs:30,soort:"sticker"},
+ {id:"st-politie",ic:"\ud83d\ude94",naam:"Politiehond-sticker",prijs:35,soort:"sticker"},
+ {id:"st-speur",ic:"\ud83d\udd0d",naam:"Speurhond-sticker",prijs:35,soort:"sticker"},
+ {id:"st-therapie",ic:"\ud83c\udfe5",naam:"Therapiehond-sticker",prijs:40,soort:"sticker"}];
+var THEMAS=["oceaan","lente","regenboog","ruimte","winter","herfst","helden"];
 function itemVeld(it){return it.soort==="dier"?"huisdier":it.soort==="thema"?"thema":it.soort==="sticker"?"plakboek":"petje";}
 function itemWaarde(it){return it.soort==="thema"?it.id:it.ic;}
 function applyThema(){
- var THEMA_EMOJI={"🌊":"oceaan","🌸":"lente","🌈":"regenboog","🌌":"ruimte","❄️":"winter","🍂":"herfst"};
+ var THEMA_EMOJI={"🌊":"oceaan","🌸":"lente","🌈":"regenboog","🌌":"ruimte","❄️":"winter","🍂":"herfst","🐾":"helden"};
  if(staat.thema&&THEMAS.indexOf(staat.thema)<0){staat.thema=THEMA_EMOJI[staat.thema]||"";}
  THEMAS.forEach(function(t){document.body.classList.remove("thema-"+t);});
  if(staat.thema)document.body.classList.add("thema-"+staat.thema);
@@ -1089,6 +1099,33 @@ var BOEKEN=[
    {vraag:"Wat maakte gorilla Koko tot haar baby?",goed:"Een katje",opties:["Een katje","Een puppy","Een konijn"]},
    {vraag:"Wat kreeg dolfijn Winter om weer te zwemmen?",goed:"Een staartprothese",opties:["Een staartprothese","Een zwemvest","Grotere vinnen"]},
    {vraag:"Wie troostte neushoornkalf Gertjie?",goed:"Schaap Lammie",opties:["Schaap Lammie","Hond Max","Kip Mike"]}]}
+,{id:"moed2",naam:"Heldenpoten 2",ic:"\ud83c\udfc5",
+  woorden:["soldaat","speurhond","surfen","overstroming","sloot","koala","bosbrand","politie","puin","ziekenhuis","redder","baan"],
+  zinnen:[{zin:"Oorlogshond Stubby waarschuwde de ___ voor gevaar.",goed:"soldaten",opties:["soldaten","schapen","vissers"]},
+   {zin:"Lucca de herder vond verborgen ___ met haar neus.",goed:"bommen",opties:["bommen","ballen","botten"]},
+   {zin:"Ricochet de hond staat op een ___ in zee.",goed:"surfplank",opties:["surfplank","boot","duikplank"]},
+   {zin:"Paard Duke schopte een ___ open om iemand te redden.",goed:"autodeur",opties:["autodeur","staldeur","brief"]},
+   {zin:"De ___ ruikt een bosbrand al heel vroeg.",goed:"koala",opties:["koala","koe","kangoeroe"]},
+   {zin:"Een ___ helpt mensen in het ziekenhuis weer te lachen.",goed:"therapiehond",opties:["therapiehond","postduif","racepaard"]}],
+  verhaal:[
+   ["Sommige helden hebben een echte baan — deze dieren gaan elke dag weer aan het werk om te helpen."],
+   ["Hond Stubby werd door soldaten geadopteerd in de oorlog en waarschuwde hen altijd op tijd voor gevaar."],
+   ["Marinehond Lucca vond met haar neus verborgen bommen en redde zo heel veel soldaten."],
+   ["Ricochet de surfhond zwom met touwen door het water en hielp hulpverleners bij overstromingen."],
+   ["Labrador Dory zocht na de orkaan door overstroomde straten naar mensen die gered moesten worden."],
+   ["Therapiepaard Duke schopte een autoruit kapot om de bestuurder uit een brandende auto te halen."],
+   ["Paard Stormy sprong in de sloot en hield zijn verzorgster urenlang boven water tot de hulp kwam."],
+   ["In Australië ruiken koala's een bosbrand al heel vroeg — zo worden ze brandverkenners."],
+   ["De politiehond bewaakt de stad en vindt mensen en spoor die niemand anders kan vinden."],
+   ["Na een aardbeving klimt de speurhond over het puin en vindt overlevenden onder het gruis."],
+   ["De therapiehond komt in het ziekenhuis bij het bed liggen — zieke kinderen lachen weer."],
+   ["Dolfijnen helpen redders in het water en duwen zwemmers in nood naar de veilige kant."],
+   ["Hond, paard, koala of dolfijn: echte helden doen hun werk zonder er iets voor terug te vragen."]],
+  vragen:[{vraag:"Welke hond waarschuwde soldaten in de oorlog?",goed:"Stubby",opties:["Stubby","Dory","Balto"]},
+   {vraag:"Wat deed Ricochet op zee?",goed:"Surfen en helpen bij overstromingen",opties:["Surfen en helpen bij overstromingen","Vissen vangen","Boodschappen brengen"]},
+   {vraag:"Welk paard schopte een autoruit kapot?",goed:"Duke",opties:["Duke","Stormy","Bella"]},
+   {vraag:"Welk dier ruikt een bosbrand al heel vroeg?",goed:"De koala",opties:["De koala","De dolfijn","De duif"]},
+   {vraag:"Waar helpt de therapiehond?",goed:"In het ziekenhuis",opties:["In het ziekenhuis","In de woestijn","In de zee"]}]}
 
 ];
 var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",zon:"☀️",ster:"⭐",
