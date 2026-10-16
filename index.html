@@ -2683,6 +2683,7 @@ function ouderRapport(){
   "<p style='margin-top:10px'><b>Oefen verder</b> (&lt;70%):</p>"+(oefen.length?oefen.map(function(s){return "<div>"+s+"</div>";}).join(""):"<div>alles sterk!</div>")+
   "<p style='margin-top:10px'><b>Groep-bewijs:</b> "+gbl+"</p>"+
   "<p><b>Oefenritme:</b> "+dagStreak()+" dag(en) op rij · ⭐ "+staat.sterren+" sterren</p>"+
+  ((staat.eigenBoeken||[]).length?"<p><b>Eigen boeken geschreven:</b> "+(staat.eigenBoeken.length)+" — "+staat.eigenBoeken.map(function(b){return "«"+b.titel+"»";}).join(", ")+"</p>":"")+
   "<p><b>Hoe "+(wie()||"je kind")+" leert:</b></p>"+speelstijlTekst().replace(/stijl-regel/g,""));
 }
 
