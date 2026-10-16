@@ -137,6 +137,17 @@ padding:14px;margin-top:14px;text-align:center}
  body.alleen-diploma #clip-laag,body.alleen-diploma main>*:not(#scherm-diploma){display:none!important}
  body.alleen-diploma #scherm-diploma.hidden{display:block!important}
 }
+/* ====== eigen heldenboek (schrijf zelf) */
+.eb-dier{font-size:2rem;background:var(--licht,#fff4d6);border:3px solid transparent;border-radius:14px;padding:8px 12px;cursor:pointer}
+.eb-dier.p{border-color:var(--goud,#f4a300);background:#ffe8ae}
+.eb-label{display:block;font-weight:700;margin:12px 0 4px;font-size:1rem}
+.eb-vak{width:100%;padding:12px;border:2px solid var(--goud,#f4a300);border-radius:14px;font-size:1.05rem;background:#fff;font-family:inherit}
+.eb-cover{text-align:center;padding:16px;background:linear-gradient(160deg,#ffe9b3,#ffd166);border-radius:14px;margin-bottom:12px}
+.eb-pag{display:flex;gap:10px;align-items:center;margin:10px 0;padding:10px;background:#fffaf0;border-radius:12px;text-align:left}
+.eb-pag .em{font-size:2rem;min-width:44px;text-align:center}
+.eb-pag p{margin:0;font-size:1.02rem;line-height:1.45}
+.eb-mini{display:flex;gap:8px;align-items:center;padding:8px;background:#fffaf0;border-radius:12px;margin:8px 0;cursor:pointer;border:2px solid transparent}
+.eb-mini:hover{border-color:var(--goud,#f4a300)}
 </style>
 </head>
 <body>
@@ -207,6 +218,14 @@ padding:14px;margin-top:14px;text-align:center}
 </div>
 <div class="acties"><button class="pill" onclick="window.print()">🖨 print</button>
 <button class="pill grijs" onclick="naarHome()">← terug</button></div>
+</div>
+
+<div id="scherm-eigenboek" class="hidden">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+<button class="pill grijs" onclick="naarHome()">← terug</button>
+<b>✍️ Schrijf je eigen heldenboek</b>
+</div>
+<div class="vraag"><div id="eb-inhoud"></div></div>
 </div>
 
 </main>
@@ -1157,7 +1176,7 @@ var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",z
 var huidigVak="",huidigNiv="",vraagNr=0,goedTeller=0,goedRij=0,RONDE=8,rondeMax=RONDE;
 var dotHtml="";
 function toon(id){
- ["scherm-home","scherm-oefen","scherm-klaar","scherm-spel","scherm-diploma"].forEach(function(s){
+ ["scherm-home","scherm-oefen","scherm-klaar","scherm-spel","scherm-diploma","scherm-eigenboek"].forEach(function(s){
   document.getElementById(s).classList.toggle("hidden",s!==id);});
  window.scrollTo(0,0);
 }
@@ -1178,6 +1197,113 @@ function boekKaarten(el){
   c.onclick=function(){toonBoek(bk);};
   g.appendChild(c);});
  el.appendChild(g);}
+// ====== SCHRIJF JE EIGEN HELDENBOEK — kind maakt zelf een boek
+var EB_DIEREN=[["🐕","hond"],["🐈","kat"],["🐬","dolfijn"],["🐎","paard"],["🦜","papegaai"],["🐘","olifant"],["🦘","kangoeroe"],["🦁","leeuw"]];
+var EB_GEVAAR=[
+ {ic:"🌊",t:"Iemand was in gevaar op zee",zin:"Op een dag was er een oproep: iemand was in gevaar op zee! De golven sloegen hoog op."},
+ {ic:"🔥",t:"Er was brand in het bos",zin:"Op een dag brak er brand uit in het bos. De dieren waren bang en konden niet weg."},
+ {ic:"❄️",t:"Iemand was verdwaald in de sneeuw",zin:"Op een dag sneeuwde het hard. Iemand was verdwaald en vond het huis niet meer terug."},
+ {ic:"😢",t:"Een kind was heel verdrietig",zin:"Op een dag was er een kind dat heel verdrietig was en niet meer wilde spelen."}];
+var EB_HULP=[
+ {ic:"📣",t:"Hij waarschuwde de mensen",zin:function(n){return "Maar "+n+" dacht niet aan rennen! "+n+" waarschuwde de mensen, zo luid als maar kon.";}},
+ {ic:"🏊",t:"Hij zwom er meteen heen",zin:function(n){return "Maar "+n+" was niet bang! "+n+" zwom er meteen heen en hielp.";}},
+ {ic:"🐾",t:"Hij liep vooruit en vond de weg",zin:function(n){return "Maar "+n+" kende een truc! "+n+" liep vooruit en vond de weg terug.";}},
+ {ic:"🤗",t:"Hij bleef knuffelen en troosten",zin:function(n){return "Maar "+n+" gaf niet op! "+n+" bleef knuffelen en troosten tot de zon weer scheen.";}}];
+var ebKeuze={dier:0,gevaar:0,hulp:0};
+function eigenBoekKaart(el){
+ var h=document.createElement("div");h.className="niveau";
+ h.innerHTML='✍️ Schrijf je eigen boek<span class="tag">jij bent de schrijver!</span>';
+ el.appendChild(h);
+ var g=document.createElement("div");g.className="grid";
+ var c=document.createElement("div");c.className="card";
+ var n=(staat.eigenBoeken||[]).length;
+ c.innerHTML='<span class="ic">✍️</span><b>Mijn heldenboek</b>'+(n?'<small>'+n+" boek"+(n>1?"en":"")+" gemaakt</small>":"<small>maak een echt boek zelf</small>");
+ c.onclick=function(){toonEigenBoek();};g.appendChild(c);
+ (staat.eigenBoeken||[]).slice(0,3).forEach(function(bk,bi){
+  var m=document.createElement("div");m.className="card";
+  m.innerHTML='<span class="ic">'+bk.dierIc+"</span><b>"+bk.naam+"</b><small>jouw boek — open</small>";
+  m.onclick=function(){toonEigenBoekBoek(bi);};g.appendChild(m);});
+ el.appendChild(g);
+}
+function toonEigenBoek(){
+ var el=document.getElementById("eb-inhoud");el.innerHTML="";
+ el.innerHTML='<p class="sub2">Kies je dier, zijn naam, het gevaar en hoe hij hielp — de app maakt er meteen een echt boek van. Voorlezen en printen kan ook!</p>'+
+ '<label class="eb-label">1. Kies je dier</label><div id="eb-dieren" style="display:flex;gap:8px;flex-wrap:wrap"></div>'+
+ '<label class="eb-label">2. Hoe heet je held?</label><input class="eb-vak" id="eb-naam" maxlength="14" placeholder="bv. Bink">'+
+ '<label class="eb-label">3. Wat was er aan de hand?</label><select class="eb-vak" id="eb-gevaar"></select>'+
+ '<label class="eb-label">4. Hoe hielp jouw held?</label><select class="eb-vak" id="eb-hulp"></select>'+
+ '<div class="knoppen"><button class="pill" onclick="maakEigenBoek()">✨ maak mijn boek!</button></div>'+
+ '<div id="eb-waarschuw" class="sub2" style="margin-top:8px"></div>';
+ var dd=document.getElementById("eb-dieren");
+ EB_DIEREN.forEach(function(d,i){
+  var b=document.createElement("button");b.className="eb-dier"+(ebKeuze.dier===i?" p":"");
+  b.textContent=d[0];b.title=d[1];
+  b.onclick=function(){ebKeuze.dier=i;dd.querySelectorAll(".eb-dier").forEach(function(x){x.classList.remove("p");});b.classList.add("p");zeg(d[1]);};
+  dd.appendChild(b);});
+ var gs=document.getElementById("eb-gevaar");
+ EB_GEVAAR.forEach(function(g,i){var o=document.createElement("option");o.value=i;o.textContent=g.ic+" "+g.t;gs.appendChild(o);});
+ gs.value=ebKeuze.gevaar;gs.onchange=function(){ebKeuze.gevaar=+gs.value;};
+ var hs=document.getElementById("eb-hulp");
+ EB_HULP.forEach(function(h,i){var o=document.createElement("option");o.value=i;o.textContent=h.ic+" "+h.t;hs.appendChild(o);});
+ hs.value=ebKeuze.hulp;hs.onchange=function(){ebKeuze.hulp=+hs.value;};
+ var nm=document.getElementById("eb-naam");if(staat.heldNaam)nm.value=staat.heldNaam;
+ toon("scherm-eigenboek");
+ zeg("Ga jij een boek schrijven? Kies je dier en zijn naam!");
+}
+function maakEigenBoek(){
+ var naam=(document.getElementById("eb-naam").value||"").trim();
+ if(!naam){document.getElementById("eb-waarschuw").textContent="⚠️ Verzin eerst een naam voor je held!";zeg("Verzin eerst een naam!");return;}
+ staat.heldNaam=naam;
+ var d=EB_DIEREN[ebKeuze.dier],g=EB_GEVAAR[ebKeuze.gevaar],h=EB_HULP[ebKeuze.hulp];
+ var bk={dierIc:d[0],dierWoord:d[1],naam:naam,gevaar:ebKeuze.gevaar,hulp:ebKeuze.hulp,
+  titel:naam+", de "+d[1]+"-held",auteur:wie()||"jij",
+  paginas:[
+   {em:d[0],zin:"Er was eens een "+d[1]+" die "+naam+" heette. "+naam+" was geen gewone "+d[1]+" — "+naam+" was een held!"},
+   {em:g.ic,zin:g.zin},
+   {em:h.ic,zin:h.zin(naam)},
+   {em:"🏅",zin:"Iedereen juichte: '"+naam+" is een echte held!' En "+(wie()||"jij")+" had dit boek helemaal zelf geschreven."}]};
+ (staat.eigenBoeken=staat.eigenBoeken||[]).unshift(bk);
+ if(staat.eigenBoeken.length>10)staat.eigenBoeken=staat.eigenBoeken.slice(0,10);
+ staat.sterren+=5;bewaar();feestConfetti(60);speelJubel();
+ toonEigenBoekBoek(0);
+ zeg("Wauw! Je eigen boek is klaar: "+bk.titel+". Vijf sterren erbij!");
+}
+function toonEigenBoekBoek(bi){
+ var bk=(staat.eigenBoeken||[])[bi];if(!bk){toonEigenBoek();return;}
+ var el=document.getElementById("eb-inhoud");
+ el.innerHTML='<div class="eb-cover"><div style="font-size:3rem">'+bk.dierIc+"</div>"+
+  '<h2 style="margin:6px 0 2px">'+bk.titel+"</h2>"+
+  '<div class="sub2">geschreven door <b>'+bk.auteur+"</b> · G2B Heldenboek</div></div>"+
+  bk.paginas.map(function(p){return '<div class="eb-pag"><div class="em">'+p.em+"</div><p>"+p.zin+"</p></div>";}).join("")+
+  '<div class="knoppen">'+
+  '<button class="pill" onclick="leesEigenBoek('+bi+')">🔊 lees voor</button>'+
+  '<button class="pill" onclick="printEigenBoek('+bi+')">🖨️ print</button>'+
+  '<button class="pill grijs" onclick="wisEigenBoek('+bi+')">🗑️</button></div>'+
+  '<button class="pill grijs" style="margin-top:8px" onclick="toonEigenBoek()">✍️ nog een boek maken</button>';
+ toon("scherm-eigenboek");
+}
+function leesEigenBoek(bi){
+ var bk=staat.eigenBoeken[bi];
+ zeg(bk.titel+". "+bk.paginas.map(function(p){return p.zin;}).join(" "));
+}
+function printEigenBoek(bi){
+ var bk=staat.eigenBoeken[bi];
+ var pags=bk.paginas.map(function(p,i){
+  return '<div class="wb-boekpagina"><div style="font-size:80px;margin-top:60px">'+p.em+"</div>"+
+   '<div class="zin" style="font-size:19px;margin-top:20px;max-width:12cm;margin-left:auto;margin-right:auto">'+p.zin+"</div></div>";
+ }).join("");
+ wbToon(bk.dierIc+" "+bk.titel+" — geschreven door "+bk.auteur,
+  '<div style="text-align:center;padding:30px 0;page-break-after:always"><div style="font-size:110px">'+bk.dierIc+"</div>"+
+  '<div style="font-size:26px;font-weight:bold;margin-top:20px">'+bk.titel+"</div>"+
+  '<div style="font-size:16px;margin-top:10px">geschreven door <b>'+bk.auteur+"</b></div>"+
+  '<div style="font-size:13px;margin-top:30px;color:#666">G2B Schoolspelen — Schrijf je eigen heldenboek</div></div>'+pags);
+ zeg("Je boek wordt geprint — blad voor blad, jouw eigen heldenboek!");
+}
+function wisEigenBoek(bi){
+ if(!confirm("Weet je zeker dat je dit boek weggooit?"))return;
+ staat.eigenBoeken.splice(bi,1);bewaar();
+ toonEigenBoek();
+}
 var huidigBoek=null,laatsteBoek=null;
 // boek-helden met een geanimeerde Wan-clip (clips/<id>.mp4)
 var CLIPS={balto:1,boerderij:1,dierenhelden:1,gevoelens:1,helden:1,keesje:1,klas:1,kleuren:1,koreaans:1,letters:1,moed:1,moed2:1,sam:1,seizoenen:1,sunny:1,tellen:1,topo:1,verkeer:1,vormen:1,weekdagen:1,ziggy:1};
@@ -1263,6 +1389,7 @@ function bouwHome(){
  voerKaart(el);
  nieuwsKaart(el);
  boekKaarten(el);
+ eigenBoekKaart(el);
  spelKaarten(el);
  maatjeUpdate();applyThema();
  var gkk=document.getElementById("geluid-knop");if(gkk)gkk.textContent=geluidAan()?"🔊":"🔇";
