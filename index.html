@@ -1325,7 +1325,8 @@ function toonEigenBoekBoek(bi){
  toon("scherm-eigenboek");
 }
 function ebLeesModus(bi,pag){
- var bk=staat.eigenBoeken[bi];var el=document.getElementById("eb-inhoud");
+ var bk=staat.eigenBoeken[bi];if(!bk){toonEigenBoek();return;}
+ toon("scherm-eigenboek");var el=document.getElementById("eb-inhoud");
  if(pag<0)pag=0;
  if(pag>bk.paginas.length){toonEigenBoekBoek(bi);return;}
  var cover=pag===0;
@@ -1340,7 +1341,30 @@ function ebLeesModus(bi,pag){
   '<span class="sub2">'+(cover?"cover":"pagina "+pag+" van "+bk.paginas.length)+"</span>"+
   '<button class="pill" onclick="ebLeesModus('+bi+","+(pag+1)+')">'+(cover?"openen ▶":"▶")+"</button></div>"+body+
   '<div class="knoppen" style="margin-top:14px"><button class="pill grijs" onclick="toonEigenBoekBoek('+bi+')">✕ sluiten</button>'+
-  (cover?"":'<button class="pill" onclick="zeg(\''+bk.paginas[pag-1].zin.replace(/'/g,"\\'")+'\')">🔊</button>')+"</div>";
+  (cover?"":'<button class="pill" onclick="zeg(\''+bk.paginas[pag-1].zin.replace(/'/g,"\\'")+'\')">🔊</button>'+
+  '<button class="pill" onclick="ebHardop('+bi+","+pag+')">🎤 lees hardop</button>')+"</div>"+
+  '<div id="eb-uit" class="sub2" style="margin-top:8px"></div>';
+}
+function ebHardop(bi,pag){
+ var bk=staat.eigenBoeken[bi];var zin=bk.paginas[pag-1].zin;
+ var uit=document.getElementById("eb-uit");
+ var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){uit.innerHTML="Hardop lezen werkt in Chrome of Edge — vraag even om zo'n browser.";zeg(zin);return;}
+ uit.innerHTML="🎙️ luisteren… lees de zin hardop voor!";
+ var r=new SR();r.lang="nl-NL";r.interimResults=false;r.maxAlternatives=3;
+ r.onresult=function(ev){
+  var said="";for(var i=0;i<ev.results[0].length;i++)said+=" "+ev.results[0][i].transcript;
+  var norm=function(t){return t.toLowerCase().replace(/[^a-z ]/g,"");};
+  var wHoop=norm(zin).split(" ").filter(function(w){return w.length>2;});
+  var gezegd=norm(said);
+  var hits=wHoop.filter(function(w){return gezegd.indexOf(w)>-1;}).length;
+  var ok=hits>=Math.max(3,Math.round(wHoop.length*0.6));
+  uit.innerHTML='Jij las: <b>"'+said.trim()+'"</b>'+(ok?" — 👏 goed gelezen!":" — bijna! Lees de zin nog eens rustig voor.");
+  if(ok){staat.sterren++;bewaar();feestConfetti(30);speelJubel();zeg("Goed gelezen!");}
+ };
+ r.onerror=function(){uit.textContent="Ik hoorde je niet — spreek dichtbij de microfoon en probeer opnieuw.";};
+ r.onend=function(){};
+ try{r.start();}catch(e){uit.textContent="Microfoon startte niet — probeer nog eens.";}
 }
 function leesEigenBoek(bi){
  var bk=staat.eigenBoeken[bi];
