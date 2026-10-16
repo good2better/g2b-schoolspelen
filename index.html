@@ -1203,12 +1203,16 @@ var EB_GEVAAR=[
  {ic:"🌊",t:"Iemand was in gevaar op zee",zin:"Op een dag was er een oproep: iemand was in gevaar op zee! De golven sloegen hoog op."},
  {ic:"🔥",t:"Er was brand in het bos",zin:"Op een dag brak er brand uit in het bos. De dieren waren bang en konden niet weg."},
  {ic:"❄️",t:"Iemand was verdwaald in de sneeuw",zin:"Op een dag sneeuwde het hard. Iemand was verdwaald en vond het huis niet meer terug."},
- {ic:"😢",t:"Een kind was heel verdrietig",zin:"Op een dag was er een kind dat heel verdrietig was en niet meer wilde spelen."}];
+ {ic:"😢",t:"Een kind was heel verdrietig",zin:"Op een dag was er een kind dat heel verdrietig was en niet meer wilde spelen."},
+ {ic:"🌳",t:"Een kat zat vast in een boom",zin:"Op een dag zat er een poes hoog in een boom vast. Ze durfde niet meer naar beneden!"},
+ {ic:"🌧️",t:"De rivier steeg en steeg",zin:"Op een dag regende het zo hard dat de rivier steeg en steeg. De brug stond bijna onder water!"}];
 var EB_HULP=[
  {ic:"📣",t:"Hij waarschuwde de mensen",zin:function(n){return "Maar "+n+" dacht niet aan rennen! "+n+" waarschuwde de mensen, zo luid als maar kon.";}},
  {ic:"🏊",t:"Hij zwom er meteen heen",zin:function(n){return "Maar "+n+" was niet bang! "+n+" zwom er meteen heen en hielp.";}},
  {ic:"🐾",t:"Hij liep vooruit en vond de weg",zin:function(n){return "Maar "+n+" kende een truc! "+n+" liep vooruit en vond de weg terug.";}},
- {ic:"🤗",t:"Hij bleef knuffelen en troosten",zin:function(n){return "Maar "+n+" gaf niet op! "+n+" bleef knuffelen en troosten tot de zon weer scheen.";}}];
+ {ic:"🤗",t:"Hij bleef knuffelen en troosten",zin:function(n){return "Maar "+n+" gaf niet op! "+n+" bleef knuffelen en troosten tot de zon weer scheen.";}},
+ {ic:"🚨",t:"Hij haalde er hulp bij",zin:function(n){return "Maar "+n+" wist precies wat te doen! "+n+" haalde er hulp bij — samen is alles makkelijker.";}},
+ {ic:"🦸",t:"Hij waagde een dappere sprong",zin:function(n){return "Maar "+n+" hield zijn hoofd koel! "+n+" waagde een dappere sprong en was er meteen.";}}];
 var ebKeuze={dier:0,gevaar:0,hulp:0};
 function eigenBoekKaart(el){
  var h=document.createElement("div");h.className="niveau";
@@ -1233,6 +1237,10 @@ function toonEigenBoek(){
  '<label class="eb-label">3. Wat was er aan de hand?</label><select class="eb-vak" id="eb-gevaar"></select>'+
  '<label class="eb-label">4. Hoe hielp jouw held?</label><select class="eb-vak" id="eb-hulp"></select>'+
  '<label class="eb-label">5. Wie is de schrijver? (jouw naam — mag leeg)</label><input class="eb-vak" id="eb-auteur" maxlength="20" placeholder="bv. Giorgio">'+
+ '<label class="eb-label">6. Teken je held! (mag ook leeg)</label>'+
+ '<div style="display:flex;gap:6px;align-items:center;margin-bottom:6px"><div id="eb-kleuren"></div>'+
+ '<button class="pill grijs" style="padding:4px 10px;font-size:.85rem" onclick="ebWis()">🧽 wis alles</button></div>'+
+ '<canvas id="eb-canvas" width="640" height="380" style="width:100%;max-width:520px;background:#fff;border:2px solid var(--goud,#f4a300);border-radius:14px;touch-action:none;cursor:crosshair"></canvas>'+
  '<div class="knoppen"><button class="pill" onclick="maakEigenBoek()">✨ maak mijn boek!</button></div>'+
  '<div id="eb-waarschuw" class="sub2" style="margin-top:8px"></div>';
  var dd=document.getElementById("eb-dieren");
@@ -1248,9 +1256,37 @@ function toonEigenBoek(){
  EB_HULP.forEach(function(h,i){var o=document.createElement("option");o.value=i;o.textContent=h.ic+" "+h.t;hs.appendChild(o);});
  hs.value=ebKeuze.hulp;hs.onchange=function(){ebKeuze.hulp=+hs.value;};
  var nm=document.getElementById("eb-naam");if(staat.heldNaam)nm.value=staat.heldNaam;
+ ebTekenInit();
  toon("scherm-eigenboek");
- zeg("Ga jij een boek schrijven? Kies je dier en zijn naam!");
+ zeg("Ga jij een boek schrijven? Kies je dier en zijn naam! Je mag ook je held tekenen.");
 }
+// — mini-tekenveld voor de eigen-boek-cover
+var ebCtx=null,ebKleur="#e63946",ebAan=false,ebLeeg=true,ebLX=0,ebLY=0;
+var EB_KLEUREN=["#e63946","#f4a300","#2a9d8f","#457b9d","#9b5de5","#111111","#ffffff"];
+function ebTekenInit(){
+ var cv=document.getElementById("eb-canvas");if(!cv)return;
+ ebCtx=cv.getContext("2d");ebCtx.fillStyle="#fff";ebCtx.fillRect(0,0,cv.width,cv.height);ebLeeg=true;
+ var kd=document.getElementById("eb-kleuren");kd.innerHTML="";
+ EB_KLEUREN.forEach(function(kl,i){
+  var b=document.createElement("button");
+  b.style.cssText="width:30px;height:30px;border-radius:50%;border:3px solid "+(i===0?"#333":"#ddd")+";background:"+kl+";cursor:pointer;padding:0";
+  b.onclick=function(){ebKleur=kl;kd.querySelectorAll("button").forEach(function(x){x.style.borderColor="#ddd";});b.style.borderColor="#333";};
+  kd.appendChild(b);});
+ function pos(e){var r=cv.getBoundingClientRect(),p=e.touches?e.touches[0]:e;
+  return[(p.clientX-r.left)*cv.width/r.width,(p.clientY-r.top)*cv.height/r.height];}
+ function lijn(e){var xy=pos(e);
+  ebCtx.strokeStyle=ebKleur==="#ffffff"?"#fff":ebKleur;ebCtx.lineWidth=ebKleur==="#ffffff"?26:8;
+  ebCtx.lineCap="round";ebCtx.lineJoin="round";
+  ebCtx.beginPath();ebCtx.moveTo(ebLX,ebLY);ebCtx.lineTo(xy[0],xy[1]);ebCtx.stroke();
+  ebLX=xy[0];ebLY=xy[1];ebLeeg=false;}
+ cv.onmousedown=function(e){ebAan=true;var xy=pos(e);ebLX=xy[0];ebLY=xy[1];lijn(e);};
+ cv.onmousemove=function(e){if(ebAan)lijn(e);};
+ cv.onmouseup=function(){ebAan=false;};cv.onmouseleave=function(){ebAan=false;};
+ cv.ontouchstart=function(e){e.preventDefault();ebAan=true;var xy=pos(e);ebLX=xy[0];ebLY=xy[1];lijn(e);};
+ cv.ontouchmove=function(e){e.preventDefault();if(ebAan)lijn(e);};
+ cv.ontouchend=function(e){e.preventDefault();ebAan=false;};
+}
+function ebWis(){var cv=document.getElementById("eb-canvas");ebCtx.fillStyle="#fff";ebCtx.fillRect(0,0,cv.width,cv.height);ebLeeg=true;}
 function maakEigenBoek(){
  var naam=(document.getElementById("eb-naam").value||"").trim();
  if(!naam){document.getElementById("eb-waarschuw").textContent="⚠️ Verzin eerst een naam voor je held!";zeg("Verzin eerst een naam!");return;}
@@ -1259,6 +1295,7 @@ function maakEigenBoek(){
  var d=EB_DIEREN[ebKeuze.dier],g=EB_GEVAAR[ebKeuze.gevaar],h=EB_HULP[ebKeuze.hulp];
  var bk={dierIc:d[0],dierWoord:d[1],naam:naam,gevaar:ebKeuze.gevaar,hulp:ebKeuze.hulp,
   titel:naam+", de "+d[1]+"-held",auteur:auteur,
+  tekening:ebLeeg?null:document.getElementById("eb-canvas").toDataURL("image/png"),
   paginas:[
    {em:d[0],zin:"Er was eens een "+d[1]+" die "+naam+" heette. "+naam+" was geen gewone "+d[1]+" — "+naam+" was een held!"},
    {em:g.ic,zin:g.zin},
@@ -1273,7 +1310,8 @@ function maakEigenBoek(){
 function toonEigenBoekBoek(bi){
  var bk=(staat.eigenBoeken||[])[bi];if(!bk){toonEigenBoek();return;}
  var el=document.getElementById("eb-inhoud");
- el.innerHTML='<div class="eb-cover"><div style="font-size:3rem">'+bk.dierIc+"</div>"+
+ el.innerHTML='<div class="eb-cover">'+
+  (bk.tekening?'<img src="'+bk.tekening+'" style="max-width:100%;border-radius:10px;background:#fff">':'<div style="font-size:3rem">'+bk.dierIc+"</div>")+
   '<h2 style="margin:6px 0 2px">'+bk.titel+"</h2>"+
   '<div class="sub2">geschreven door <b>'+bk.auteur+"</b> · G2B Heldenboek</div></div>"+
   bk.paginas.map(function(p){return '<div class="eb-pag"><div class="em">'+p.em+"</div><p>"+p.zin+"</p></div>";}).join("")+
@@ -1295,7 +1333,8 @@ function printEigenBoek(bi){
    '<div class="zin" style="font-size:19px;margin-top:20px;max-width:12cm;margin-left:auto;margin-right:auto">'+p.zin+"</div></div>";
  }).join("");
  wbToon(bk.dierIc+" "+bk.titel+" — geschreven door "+bk.auteur,
-  '<div style="text-align:center;padding:30px 0;page-break-after:always"><div style="font-size:110px">'+bk.dierIc+"</div>"+
+  '<div style="text-align:center;padding:30px 0;page-break-after:always">'+
+  (bk.tekening?'<img src="'+bk.tekening+'" style="max-width:12cm;border:2px solid #f4a300;border-radius:10px">':'<div style="font-size:110px">'+bk.dierIc+"</div>")+
   '<div style="font-size:26px;font-weight:bold;margin-top:20px">'+bk.titel+"</div>"+
   '<div style="font-size:16px;margin-top:10px">geschreven door <b>'+bk.auteur+"</b></div>"+
   '<div style="font-size:13px;margin-top:30px;color:#666">G2B Schoolspelen — Schrijf je eigen heldenboek</div></div>'+pags);
