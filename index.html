@@ -114,6 +114,7 @@ padding:14px;margin-top:14px;text-align:center}
 .mem-kaart:hover{border-color:var(--zee);transform:scale(1.04)}
 .mem-kaart.open{background:#fff;border-color:var(--goud)}
 .mem-kaart.gevonden{background:#d9f5dd;border-color:var(--groen);animation:stuiter .5s ease}
+#plakboek{position:fixed;bottom:14px;right:74px;z-index:60;pointer-events:none;display:flex;flex-direction:column-reverse;gap:2px;font-size:1.15rem;filter:drop-shadow(0 2px 3px rgba(0,0,0,.2))}
 #maatje{position:fixed;bottom:14px;right:14px;font-size:2.6rem;z-index:60;pointer-events:none;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
 #maatje.jubel{animation:jubel .7s ease}
 @keyframes jubel{30%{transform:translateY(-18px) rotate(-12deg) scale(1.2)}70%{transform:translateY(-6px) rotate(10deg)}}
@@ -216,6 +217,7 @@ padding:14px;margin-top:14px;text-align:center}
 </div>
 <div id="werkblad"></div>
 <footer>G2B Schoolspelen — gratis leren, voor altijd van jou. © good2better</footer>
+<div id="plakboek" title="Mijn helden-stickers"></div>
 <div id="maatje" title="Ziggy kijkt mee">🦓</div>
 
 <script>
@@ -371,9 +373,19 @@ var WINKEL=[
  {id:"vest",ic:"🦺",naam:"Veiligheidsvest",prijs:20,soort:"kleding"},{id:"sport",ic:"🎽",naam:"Sportshirt",prijs:25,soort:"kleding"},
  {id:"oceaan",ic:"🌊",naam:"Oceaan-wereld",prijs:30,soort:"thema"},{id:"lente",ic:"🌸",naam:"Lente-wereld",prijs:30,soort:"thema"},
  {id:"regenboog",ic:"🌈",naam:"Regenboog-wereld",prijs:45,soort:"thema"},{id:"ruimte",ic:"🌌",naam:"Ruimte-wereld",prijs:60,soort:"thema"},
- {id:"winter",ic:"❄️",naam:"Winter-wereld",prijs:35,soort:"thema"},{id:"herfst",ic:"🍂",naam:"Herfst-wereld",prijs:35,soort:"thema"}];
+ {id:"winter",ic:"❄️",naam:"Winter-wereld",prijs:35,soort:"thema"},{id:"herfst",ic:"🍂",naam:"Herfst-wereld",prijs:35,soort:"thema"},
+ {id:"st-balto",ic:"\ud83d\udc3a",naam:"Balto-sticker",prijs:15,soort:"sticker"},
+ {id:"st-cherami",ic:"\ud83d\udd4a\ufe0f",naam:"Cher Ami-sticker",prijs:15,soort:"sticker"},
+ {id:"st-koko",ic:"\ud83e\udd8d",naam:"Koko-sticker",prijs:20,soort:"sticker"},
+ {id:"st-tara",ic:"\ud83d\udc18",naam:"Tara-sticker",prijs:20,soort:"sticker"},
+ {id:"st-geleide",ic:"\ud83e\uddae",naam:"Geleidehond-sticker",prijs:25,soort:"sticker"},
+ {id:"st-paard",ic:"\ud83d\udc34",naam:"Therapiepaard-sticker",prijs:25,soort:"sticker"},
+ {id:"st-gertjie",ic:"\ud83e\udd8f",naam:"Gertjie-sticker",prijs:30,soort:"sticker"},
+ {id:"st-mike",ic:"\ud83d\udc14",naam:"Miracle Mike-sticker",prijs:30,soort:"sticker"},
+ {id:"st-winter",ic:"\ud83d\udc2c",naam:"Winter-sticker",prijs:35,soort:"sticker"},
+ {id:"st-buttercup",ic:"\ud83e\udd86",naam:"Buttercup-sticker",prijs:40,soort:"sticker"}];
 var THEMAS=["oceaan","lente","regenboog","ruimte","winter","herfst"];
-function itemVeld(it){return it.soort==="dier"?"huisdier":it.soort==="thema"?"thema":"petje";}
+function itemVeld(it){return it.soort==="dier"?"huisdier":it.soort==="thema"?"thema":it.soort==="sticker"?"plakboek":"petje";}
 function itemWaarde(it){return it.soort==="thema"?it.id:it.ic;}
 function applyThema(){
  var THEMA_EMOJI={"🌊":"oceaan","🌸":"lente","🌈":"regenboog","🌌":"ruimte","❄️":"winter","🍂":"herfst"};
@@ -384,6 +396,7 @@ function applyThema(){
 function maatjeUpdate(){
  var m=document.getElementById("maatje");if(!m)return;
  m.innerHTML=heldIc()+(staat.petje?'<span style="position:absolute;top:-16px;left:-6px;font-size:1.5rem">'+staat.petje+"</span>":"")+(staat.huisdier?'<span style="position:absolute;bottom:-6px;left:-24px;font-size:1.4rem">'+staat.huisdier+"</span>":"");
+ var pb=document.getElementById("plakboek");if(pb)pb.innerHTML=WINKEL.filter(function(it){return it.soort==="sticker"&&(staat.winkel||[]).indexOf(it.id)>=0;}).map(function(it){return '<span title="'+it.naam+'">'+it.ic+"</span>";}).join("");
 }
 // ====== GELUID aan/uit (ouders-vraag: rust kunnen zetten)
 function geluidAan(){return staat.geluid!==false;}
@@ -1049,6 +1062,33 @@ var BOEKEN=[
    {vraag:"Welke dieren duwden een zwemmer naar de wal?",goed:"Dolfijnen",opties:["Dolfijnen","Haaien","Schildpadden"]},
    {vraag:"Wat snuffelt rat Bondi op?",goed:"Landmijnen",opties:["Landmijnen","Truffels","Kaas"]},
    {vraag:"Wie bleef jaren bij het graf van zijn baasje?",goed:"Bobby",opties:["Bobby","Lassie","Tara"]}]}
+,{id:"moed",naam:"Heldenpoten",ic:"\ud83d\udc3e",
+  woorden:["moed","held","duif","gorilla","olifant","neushoorn","dolfijn","eend","prothese","geleiden","therapie","trots"],
+  zinnen:[{zin:"Balto de husky brengt medicijnen door de ___ naar Nome.",goed:"sneeuwstorm",opties:["sneeuwstorm","regen","woestijn"]},
+   {zin:"Duif Cher Ami vliegt met een boodschap door de ___.",goed:"loopgraven",opties:["loopgraven","wolken","stad"]},
+   {zin:"Gorilla Koko neemt een klein ___ als haar baby.",goed:"katje",opties:["katje","vogeltje","konijntje"]},
+   {zin:"Dolfijn Winter krijgt een speciale ___.",goed:"staartprothese",opties:["staartprothese","vinnenpak","zwembril"]},
+   {zin:"Eend Buttercup loopt weer met zijn ___.",goed:"kunstpootje",opties:["kunstpootje","nieuwe vleugels","schoentje"]},
+   {zin:"Kip Miracle Mike leefde verrassend ___ door.",goed:"lang",opties:["lang","hoog","ver"]}],
+  verhaal:[
+   ["Helden hoeven geen cape te dragen — deze dieren reden echt mensen en dieren. Dit zijn hun ware verhalen."],
+   ["Balto, een husky in Alaska, sleepte medicijnen door een vreselijke sneeuwstorm naar het zieke stadje Nome."],
+   ["Postduif Cher Ami vloog in de oorlog door de loopgraven heen en bracht een boodschap die een heel bataljon redde."],
+   ["Gorilla Koko vond een verdwaald katje en maakte het haar eigen baby — zacht en liefdevol."],
+   ["Gorilla Binti Jua droeg een gevallen jongetje voorzichtig naar de dierverzorgers in de dierentuin."],
+   ["Olifant Tara voedde wees-olifantje Bella op alsof het haar eigen kalf was."],
+   ["Een geleidehond leidt zijn blinde baasje veilig door de drukke stad — elke dag weer."],
+   ["Een rustig therapiepaard helpt een veteraan die moeite heeft weer vertrouwen te voelen."],
+   ["Wees-neushoornkalf Gertjie vond troost bij oude schaap Lammie, die zijn nieuwe vriend werd."],
+   ["Kip Miracle Mike bleef verrassend lang doorleven en maakte zijn baasjes beroemd."],
+   ["Dolfijn Winter verloor haar staart maar zwom weer dankzij een speciale prothese — een echte filmheldin."],
+   ["Eend Buttercup kreeg van zijn baasjes een kunstpootje en liep weer vrolijk rond."],
+   ["Klein of groot, met vacht, veren of vinnen: dieren kunnen echte helden zijn — en jij kunt het ook zijn."]],
+  vragen:[{vraag:"Welke hond bracht medicijnen door de storm naar Nome?",goed:"Balto",opties:["Balto","Lassie","Bobby"]},
+   {vraag:"Wat voor dier was Cher Ami?",goed:"Een postduif",opties:["Een postduif","Een adelaar","Een papegaai"]},
+   {vraag:"Wat maakte gorilla Koko tot haar baby?",goed:"Een katje",opties:["Een katje","Een puppy","Een konijn"]},
+   {vraag:"Wat kreeg dolfijn Winter om weer te zwemmen?",goed:"Een staartprothese",opties:["Een staartprothese","Een zwemvest","Grotere vinnen"]},
+   {vraag:"Wie troostte neushoornkalf Gertjie?",goed:"Schaap Lammie",opties:["Schaap Lammie","Hond Max","Kip Mike"]}]}
 
 ];
 var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",zon:"☀️",ster:"⭐",
@@ -1401,25 +1441,27 @@ function toonWinkel(){
  document.getElementById("spel-teller").textContent="⭐ "+staat.sterren;
  var inh=document.getElementById("spel-inhoud");
  inh.innerHTML='<p class="sub2">Ruil je ⭐ in! Kleding en een huisdier voor je held — of een heel ander wereldje als achtergrond.</p>';
- [["kleding","🧢 Kleding voor je held"],["dier","🐾 Huisdier — staat altijd naast je held"],["thema","🌍 Achtergrond-wereld"]].forEach(function(grp){
+ [["kleding","🧢 Kleding voor je held"],["dier","🐾 Huisdier — staat altijd naast je held"],["sticker","🏅 Helden-stickers — echte dierenhelden voor je plakboek"],["thema","🌍 Achtergrond-wereld"]].forEach(function(grp){
   var kop=document.createElement("p");kop.className="sub2";kop.style.cssText="font-weight:700;margin:14px 0 0";kop.textContent=grp[1];inh.appendChild(kop);
   var g=document.createElement("div");
   g.style.cssText="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:520px;margin:8px auto 0";
   WINKEL.filter(function(it){return it.soort===grp[0];}).forEach(function(it){
    var veld=itemVeld(it),waarde=itemWaarde(it);
    var gekocht=(staat.winkel||[]).indexOf(it.id)>=0;
-   var gedragen=staat[veld]===waarde;
+   var isSt=it.soort==="sticker";
+   var gedragen=isSt?gekocht:staat[veld]===waarde;
    var b=document.createElement("button");b.className="mem-kaart woord";
    if(gedragen)b.classList.add("open");
-   b.innerHTML='<span style="font-size:1.7rem">'+it.ic+"</span><br>"+it.naam+"<br><small>"+(gedragen?"✔️ actief":(gekocht?"tik: aan/uit":"⭐ "+it.prijs))+"</small>";
+   b.innerHTML='<span style="font-size:1.7rem">'+it.ic+"</span><br>"+it.naam+"<br><small>"+(gedragen?(isSt?"✔️ in plakboek":"✔️ actief"):(gekocht?"tik: aan/uit":"⭐ "+it.prijs))+"</small>";
    b.onclick=function(){
     var idx=(staat.winkel||[]).indexOf(it.id);
     if(idx<0){
      if(staat.sterren<it.prijs){speelJammer();zeg("Dat kost "+it.prijs+" sterren — je hebt er "+staat.sterren+". Oefen meer om te sparen!");return;}
-     staat.sterren-=it.prijs;staat.winkel=(staat.winkel||[]).concat([it.id]);staat[veld]=waarde;
+     staat.sterren-=it.prijs;staat.winkel=(staat.winkel||[]).concat([it.id]);if(!isSt)staat[veld]=waarde;
      bewaar();maatjeUpdate();applyThema();feestConfetti(30);speelJubel();
-     zeg("Gekocht — "+it.naam+(it.soort==="dier"?" gaat met je mee!":" staat je geweldig!"));toonWinkel();return;
+     zeg("Gekocht — "+it.naam+(isSt?" staat nu in je plakboek!":it.soort==="dier"?" gaat met je mee!":" staat je geweldig!"));toonWinkel();return;
     }
+    if(isSt){zeg("Die zit al in je plakboek — kijk naast je held!");return;}
     staat[veld]=(staat[veld]===waarde)?"":waarde;bewaar();maatjeUpdate();applyThema();toonWinkel();
    };
    g.appendChild(b);});
