@@ -563,16 +563,29 @@ function stemVoor(lang){
  var key=(lang||"nl").split("-")[0].toLowerCase();
  if(_stemmen[key]!==undefined)return _stemmen[key];
  var vs=[];try{vs=speechSynthesis.getVoices().filter(function(v){return (v.lang||"").toLowerCase().indexOf(key)===0;});}catch(e){}
- _stemmen[key]=vs.find(function(v){return /google|microsoft|natural|online|samantha|ellen|claire|xander|anna|iris|eva|mark|thomas|maarten|laura|fenna|colette|denise|frank/i.test(v.name);})||vs[0]||null;
+ // beste stemmen eerst: neurale/natuurlijke NL-stemmen klinken veel warmer
+ var PREF=[/fenna/i,/natural/i,/neural/i,/maarten/i,/google/i,/online/i,/microsoft/i,/samantha|ellen|claire|xander|anna|iris|eva|mark|thomas|laura|colette|denise|frank/i];
+ for(var pi=0;pi<PREF.length;pi++){var hit=vs.find(function(v){return PREF[pi].test(v.name);});if(hit){_stemmen[key]=hit;return hit;}}
+ _stemmen[key]=vs[0]||null;
  return _stemmen[key];}
 try{speechSynthesis.onvoiceschanged=function(){_stemmen={};};}catch(e){}
+var _zegQ=[];
 function zeg(t){
  if(staat.geluid===false)return;
  stopBoekAudio();
  try{speechSynthesis.cancel();
- var u=new SpeechSynthesisUtterance(t);u.lang="nl-NL";u.rate=0.92;u.pitch=1.06;
- var v=stemVoor("nl");if(v)u.voice=v;
- speechSynthesis.speak(u);}catch(e){}
+ _zegQ=[];
+ // zinnetje voor zinnetje met korte pauzes = natuurlijkere vertel-stem
+ var zinnen=String(t).match(/[^.!?]+[.!?]*/g)||[t];
+ var v=stemVoor("nl");
+ zinnen.forEach(function(z,i){
+  z=z.trim();if(!z)return;
+  var u=new SpeechSynthesisUtterance(z);u.lang="nl-NL";u.rate=0.92;u.pitch=1.06;
+  // kleine levendigheid: sloten iets langzamer uitspreken
+  if(i===zinnen.length-1&&zinnen.length>1)u.rate=0.88;
+  if(v)u.voice=v;
+  _zegQ.push(u);speechSynthesis.speak(u);
+ });}catch(e){}
 }
 function zegTaal(t,lang){if(staat.geluid===false)return;stopBoekAudio();try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.rate=0.85;var v=stemVoor(lang);if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}}
 var laatsteZeg="",_boekAudio=null;
