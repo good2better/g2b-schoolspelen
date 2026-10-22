@@ -272,10 +272,10 @@ var NIVEAUS=[
  {id:"mb",naam:"Middelbaar 1–5",tag:"verder",vakken:["tafels","procent","spelling2","zin2","topo","engels"]},
  {id:"uni",naam:"Universiteit",tag:"hoog",vakken:["procent","breuk","zin2","topo","engels","logica"]},
  {id:"uni-beta",naam:"Uni 🔬 Bèta",tag:"richting",vakken:["procent","breuk","logica","wetenschap"]},
- {id:"uni-mens",naam:"Uni ⚖️ Mens&Maat.",tag:"richting",vakken:["zin2","topo","engels","logica"]},
+ {id:"uni-mens",naam:"Uni ⚖️ Mens&Maat.",tag:"richting",vakken:["zin2","topo","engels","geschied","logica"]},
  {id:"uni-econ",naam:"Uni 💶 Economie",tag:"richting",vakken:["procent","breuk","topo","engels"]},
  {id:"uni-taal",naam:"Uni 📚 Taal",tag:"richting",vakken:["zin2","engels","wetenschap","logica"]},
- {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica","engels","wetenschap"]},
+ {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica","engels","wetenschap","geschied"]},
  {id:"genius",naam:"Genius",tag:"🏆",vakken:["logica","breuk","zin2","wetenschap"]}
 ];
 var VAKKEN={
@@ -312,6 +312,7 @@ var VAKKEN={
  topo:{ic:"🌍",naam:"Topografie",info:"de wereld en Nederland"},
  engels:{ic:"🇬🇧",naam:"Engels",info:"vertaal het woord"},
  wetenschap:{ic:"🔬",naam:"Wetenschap",info:"natuur & scheikunde"},
+ geschied:{ic:"🏛️",naam:"Geschiedenis",info:"NL & de wereld vroeger"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
  seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
  feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"},
@@ -541,6 +542,7 @@ var LESJES={
  engels:"Engels is de wereldtaal. Lees het Nederlandse woord en denk: welke Engelse betekenis ken ik al? Veel woorden lijken op elkaar!",
  wetenschap:"Feiten over natuur en scheikunde. Twijfel je? Denk aan wat je in de natuur om je heen ziet — vaak klopt je eerste gedachte.",
  topo:"Topografie = waar ligt wat? Denk aan de kaart van Nederland en de wereld — landen, steden, zeeën.",
+ geschied:"Geschiedenis = wat gebeurde er vroeger? Denk aan jaartallen en beroemde personen — welk verhaal ken je al?",
  klanken:"Luister goed naar het woord. Welke klank hoor je aan het BEGIN? Zeg het woord maar zachtjes na.",
  split:"Splitsen = het getal in twee stukjes verdelen. 10 splits je in 4 en 6: samen weer 10!",
  fouten:"Dit zijn jouw moeilijke stukjes — hier word je het allersterkst van!"
@@ -702,6 +704,25 @@ var WETENSCHAP=[
  {zin:"Wat meet je met een thermometer?",goed:"temperatuur",opties:["temperatuur","luchtdruk","snelheid"]},
  {zin:"Hoeveel chromosomen heeft een mens normaal?",goed:"46",opties:["46","23","92"]},
  {zin:"Welke kleur krijgt lakmoespapier in zuur?",goed:"rood",opties:["rood","blauw","groen"]}
+];
+// ====== GESCHIEDENIS: NL & wereld-feiten voor Mens&Maatschappij (zelf geschreven)
+var GESCHIED=[
+ {zin:"In welke eeuw stichtten de Romeinen Nederlandse steden zoals Nijmegen?",goed:"rond het jaar 0 (1e eeuw)",opties:["rond het jaar 0 (1e eeuw)","de 15e eeuw","de 19e eeuw"]},
+ {zin:"Wie was de eerste koning van Nederland (1815)?",goed:"Willem I",opties:["Willem I","Willem III","Beatrix"]},
+ {zin:"In welke oorlog vocht Nederland tachtig jaar tegen Spanje?",goed:"de Tachtigjarige Oorlog",opties:["de Tachtigjarige Oorlog","de Honderdjarige Oorlog","de Eerste Wereldoorlog"]},
+ {zin:"Welke eeuw heet in Nederland 'de Gouden Eeuw'?",goed:"de 17e eeuw",opties:["de 17e eeuw","de 15e eeuw","de 19e eeuw"]},
+ {zin:"Welke VOC-stad was het handels-hart van de Gouden Eeuw?",goed:"Amsterdam",opties:["Amsterdam","Parijs","Londen"]},
+ {zin:"Wie schilderde de Nachtwacht?",goed:"Rembrandt van Rijn",opties:["Rembrandt van Rijn","Vincent van Gogh","Johannes Vermeer"]},
+ {zin:"Wanneer werd Nederland bevrijd van de Duitse bezetting (WO II)?",goed:"1945",opties:["1945","1940","1950"]},
+ {zin:"Welke dag vieren we de bevrijding?",goed:"5 mei",opties:["5 mei","4 mei","27 april"]},
+ {zin:"Wie ontdekte Amerika in 1492?",goed:"Columbus",opties:["Columbus","Magelhaen","Vasco da Gama"]},
+ {zin:"De piramides staan in welk land?",goed:"Egypte",opties:["Egypte","Mexico","Griekenland"]},
+ {zin:"Welke Franse keizer vocht de slag bij Waterloo (1815)?",goed:"Napoleon",opties:["Napoleon","Lodewijk XIV","Karel de Grote"]},
+ {zin:"Wie was de eerste mens op de maan (1969)?",goed:"Neil Armstrong",opties:["Neil Armstrong","Buzz Aldrin","Yuri Gagarin"]},
+ {zin:"Welke uitvinder maakte de gloeilamp praktisch bruikbaar?",goed:"Edison",opties:["Edison","Tesla","Bell"]},
+ {zin:"Hoe heette de muur die Berlijn verdeelde tot 1989?",goed:"de Berlijnse Muur",opties:["de Berlijnse Muur","de IJzeren Muur","de Koude Muur"]},
+ {zin:"Welke Nederlandse vrouw was een bekende verzetsheldin in WO II?",goed:"Hannie Schaft",opties:["Hannie Schaft","Anne Frank","Mata Hari"]},
+ {zin:"Anne Frank schreef haar dagboek in welke oorlog?",goed:"de Tweede Wereldoorlog",opties:["de Tweede Wereldoorlog","de Eerste Wereldoorlog","de Vietnamoorlog"]}
 ];
 // ====== MIJN BOEKEN: jouw boeken worden oefeningen
 var BOEKEN=[
@@ -2493,6 +2514,13 @@ var makers={
   window._les={soort:"wetenschap",zin:z.zin};
   v.innerHTML='<div class="sub2">🔬 weet jij het?</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
   antwoordOpties(a,z.goed,z.opties.slice(),"wetenschap");
+  zegHoud(z.zin);
+ },
+ geschied:function(v,a){
+  var z=GESCHIED[rnd(0,GESCHIED.length-1)];
+  window._les={soort:"geschied",zin:z.zin};
+  v.innerHTML='<div class="sub2">🏛️ uit het verleden:</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
+  antwoordOpties(a,z.goed,z.opties.slice(),"geschied");
   zegHoud(z.zin);
  },
  engels:function(v,a){
