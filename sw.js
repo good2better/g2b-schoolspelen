@@ -1,4 +1,4 @@
-const CACHE="g2b-schoolspelen-v36";
+const CACHE="g2b-schoolspelen-v37";
 // Klein precache: de app zelf is meteen klaar. Clips & boekplaatjes
 // cachen lazy bij eerste gebruik (install bleef anders ~13 MB blokkeren).
 const ASSETS=["./","./index.html","./jufjet.png","./meestermo.png"];
