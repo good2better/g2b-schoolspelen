@@ -65,6 +65,7 @@ padding:12px 14px;margin-top:10px;font-size:1rem;line-height:1.5;display:none}
 .teltot{font-size:1.6rem;font-weight:800;color:var(--roze);min-height:2rem}
 .leeft{display:inline-block;animation:dans 1s ease infinite alternate}
 @keyframes dans{25%{transform:rotate(-8deg) scale(1.2)}75%{transform:rotate(8deg) scale(1.2)}}
+#pauze.hidden{display:none !important}
 .pauze{position:fixed;inset:0;background:rgba(30,20,60,.85);z-index:98;
 display:flex;align-items:center;justify-content:center}
 .pauze .doos{background:#fff;border-radius:18px;padding:34px;text-align:center;max-width:320px}
@@ -182,9 +183,8 @@ function bewaar(){localStorage.setItem("g2b_playlearn",JSON.stringify(staat));
 // ====== STEM (gratis, ingebouwd in de browser — spreekt NL)
 // Als de G2B stem-server draait (pocket-tts op localhost:8400, MIT/open source)
 // gebruiken we die natuurlijke NL-stem; anders de browser-stem.
-var _stemOk=null;
+var _stemOk=null,_stemRetryAt=0;
 function _stemServer(t){
- if(_stemOk===false)return Promise.reject();
  var fd=new FormData();fd.append("text",t);
  return fetch("http://localhost:8400/tts",{method:"POST",body:fd})
   .then(function(r){if(!r.ok)throw 0;_stemOk=true;return r.blob();})
@@ -195,8 +195,9 @@ function _stemServer(t){
 }
 function zeg(t){
  try{speechSynthesis.cancel();}catch(e){}
+ if(_stemOk===false&&Date.now()>_stemRetryAt)_stemOk=null; // retry elke 30s
  if(_stemOk!==false){
-  _stemServer(t).catch(function(){_stemOk=false;_zegBrowser(t);});
+  _stemServer(t).catch(function(){_stemOk=false;_stemRetryAt=Date.now()+30000;_zegBrowser(t);});
   return;
  }
  _zegBrowser(t);
