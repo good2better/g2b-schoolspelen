@@ -279,7 +279,7 @@ var NIVEAUS=[
  {id:"mb",naam:"Middelbaar 1–5",tag:"verder",vakken:["tafels","procent","spelling2","zin2","topo","engels"]},
  {id:"uni",naam:"Universiteit",tag:"hoog",vakken:["procent","breuk","zin2","topo","engels","logica"]},
  {id:"uni-beta",naam:"Uni 🔬 Bèta",tag:"richting",vakken:["procent","breuk","logica","wetenschap","bio","info2"]},
- {id:"uni-mens",naam:"Uni ⚖️ Mens&Maat.",tag:"richting",vakken:["zin2","topo","engels","geschied","logica","filos"]},
+ {id:"uni-mens",naam:"Uni ⚖️ Mens&Maat.",tag:"richting",vakken:["zin2","topo","engels","geschied","logica","filos","recht"]},
  {id:"uni-econ",naam:"Uni 💶 Economie",tag:"richting",vakken:["procent","breuk","ondern","engels","topo","stat"]},
  {id:"uni-taal",naam:"Uni 📚 Taal",tag:"richting",vakken:["zin2","engels","gram","logica"]},
  {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica","engels","wetenschap","geschied","stat","filos","bio"]},
@@ -326,6 +326,7 @@ var VAKKEN={
  filos:{ic:"💭",naam:"Filosofie",info:"denken over grote vragen"},
  bio:{ic:"🧬",naam:"Biologie",info:"cellen, DNA & het leven zelf"},
  info2:{ic:"💻",naam:"Informatica",info:"computers, code & hoe het web werkt"},
+ recht:{ic:"⚖️",naam:"Recht",info:"Grondwet, Kamer & de rechtbank"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
  seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
  feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"},
@@ -562,6 +563,7 @@ var LESJES={
  filos:"Filosofie = doorvragen op grote vragen. Ken de denkers (Socrates, Plato, Kant) en let op drogredenen — een argument dat goed lijkt maar niet klopt.",
  bio:"Biologie = het leven snappen: cellen bouwen lichamen, DNA is de handleiding van de cel, planten maken zuurstof via fotosynthese.",
  info2:"Informatica = computers begrijpen: bits en bytes, algoritmes (stappenplannen) en hoe het web werkt.",
+ recht:"Recht = de regels van het land: Grondwet, Tweede Kamer, rechtbank — en wie wat mag beslissen.",
  klanken:"Luister goed naar het woord. Welke klank hoor je aan het BEGIN? Zeg het woord maar zachtjes na.",
  split:"Splitsen = het getal in twee stukjes verdelen. 10 splits je in 4 en 6: samen weer 10!",
  fouten:"Dit zijn jouw moeilijke stukjes — hier word je het allersterkst van!"
@@ -981,6 +983,23 @@ var INFORMATICA=[
  {zin:"'Debuggen' is…?",goed:"fouten in code opsporen en repareren",opties:["fouten in code opsporen en repareren","insecten vangen","computers schoonmaken"]},
  {zin:"Een variabele in code is…?",goed:"een naam voor een waarde die kan veranderen",opties:["een naam voor een waarde die kan veranderen","een vast getal","een komma"]},
  {zin:"De eerste 'computerprogrammeur' ter wereld was…?",goed:"Ada Lovelace",opties:["Ada Lovelace","Bill Gates","Alan Turing"]}
+];
+var RECHT=[
+ {zin:"De belangrijkste wet van Nederland is…?",goed:"de Grondwet",opties:["de Grondwet","het Burgerlijk Wetboek","de verkeerswet"]},
+ {zin:"De Tweede Kamer heeft hoeveel zetels?",goed:"150",opties:["150","75","250"]},
+ {zin:"Een meerderheid in de Tweede Kamer is minimaal…?",goed:"76 zetels",opties:["76 zetels","51 zetels","100 zetels"]},
+ {zin:"De Eerste Kamer (senaat) telt hoeveel leden?",goed:"75",opties:["75","150","100"]},
+ {zin:"Een rechter beslist…?",goed:"onafhankelijk — niemand mag hem/haar sturen",opties:["onafhankelijk — niemand mag hem/haar sturen","wat de minister zegt","wat de politie wil"]},
+ {zin:"Een advocaat doet…?",goed:"je verdedigen en bijstaan in de rechtbank",opties:["je verdedigen en bijstaan in de rechtbank","je arresteren","wetten maken"]},
+ {zin:"De Hoge Raad is…?",goed:"de hoogste rechterlijke macht van Nederland",opties:["de hoogste rechterlijke macht van Nederland","een parlementsgebouw","een koninklijke raad"]},
+ {zin:"Het College voor de Rechten van de Mens bewaakt…?",goed:"discriminatie en mensenrechten in Nederland",opties:["discriminatie en mensenrechten in Nederland","alleen verkeerszaken","alleen belasting"]},
+ {zin:"Een rechtbank in eerste aanleg betekent…?",goed:"de eerste keer dat een zaak wordt behandeld",opties:["de eerste keer dat een zaak wordt behandeld","de hoogste zaak","een spoedzaak"]},
+ {zin:"'Onschuldig tot het tegendeel is bewezen' heet…?",goed:"de verdenking van onschuld (presumptie)",opties:["de verdenking van onschuld (presumptie)","de bewijsregel","de wet van het sterkste"]},
+ {zin:"Een vonnis is…?",goed:"de uitspraak van de rechter",opties:["de uitspraak van de rechter","een vergadering","een document"]},
+ {zin:"Een referendum is…?",goed:"een stemming waarin burgers direct meebeslissen",opties:["een stemming waarin burgers direct meebeslissen","een debat","een nieuwe wet"]},
+ {zin:"Habeas corpus betekent…?",goed:"je mag niet zonder rechter vastgehouden worden",opties:["je mag niet zonder rechter vastgehouden worden","je hebt gelijk","het recht om te spreken"]},
+ {zin:"De ministerraad is…?",goed:"de vergadering van alle ministers met de minister-president",opties:["de vergadering van alle ministers met de minister-president","het parlement","de rechterlijke macht"]},
+ {zin:"Privacy wet in Europa heet…?",goed:"AVG / GDPR",opties:["AVG / GDPR","WOB","UWV"]}
 ];
 var BOEKEN=[
  {id:"sunny",naam:"Sunny's Sailing Adventures",ic:"⛵",
@@ -2821,6 +2840,13 @@ var makers={
   window._les={soort:"info2",zin:z.zin};
   v.innerHTML='<div class="sub2">💻 computer-vraag:</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
   antwoordOpties(a,z.goed,z.opties.slice(),"info2");
+  zegHoud(z.zin);
+ },
+ recht:function(v,a){
+  var z=RECHT[rnd(0,RECHT.length-1)];
+  window._les={soort:"recht",zin:z.zin};
+  v.innerHTML='<div class="sub2">⚖️ rechts-vraag:</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
+  antwoordOpties(a,z.goed,z.opties.slice(),"recht");
   zegHoud(z.zin);
  },
  engels:function(v,a){
