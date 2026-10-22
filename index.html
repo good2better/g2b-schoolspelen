@@ -274,7 +274,7 @@ var NIVEAUS=[
  {id:"uni-beta",naam:"Uni 🔬 Bèta",tag:"richting",vakken:["procent","breuk","logica","wetenschap"]},
  {id:"uni-mens",naam:"Uni ⚖️ Mens&Maat.",tag:"richting",vakken:["zin2","topo","engels","geschied","logica"]},
  {id:"uni-econ",naam:"Uni 💶 Economie",tag:"richting",vakken:["procent","breuk","ondern","engels","topo"]},
- {id:"uni-taal",naam:"Uni 📚 Taal",tag:"richting",vakken:["zin2","engels","wetenschap","logica"]},
+ {id:"uni-taal",naam:"Uni 📚 Taal",tag:"richting",vakken:["zin2","engels","gram","logica"]},
  {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica","engels","wetenschap","geschied"]},
  {id:"genius",naam:"Genius",tag:"🏆",vakken:["logica","breuk","zin2","wetenschap"]}
 ];
@@ -314,6 +314,7 @@ var VAKKEN={
  wetenschap:{ic:"🔬",naam:"Wetenschap",info:"natuur & scheikunde"},
  geschied:{ic:"🏛️",naam:"Geschiedenis",info:"NL & de wereld vroeger"},
  ondern:{ic:"💶",naam:"Ondernemen",info:"geld, winst & slim omgaan"},
+ gram:{ic:"📖",naam:"Grammatica",info:"woordsoorten & zinnen"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
  seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
  feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"},
@@ -545,6 +546,7 @@ var LESJES={
  topo:"Topografie = waar ligt wat? Denk aan de kaart van Nederland en de wereld — landen, steden, zeeën.",
  geschied:"Geschiedenis = wat gebeurde er vroeger? Denk aan jaartallen en beroemde personen — welk verhaal ken je al?",
  ondern:"Ondernemen = slim met geld denken. Reken altijd eerst uit: wat kost het, wat levert het op?",
+ gram:"Grammatica = hoe zinnen in elkaar zitten. Zoek eerst het werkwoord, dan wie het doet (onderwerp) en wat er gedaan wordt.",
  klanken:"Luister goed naar het woord. Welke klank hoor je aan het BEGIN? Zeg het woord maar zachtjes na.",
  split:"Splitsen = het getal in twee stukjes verdelen. 10 splits je in 4 en 6: samen weer 10!",
  fouten:"Dit zijn jouw moeilijke stukjes — hier word je het allersterkst van!"
@@ -743,6 +745,24 @@ var ONDERNEEM=[
  {zin:"Een goede ondernemer rekent eerst uit: wat kost het mij vs. wat levert het op. Dat heet…?",goed:"kosten-baten-analyse",opties:["kosten-baten-analyse","een goocheltruc","een spaarplan"]},
  {zin:"€10 per week sparen — na 10 weken heb je…?",goed:"€100",opties:["€100","€10","€1000"]},
  {zin:"Waarom kopen winkels spullen in grote hoeveelheden in?",goed:"dan is de prijs per stuk lager — meer winst per verkoop",opties:["dan is de prijs per stuk lager — meer winst per verkoop","omdat het er mooi uitziet","omdat het moet van de wet"]}
+];
+// ====== GRAMMATICA: woordsoorten & zinsbouw voor Taal-richting (zelf geschreven)
+var GRAM=[
+ {zin:"In 'De kat slaapt' — welk woord is het onderwerp?",goed:"de kat",opties:["de kat","slaapt","de"]},
+ {zin:"In 'De kat slaapt' — welk woord is het werkwoord?",goed:"slaapt",opties:["slaapt","kat","de"]},
+ {zin:"Welk woord is een lidwoord?",goed:"de",opties:["de","rennen","mooi"]},
+ {zin:"Welk woordsoort zegt hoe iets is (bijv. 'mooi', 'snel')?",goed:"bijvoeglijk naamwoord",opties:["bijvoeglijk naamwoord","zelfstandig naamwoord","werkwoord"]},
+ {zin:"Welk woord is een zelfstandig naamwoord?",goed:"tafel",opties:["tafel","lopen","heel"]},
+ {zin:"Welk woord is een bijwoord (zegt hoe/wanneer)?",goed:"gisteren",opties:["gisteren","hond","de"]},
+ {zin:"'lopen, liep, gelopen' — welke verleden tijd is juist: 'Ik ___ gisteren naar school'?",goed:"liep",opties:["liep","loop","gelopen"]},
+ {zin:"Wat is de meervoud van 'kind'?",goed:"kinderen",opties:["kinderen","kinds","kinder"]},
+ {zin:"'hij heeft' — welk werkwoord is dit in de tegenwoordige tijd?",goed:"hebben",opties:["hebben","zijn","worden"]},
+ {zin:"Welke zin is correct?",goed:"Ik ben naar huis gegaan.",opties:["Ik ben naar huis gegaan.","Ik heb naar huis gegaan.","Ik ging naar huis gegaan."]},
+ {zin:"'groter, grootste' — hoe heet deze vergrotende trap?",goed:"vergrotende en overtreffende trap",opties:["vergrotende en overtreffende trap","verkleinwoord","tegenwoordige tijd"]},
+ {zin:"In 'Zij leest een boek' — welk woord is het lijdend voorwerp?",goed:"een boek",opties:["een boek","zij","leest"]},
+ {zin:"Welk woord is een voornaamwoord?",goed:"hij",opties:["hij","tafel","snel"]},
+ {zin:"'onder, boven, naast' zijn…?",goed:"voorzetsels",opties:["voorzetsels","werkwoorden","lidwoorden"]},
+ {zin:"Welke zin heeft een hoofd- én bijzin?",goed:"Omdat het regende, bleven we thuis.",opties:["Omdat het regende, bleven we thuis.","We bleven thuis.","Het regende hard."]}
 ];
 // ====== MIJN BOEKEN: jouw boeken worden oefeningen
 var BOEKEN=[
@@ -2550,6 +2570,13 @@ var makers={
   v.innerHTML='<div class="sub2">💶 ondernemer-vraag:</div><div class="big" style="font-size:1.4rem">'+w.zin+"</div>";
   antwoordOpties(a,w.goed,w.opties.slice(),"ondern");
   zegHoud(w.zin);
+ },
+ gram:function(v,a){
+  var z=GRAM[rnd(0,GRAM.length-1)];
+  window._les={soort:"gram",zin:z.zin};
+  v.innerHTML='<div class="sub2">📖 taal-denkvraag:</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
+  antwoordOpties(a,z.goed,z.opties.slice(),"gram");
+  zegHoud(z.zin);
  },
  engels:function(v,a){
   var w=ENGELS[rnd(0,ENGELS.length-1)],naarEn=rnd(0,1)===0;
