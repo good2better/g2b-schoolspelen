@@ -2842,38 +2842,71 @@ var JUF_FAQ={
   ["Hoe werken de boeken?","Elke boek heeft pagina's om te lezen, woorden om te leren, zinnen om af te maken en een quiz om te testen."],
   ["Kan ik ook op papier oefenen?","Ja — bij 'werkblad printen' maak je echte blaadjes van elk boek en elk vak voor je printer."]]
 };
+var JUF_FAQ_EN={
+ "Math & sums":[["How do I learn the times tables best?","Small steps: first 1-5, then 6-10. Say them out loud, write them down, and practice 5 minutes every day — that works better than an hour all at once."],
+  ["How do I work out fractions?","Look at the denominator: how many pieces is the whole split into? Then count how many pieces you have. 3/8 = three out of eight pieces."],
+  ["What is a smart trick for the 9-times table?","Your fingers help: fold down the n-th finger and count the fingers before it (tens) and after it (ones)."],
+  ["How do I calculate with money?","Think of coins: 1 euro = 100 cents. Put real coins next to it if you can — then you really see it."],
+  ["What if a sum is too hard?","Make it smaller: calculate with easy numbers first (10 instead of 97), get the trick, then apply it to the big one."]],
+ "Language & spelling":[["How do I write a good sentence?","Start with a capital letter, end with a full stop. Always check: who does what? Then your sentence is right."],
+  ["I always forget capitals — what now?","Read your text out loud. Every new sentence = capital. Every name = capital. Practice makes it automatic."],
+  ["How do I learn difficult words?","Write the word three times, say the letters out loud, and make a silly little sentence with it — that sticks."],
+  ["When do I use a comma?","Wherever you take a breath when reading out loud — that is usually where a comma belongs."],
+  ["How do I make a story exciting?","Start calmly, let something go wrong in the middle, and solve it only at the end — that is called the story arc."]],
+ "Reading & books":[["I read slowly — is that bad?","Not at all. A little every day makes you faster and faster. Pick a book you like — then it goes by itself."],
+  ["How do I learn to read louder?","Read softly to yourself first, then louder and louder. Listen to your own voice — you immediately hear where it stumbles."],
+  ["Which book should I choose?","Pick something you are curious about. A book you really want to know reads much easier than a must-read book."]],
+ "Netherlands & the world":[["How do I learn places and countries?","Look at the map every day, say the names out loud, and connect them to something you know (big city, capital, river)."],
+  ["How do I remember years?","Make it a little story: 1945 = 'grandpa's birthday when the war ended'. Stories stick, loose numbers you forget."],
+  ["What is the Constitution again?","The most important law of the Netherlands — it says everyone is free, equal and safe."]],
+ "Practice & learning":[["How do I learn the very best?","Little bits every day, not everything at once. Explaining to someone else (or your teddy) is the best test that you get it."],
+  ["What do I do with a mistake?","A mistake is no disaster — it is exactly what you still need to practice. I always show you the good explanation after a mistake."],
+  ["When am I 'done' with a subject?","When you get almost everything right — then new material comes. But keep repeating the old ones now and then."],
+  ["What helps when I don't feel like it?","Just do one question. One more. Before you know it you have done a whole round — starting is the hardest part."],
+  ["How do I get better at tests?","Breathe calmly, read the question twice, start with what you know — the rest comes after."]],
+ "Feelings & school":[["I think practicing is stupid — what now?","Try seeing it as a game: earning stars, getting badges, helping your hero. And ask me for an easy one — after that it flows."],
+  ["I'm scared of the test.","Keep breathing calmly. You practiced — you can do more than you think. Making mistakes is allowed, that is where learning starts."],
+  ["I'm being bullied — what should I do?","Tell a teacher or a parent. Always. That is not snitching — that is taking good care of yourself."],
+  ["I can't sleep because of school.","Put the book away, breathe calmly, and think of one thing that DID go well today. Tomorrow is a new day."]],
+ "About this app":[["How do I get stars?","By answering questions correctly. You can spend stars in the shop on pets, stickers and more."],
+  ["What are badges?","Special prizes for clever things — first round, 10 stars, a week of practicing in a row, and more."],
+  ["How do I pick another teacher?","On the start page it says 'Who explains it to you?' — there you choose Teacher Jet, Master Mo, or your own name."],
+  ["How do the books work?","Each book has pages to read, words to learn, sentences to finish and a quiz to test you."],
+  ["Can I practice on paper too?","Yes — with 'print worksheet' you make real sheets of every book and every subject for your printer."]]
+};
+function FAQ(){return (typeof isEn==="function"&&isEn())?JUF_FAQ_EN:JUF_FAQ;}
 function vraagKaart(el){
  var h=document.createElement("div");h.className="niveau";
- h.innerHTML='💬 Vraag het aan '+jufNaam()+'<span class="tag">privé-les — echte antwoorden</span>';
+ h.innerHTML=(isEn()?'💬 Ask ':'💬 Vraag het aan ')+jufNaam()+'<span class="tag">'+(isEn()?'private lesson — real answers':'privé-les — echte antwoorden')+'</span>';
  el.appendChild(h);
  var g=document.createElement("div");g.className="grid";
  var c=document.createElement("div");c.className="card";
- c.innerHTML='<img src="'+jufImg()+'" style="width:64px;height:64px;border-radius:50%"><b>Stel jouw vraag</b><small>'+jufNaam()+' helpt je — tikkie en antwoord!</small>';
+ c.innerHTML='<img src="'+jufImg()+'" style="width:64px;height:64px;border-radius:50%"><b>'+(isEn()?'Ask your question':'Stel jouw vraag')+'</b><small>'+jufNaam()+(isEn()?' helps you — tap and answer!':' helpt je — tikkie en antwoord!')+'</small>';
  c.onclick=function(){vraagMenu();};
  g.appendChild(c);
  el.appendChild(g);
 }
 function vraagMenu(){
- document.getElementById("spel-titel").textContent="💬 Vraag het aan "+jufNaam();
+ document.getElementById("spel-titel").textContent=(isEn()?"💬 Ask ":"💬 Vraag het aan ")+jufNaam();
  var inh=document.getElementById("spel-inhoud");
- inh.innerHTML='<p class="sub2">Kies een onderwerp — of typ hieronder je eigen vraag!</p><div class="acties" id="vraag-kies"></div>'+
-  '<div class="card" style="max-width:420px;margin:14px auto 0"><b>Jouw eigen vraag:</b><br>'+
-  '<input class="invoer" id="vraag-in" style="width:90%;max-width:320px;margin:8px 0" maxlength="120" placeholder="bijv. hoe leer ik breuken?">'+
-  '<button class="pill" onclick="vraagZelf()">vraag het!</button></div>'+
+ inh.innerHTML='<p class="sub2">'+(isEn()?'Pick a topic — or type your own question below!':'Kies een onderwerp — of typ hieronder je eigen vraag!')+'</p><div class="acties" id="vraag-kies"></div>'+
+  '<div class="card" style="max-width:420px;margin:14px auto 0"><b>'+(isEn()?'Your own question:':'Jouw eigen vraag:')+'</b><br>'+
+  '<input class="invoer" id="vraag-in" style="width:90%;max-width:320px;margin:8px 0" maxlength="120" placeholder="'+(isEn()?'e.g. how do I learn fractions?':'bijv. hoe leer ik breuken?')+'">'+
+  '<button class="pill" onclick="vraagZelf()">'+(isEn()?'ask it!':'vraag het!')+'</button></div>'+
   '<div id="vraag-antw"></div>'+
   '<div class="acties" style="margin-top:12px"><button class="pill grijs" onclick="naarHome()">← terug</button></div>';
  var zk=document.getElementById("vraag-kies");
- Object.keys(JUF_FAQ).forEach(function(t){
+ Object.keys(FAQ()).forEach(function(t){
   var b=document.createElement("button");b.className="pill";b.textContent=t;
   (function(tt){b.onclick=function(){vraagLijst(tt);};})(t);zk.appendChild(b);});
  toon("scherm-spel");
- zeg("Waar ben je nieuwsgierig naar"+(wie()?", "+wie():"")+"?");
+ zeg(isEn()?("What are you curious about"+(wie()?", "+wie():"")+"?"):("Waar ben je nieuwsgierig naar"+(wie()?", "+wie():"")+"?"));
 }
 function vraagLijst(t){
  var az=document.getElementById("vraag-antw");
  az.innerHTML='<div class="card" style="max-width:460px;margin:14px auto"><b>'+t+'</b><div class="acties" id="vraag-sub"></div></div>';
  var sz=document.getElementById("vraag-sub");
- JUF_FAQ[t].forEach(function(pa){
+ FAQ()[t].forEach(function(pa){
   var b=document.createElement("button");b.className="pill";b.style.cssText="font-size:15px;padding:8px 14px";b.textContent=pa[0];
   (function(v,a){b.onclick=function(){vraagAntwoord(v,a);};})(pa[0],pa[1]);sz.appendChild(b);});
 }
@@ -2882,12 +2915,12 @@ function vraagAntwoord(v,a){
  az.innerHTML='<div class="card" style="max-width:480px;margin:14px auto;text-align:left">'+
   '<b>❓ '+v+"</b>"+
   '<div class="lesje lesje-les aan" style="margin-top:10px"><img src="'+jufImg()+'" class="jufjet-av" alt="'+jufNaam()+'"><b>'+jufNaam()+":</b> "+a+"</div></div>"+
-  '<div class="acties" style="justify-content:center"><button class="pill" onclick="vraagMenu()">💬 nog een vraag</button></div>';
+  '<div class="acties" style="justify-content:center"><button class="pill" onclick="vraagMenu()">'+(isEn()?'💬 ask another':'💬 nog een vraag')+'</button></div>';
  zeg(a);
 }
 function vraagZelf(){
  var q=(document.getElementById("vraag-in").value||"").toLowerCase().trim();
- if(!q){zeg("Typ eerst je vraag!");return;}
+ if(!q){zeg(isEn()?"Type your question first!":"Typ eerst je vraag!");return;}
  _vraagZelfOffline(q);
 }
 function _vraagZelfServer(q){
@@ -2903,16 +2936,17 @@ function _vraagZelfServer(q){
 function _vraagZelfOffline(q){
  if(_vraagZelfServer.__miss!==true&&_vraagZelfServer(q))return;
  var best=null,score=0,onder="";
- Object.keys(JUF_FAQ).forEach(function(t){
-  JUF_FAQ[t].forEach(function(pa){
+ Object.keys(FAQ()).forEach(function(t){
+  FAQ()[t].forEach(function(pa){
    var wo=(pa[0]+" "+pa[1]).toLowerCase().split(/[^a-zà-ë0-9]+/);
    var s=0;q.split(/[^a-zà-ë0-9]+/).forEach(function(w){if(w.length>2&&wo.indexOf(w)>-1)s+=w.length;});
    if(s>score){score=s;best=pa;onder=t;}
   });
  });
  if(best&&score>4){vraagAntwoord(q,best[1]);}
- else{vraagAntwoord(q,"Dat is een goede vraag"+(wie()?", "+wie():"")+"! Die weet ik nog niet precies — kijk eens bij '"
-  +Object.keys(JUF_FAQ)[0]+"' of probeer je vraag met andere woorden. En onthoud: elke vraag die je stelt, maakt je slimmer!");}
+ else{vraagAntwoord(q,isEn()?("That's a good question"+(wie()?", "+wie():"")+"! I don't know that one exactly yet — check '"
+  +Object.keys(FAQ())[0]+"' or try your question in other words. And remember: every question you ask makes you smarter!"):("Dat is een goede vraag"+(wie()?", "+wie():"")+"! Die weet ik nog niet precies — kijk eens bij '"
+  +Object.keys(FAQ())[0]+"' of probeer je vraag met andere woorden. En onthoud: elke vraag die je stelt, maakt je slimmer!"));}
 }
 
 function seizoensKaart(el){
