@@ -582,13 +582,20 @@ function bewaar(){dagStreak();localStorage.setItem(staatKey(),JSON.stringify(sta
 // ====== STEM (gratis, ingebouwd in de browser — spreekt NL)
 // Als de G2B stem-server draait (pocket-tts op localhost:8400, MIT/open source)
 // gebruiken we die natuurlijke NL-stem; anders de browser-stem.
-var _stemOk=null,_stemRetryAt=0;
+var _stemOk=null,_stemRetryAt=0,_stemAudio=null,_stemGen=0;
+function _stemStop(){
+ _stemGen++; // verlaat pendende responses: oud antwoord mag niet meer starten
+ try{if(_stemAudio){_stemAudio.pause();_stemAudio.src="";_stemAudio=null;}}catch(e){}
+}
 function _stemServer(t){
+ var gen=_stemGen;
  var fd=new FormData();fd.append("text",t);
  return fetch("http://localhost:8400/tts",{method:"POST",body:fd})
   .then(function(r){if(!r.ok)throw 0;_stemOk=true;return r.blob();})
   .then(function(b){
+   if(gen!==_stemGen)return; // al vervangen door nieuwer zeg()
    var a=new Audio(URL.createObjectURL(b));
+   _stemAudio=a;
    return a.play().catch(function(){});
   });
 }
@@ -609,6 +616,7 @@ function zeg(t){
  if(staat.geluid===false||_wbStil)return;
  stopBoekAudio();
  try{speechSynthesis.cancel();}catch(e){}
+ _stemStop(); // vorige server-audio stopt altijd bij nieuw zeg()
  if(_stemOk===false&&Date.now()>_stemRetryAt)_stemOk=null; // retry elke 30s
  if(_stemOk!==false){
   _stemServer(t).catch(function(){_stemOk=false;_stemRetryAt=Date.now()+30000;_zegBrowser(t);});
