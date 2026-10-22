@@ -278,12 +278,12 @@ var NIVEAUS=[
  {id:"g78",naam:"Groep 7–8",tag:"gevorderd",vakken:["plus3","min3","tafels","spelling2","zin","topo","engels","puzzel"]},
  {id:"mb",naam:"Middelbaar 1–5",tag:"verder",vakken:["tafels","procent","spelling2","zin2","topo","engels"]},
  {id:"uni",naam:"Universiteit",tag:"hoog",vakken:["procent","breuk","zin2","topo","engels","logica"]},
- {id:"uni-beta",naam:"Uni 🔬 Bèta",tag:"richting",vakken:["procent","breuk","logica","wetenschap","bio"]},
+ {id:"uni-beta",naam:"Uni 🔬 Bèta",tag:"richting",vakken:["procent","breuk","logica","wetenschap","bio","info2"]},
  {id:"uni-mens",naam:"Uni ⚖️ Mens&Maat.",tag:"richting",vakken:["zin2","topo","engels","geschied","logica","filos"]},
  {id:"uni-econ",naam:"Uni 💶 Economie",tag:"richting",vakken:["procent","breuk","ondern","engels","topo","stat"]},
  {id:"uni-taal",naam:"Uni 📚 Taal",tag:"richting",vakken:["zin2","engels","gram","logica"]},
  {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica","engels","wetenschap","geschied","stat","filos","bio"]},
- {id:"genius",naam:"Genius",tag:"🏆",vakken:["logica","breuk","zin2","wetenschap","stat"]}
+ {id:"genius",naam:"Genius",tag:"🏆",vakken:["logica","breuk","zin2","wetenschap","stat","info2"]}
 ];
 var VAKKEN={
  tellen:{ic:"🔢",naam:"Tellen",info:"tel de plaatjes"},
@@ -325,6 +325,7 @@ var VAKKEN={
  stat:{ic:"📊",naam:"Statistiek",info:"gemiddelden, kansen & spreiding"},
  filos:{ic:"💭",naam:"Filosofie",info:"denken over grote vragen"},
  bio:{ic:"🧬",naam:"Biologie",info:"cellen, DNA & het leven zelf"},
+ info2:{ic:"💻",naam:"Informatica",info:"computers, code & hoe het web werkt"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
  seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
  feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"},
@@ -560,6 +561,7 @@ var LESJES={
  stat:"Statistiek = getallen samenvatten en kansen begrijpen. Gemiddelde, mediaan en modus zijn drie manieren om 'het midden' te zeggen.",
  filos:"Filosofie = doorvragen op grote vragen. Ken de denkers (Socrates, Plato, Kant) en let op drogredenen — een argument dat goed lijkt maar niet klopt.",
  bio:"Biologie = het leven snappen: cellen bouwen lichamen, DNA is de handleiding van de cel, planten maken zuurstof via fotosynthese.",
+ info2:"Informatica = computers begrijpen: bits en bytes, algoritmes (stappenplannen) en hoe het web werkt.",
  klanken:"Luister goed naar het woord. Welke klank hoor je aan het BEGIN? Zeg het woord maar zachtjes na.",
  split:"Splitsen = het getal in twee stukjes verdelen. 10 splits je in 4 en 6: samen weer 10!",
  fouten:"Dit zijn jouw moeilijke stukjes — hier word je het allersterkst van!"
@@ -962,6 +964,23 @@ var BIOLOGIE=[
  {zin:"Bacteriën zijn…?",goed:"eencellige organismen",opties:["eencellige organismen","virussen","schimmels"]},
  {zin:"Een vaccin helpt het lichaam door…?",goed:"het immuunsysteem voor te bereiden op ziekte",opties:["het immuunsysteem voor te bereiden op ziekte","bacteriën te voeren","het bloed blauw te maken"]},
  {zin:"De grootste levende structuur op aarde is…?",goed:"het Great Barrier Reef",opties:["het Great Barrier Reef","de Amazone","een blauwe vinvis"]}
+];
+var INFORMATICA=[
+ {zin:"Computers rekenen in…?",goed:"binaire code (enkelen en nullen)",opties:["binaire code (enkelen en nullen)","letters","kleuren"]},
+ {zin:"Een 'bit' is…?",goed:"één 0 of 1 — de kleinste hoeveelheid data",opties:["één 0 of 1 — de kleinste hoeveelheid data","een klein dier","een knop"]},
+ {zin:"8 bits samen heten…?",goed:"een byte",opties:["een byte","een bitje","een pixel"]},
+ {zin:"Een algoritme is…?",goed:"een stappenplan om een probleem op te lossen",opties:["een stappenplan om een probleem op te lossen","een robot","een website"]},
+ {zin:"Een 'bug' in een programma is…?",goed:"een fout in de code",opties:["een fout in de code","een insect in de computer","een feature"]},
+ {zin:"Een 'loop' doet in code…?",goed:"iets steeds opnieuw herhalen",opties:["iets steeds opnieuw herhalen","de computer uitzetten","tekst printen"]},
+ {zin:"De CPU van een computer is…?",goed:"het 'brein' dat alle berekeningen doet",opties:["het 'brein' dat alle berekeningen doet","het geheugen","het scherm"]},
+ {zin:"RAM-geheugen is…?",goed:"tijdelijk werkgeheugen dat leeg is na uitschakelen",opties:["tijdelijk werkgeheugen dat leeg is na uitschakelen","permanente opslag","de processor"]},
+ {zin:"Het verschil tussen internet en het web: het web is…?",goed:"de websites/pagina's die óp het internet draaien",opties:["de websites/pagina's die óp het internet draaien","hetzelfde als internet","de kabels"]},
+ {zin:"HTML is…?",goed:"de taal waarmee webpagina's worden opgebouwd",opties:["de taal waarmee webpagina's worden opgebouwd","een virus","een browser"]},
+ {zin:"Open source betekent…?",goed:"de broncode is openbaar en vrij te gebruiken",opties:["de broncode is openbaar en vrij te gebruiken","gratis bier","een geheim programma"]},
+ {zin:"Een database is…?",goed:"een gestructureerde verzameling gegevens",opties:["een gestructureerde verzameling gegevens","een apparaat","een programmeur"]},
+ {zin:"'Debuggen' is…?",goed:"fouten in code opsporen en repareren",opties:["fouten in code opsporen en repareren","insecten vangen","computers schoonmaken"]},
+ {zin:"Een variabele in code is…?",goed:"een naam voor een waarde die kan veranderen",opties:["een naam voor een waarde die kan veranderen","een vast getal","een komma"]},
+ {zin:"De eerste 'computerprogrammeur' ter wereld was…?",goed:"Ada Lovelace",opties:["Ada Lovelace","Bill Gates","Alan Turing"]}
 ];
 var BOEKEN=[
  {id:"sunny",naam:"Sunny's Sailing Adventures",ic:"⛵",
@@ -2795,6 +2814,13 @@ var makers={
   window._les={soort:"bio",zin:z.zin};
   v.innerHTML='<div class="sub2">🧬 leven-vraag:</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
   antwoordOpties(a,z.goed,z.opties.slice(),"bio");
+  zegHoud(z.zin);
+ },
+ info2:function(v,a){
+  var z=INFORMATICA[rnd(0,INFORMATICA.length-1)];
+  window._les={soort:"info2",zin:z.zin};
+  v.innerHTML='<div class="sub2">💻 computer-vraag:</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
+  antwoordOpties(a,z.goed,z.opties.slice(),"info2");
   zegHoud(z.zin);
  },
  engels:function(v,a){
