@@ -249,6 +249,7 @@ padding:14px;margin-top:14px;text-align:center}
 <script src="stem/lijst.js"></script>
 <script src="stem/lijst_jet.js"></script>
 <script src="stem/lijst_eigen.js" onerror="this.remove()"></script>
+<script src="juf_server.js" onerror="this.remove()"></script>
 <script>
 // PWA — offline speelbaar + installeerbaar op tablet/telefoon
 // Auto-update: checkt bij start + elke 30 min of GitHub Pages nieuwere code heeft.
@@ -2887,6 +2888,20 @@ function vraagAntwoord(v,a){
 function vraagZelf(){
  var q=(document.getElementById("vraag-in").value||"").toLowerCase().trim();
  if(!q){zeg("Typ eerst je vraag!");return;}
+ _vraagZelfOffline(q);
+}
+function _vraagZelfServer(q){
+ if(typeof JUF_SERVER==="undefined"||!JUF_SERVER)return false;
+ var ctl=new AbortController();var tid=setTimeout(function(){ctl.abort();},8000);
+ fetch(JUF_SERVER,{method:"POST",headers:{"Content-Type":"application/json"},
+  body:JSON.stringify({vraag:q}),signal:ctl.signal})
+ .then(function(r){return r.json();})
+ .then(function(j){clearTimeout(tid);if(j&&j.antwoord){vraagAntwoord(q,j.antwoord);}else{_vraagZelfOffline(q);}})
+ .catch(function(){clearTimeout(tid);_vraagZelfServer.__miss=true;_vraagZelfOffline(q);});
+ return true;
+}
+function _vraagZelfOffline(q){
+ if(_vraagZelfServer.__miss!==true&&_vraagZelfServer(q))return;
  var best=null,score=0,onder="";
  Object.keys(JUF_FAQ).forEach(function(t){
   JUF_FAQ[t].forEach(function(pa){
