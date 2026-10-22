@@ -55,6 +55,9 @@ h2{color:var(--zeed);margin-bottom:6px}
  .wb-rij{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:18px}
  .wb-lijntje{flex:1;border-bottom:2px dashed #999;height:26px}
  .wb-som{font-size:20px;margin:14px 0}
+ .wb-vraag{font-size:17px;margin:14px 0 4px}
+ .wb-opts{font-size:15px;color:#345;margin:4px 0 6px 18px}
+ .wb-antw{border-bottom:2px dashed #999;height:30px;margin-bottom:10px}
  .wb-boekpagina{page-break-after:always;text-align:center;padding-top:8px}
  .wb-boekpagina img{max-width:100%;max-height:14cm;border-radius:8px}
  .wb-boekpagina .zin{font-size:17px;margin-top:8px;line-height:1.5}
@@ -588,9 +591,9 @@ function stemVoor(lang){
  _stemmen[key]=vs[0]||null;
  return _stemmen[key];}
 try{speechSynthesis.onvoiceschanged=function(){_stemmen={};};}catch(e){}
-var _zegQ=[];
+var _zegQ=[],_wbStil=false;
 function zeg(t){
- if(staat.geluid===false)return;
+ if(staat.geluid===false||_wbStil)return;
  stopBoekAudio();
  try{speechSynthesis.cancel();
  _zegQ=[];
@@ -3059,6 +3062,8 @@ function werkbladMenu(){
   b.onclick=function(){werkbladBoek(bk);};zk.appendChild(b);});
  var s=document.createElement("button");s.className="pill";s.textContent="🔢 Sommen-blad";
  s.onclick=werkbladSommen;zk.appendChild(s);
+ var vk=document.createElement("button");vk.className="pill";vk.textContent="📝 Oefenblad per vak";
+ vk.onclick=werkbladVakken;zk.appendChild(vk);
  ["zon","bloem","vis","konijn","vlinder"].forEach(function(k,i){
   var b=document.createElement("button");b.className="pill";b.textContent="🖍️ kleurplaat: "+k;
   (function(n){b.onclick=function(){werkbladKleurplaat(n);};})(k);zk.appendChild(b);});
@@ -3115,6 +3120,45 @@ function werkbladKleurplaat(naam){
  wbToon("🖍️ Kleurplaat: "+naam,'<svg viewBox="0 0 400 340" style="width:100%;max-width:520px;display:block;margin:0 auto">'+KLEURPLATEN[naam]+"</svg>"+
   '<p style="text-align:center;margin-top:10px">Kleur '+naam+" mooi in — jouw kunstwerk!</p>");
  zeg("Kleurplaat "+naam+" — printen en inkleuren!");
+}
+function werkbladVakken(){
+ document.getElementById("spel-titel").textContent="📝 Oefenblad per vak";
+ var inh=document.getElementById("spel-inhoud");
+ inh.innerHTML='<p class="sub2">Kies een vak — er komt een blaadje met 8 echte vragen uit, met rondjes om aan te kruisen of een lijntje om op te schrijven!</p><div class="acties" id="wb-vak"></div>'+
+  '<div class="acties" style="margin-top:12px"><button class="pill grijs" onclick="werkbladMenu()">← terug</button></div>';
+ var zk=document.getElementById("wb-vak"),lijst=[];
+ NIVEAUS.forEach(function(n){n.vakken.forEach(function(v){
+  if(makers[v]&&VAKKEN[v]&&lijst.indexOf(v)<0)lijst.push(v);});});
+ lijst.forEach(function(v){
+  var b=document.createElement("button");b.className="pill";b.textContent=VAKKEN[v].ic+" "+VAKKEN[v].naam;
+  (function(id){b.onclick=function(){werkbladVak(id);};})(v);zk.appendChild(b);});
+ toon("scherm-spel");
+}
+function werkbladVak(vak){
+ var V=VAKKEN[vak],rijen=[],seen={},pog=0;
+ var hv=document.createElement("div"),ha=document.createElement("div");
+ hv.style.display="none";ha.style.display="none";
+ document.body.appendChild(hv);document.body.appendChild(ha);
+ _wbStil=true;
+ try{
+  while(rijen.length<8&&pog<60){
+   pog++;hv.innerHTML="";ha.innerHTML="";
+   try{makers[vak](hv,ha);}catch(e){break;}
+   var q=(hv.textContent||"").trim().replace(/\s+/g," ");
+   if(!q||seen[q])continue;
+   seen[q]=1;
+   var opts=[];
+   ha.querySelectorAll(".optie").forEach(function(b){opts.push((b.textContent||"").trim());});
+   rijen.push({q:q,opts:opts});
+  }
+ }finally{_wbStil=false;if(hv.parentNode)hv.parentNode.removeChild(hv);if(ha.parentNode)ha.parentNode.removeChild(ha);}
+ if(!rijen.length){zeg("Voor dat vak kan ik nog geen blaadje maken — kies een ander vak!");return;}
+ var html=rijen.map(function(r,i){
+  var o=r.opts.length?'<div class="wb-opts">'+r.opts.map(function(x){return "◯ "+x;}).join(" &nbsp; ")+"</div>":"";
+  return '<div class="wb-vraag"><b>'+(i+1)+".</b> "+r.q+"</div>"+o+'<div class="wb-antw"></div>';
+ }).join("");
+ wbToon(V.ic+" Oefenblad: "+V.naam,html);
+ zeg("Oefenblad van "+V.naam+" klaar — de printer doet de rest!");
 }
 function werkbladSommen(){
  var soms=[],i;
