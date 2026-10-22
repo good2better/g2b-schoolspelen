@@ -609,7 +609,7 @@ function herhaalZeg(){staat.stijl.luister++;bewaar();if(laatsteZeg)zeg(laatsteZe
 
 // ====== WOORDENLIJSTEN (NL, niveau-stijgend)
 var WOORDEN1=["kat","hond","boom","huis","bal","vis","melk","beer","zon","boot","kip","aap"];
-var WOORDEN2=["schaap","vlinder","fietsen","school","tafel","lepel","bloem","pizza","zeilen","vriend","zebra","poes"];
+var WOORDEN2=["schaap","vlinder","fietsen","school","tafel","lepel","bloem","pizza","zeilen","vriend","zebra","poes","schildpad","regenboog","giraffe","kameel","olifant","bibliotheek","iglo","tijger","aardbei","koningin","prinses","dokter","duif","woensdag","zaterdag","februari","vogel","worst","spiegel"];
 var ZINNEN1=[
  {zin:"De ___ drinkt melk.",goed:"kat",opties:["kat","auto","stoel"]},
  {zin:"Ik speel met de ___.",goed:"bal",opties:["bal","soep","deur"]},
@@ -619,13 +619,46 @@ var ZINNEN1=[
 var ZINNEN2=[
  {zin:"Als ik drie appels heb en eet er één, dan heb ik er ___.",goed:"twee",opties:["twee","drie","vier"]},
  {zin:"Een week heeft ___ dagen.",goed:"zeven",opties:["zeven","vijf","tien"]},
- {zin:"Het tegenovergestelde van dag is ___.",goed:"nacht",opties:["nacht","ochtend","zon"]}
+ {zin:"Het tegenovergestelde van dag is ___.",goed:"nacht",opties:["nacht","ochtend","zon"]},
+ {zin:"Sara loopt in de regen naar school zonder jas. Thuis is haar jas ___.",goed:"droog",opties:["droog","nat","koud"]},
+ {zin:"De bus vertrekt om 8:00. Tom komt om 8:05 aan. Tom is ___.",goed:"te laat",opties:["te laat","op tijd","te vroeg"]},
+ {zin:"Alle vogels kunnen vliegen. Een merel is een vogel. Kan een merel vliegen?",goed:"ja",opties:["ja","nee","alleen 's nachts"]},
+ {zin:"Lisa heeft 10 knikkers. Ze verliest er 4 en wint er 2. Hoeveel heeft ze nu?",goed:"8",opties:["8","6","10"]},
+ {zin:"De winkel sluit om 18:00. Het is nu half zes (17:30). De winkel is nog ___ open.",goed:"een half uur",opties:["een half uur","een uur","twee uur"]},
+ {zin:"Emma is ouder dan Max. Max is ouder dan Noa. Wie is de jongste?",goed:"Noa",opties:["Noa","Max","Emma"]},
+ {zin:"Het boek heeft 120 pagina's. Youri heeft er 60 gelezen. Hij heeft ___ gelezen.",goed:"de helft",opties:["de helft","een kwart","bijna alles"]},
+ {zin:"Amsterdam is de hoofdstad van ___.",goed:"Nederland",opties:["Nederland","België","Duitsland"]},
+ {zin:"Een dozijn is ___ stuks.",goed:"12",opties:["12","10","20"]},
+ {zin:"Water bevriest bij ___ graden Celsius.",goed:"0",opties:["0","10","-10"]},
+ {zin:"Daan fietst 10 km in een half uur. In een hele uur fietst hij ___ km.",goed:"20",opties:["20","10","30"]},
+ {zin:"Vandaag is het woensdag. Overmorgen is het ___.",goed:"vrijdag",opties:["vrijdag","donderdag","zaterdag"]},
+ {zin:"De zon gaat onder in het ___.",goed:"westen",opties:["westen","oosten","noorden"]},
+ {zin:"Een jaar heeft ___ maanden.",goed:"12",opties:["12","10","24"]},
+ {zin:"De vierde maand van het jaar is ___.",goed:"april",opties:["april","mei","maart"]},
+ {zin:"Als je eerlijk bent, zeg je de ___.",goed:"waarheid",opties:["waarheid","leugen","grap"]},
+ {zin:"Tien keer tien is ___.",goed:"honderd",opties:["honderd","tien","duizend"]}
 ];
 var LOGICA=[
  {zin:"2, 4, 6, ___ ?",goed:"8",opties:["8","7","10"]},
  {zin:"5, 10, 15, ___ ?",goed:"20",opties:["20","18","25"]},
  {zin:"1, 2, 4, 8, ___ ?",goed:"16",opties:["16","12","10"]},
- {zin:"Welke hoort er NIET bij: 🍎🍌🍇🚗 ?",goed:"🚗",opties:["🚗","🍎","🍌"]}
+ {zin:"Welke hoort er NIET bij: 🍎🍌🍇🚗 ?",goed:"🚗",opties:["🚗","🍎","🍌"]},
+ {zin:"3, 6, 9, ___ ?",goed:"12",opties:["12","10","15"]},
+ {zin:"10, 8, 6, ___ ?",goed:"4",opties:["4","5","2"]},
+ {zin:"1, 3, 5, ___ ?",goed:"7",opties:["7","6","9"]},
+ {zin:"100, 90, 80, ___ ?",goed:"70",opties:["70","60","75"]},
+ {zin:"2, 4, 8, 16, ___ ?",goed:"32",opties:["32","24","20"]},
+ {zin:"1, 1, 2, 3, 5, 8, ___ ? (elk getal is de som van de twee ervoor)",goed:"13",opties:["13","11","10"]},
+ {zin:"A, C, E, ___ ?",goed:"G",opties:["G","F","H"]},
+ {zin:"Welke hoort er NIET bij: 2, 4, 6, 9, 8 ?",goed:"9",opties:["9","2","6"]},
+ {zin:"Welke hoort er NIET bij: 🐟🦈🐋🦅 ?",goed:"🦅",opties:["🦅","🐟","🦈"]},
+ {zin:"Maan hoort bij nacht, zoals zon hoort bij ___.",goed:"dag",opties:["dag","ster","wolk"]},
+ {zin:"Hand hoort bij handschoen, zoals voet hoort bij ___.",goed:"sok",opties:["sok","schoen","been"]},
+ {zin:"Dokter hoort bij ziekenhuis, zoals juf hoort bij ___.",goed:"school",opties:["school","winkel","speeltuin"]},
+ {zin:"3 katten vangen 3 muizen in 3 minuten. Hoeveel katten vangen 9 muizen in 9 minuten?",goed:"3",opties:["3","9","1"]},
+ {zin:"Boek hoort bij lezen, zoals vork hoort bij ___.",goed:"eten",opties:["eten","snijden","koken"]},
+ {zin:"3, 6, 12, 24, ___ ?",goed:"48",opties:["48","36","30"]},
+ {zin:"Als BOOM omgedraaid MOOB wordt, dan wordt ZON omgedraaid ___.",goed:"NOZ",opties:["NOZ","ONZ","ZON"]}
 ];
 // ====== MIJN BOEKEN: jouw boeken worden oefeningen
 var BOEKEN=[
@@ -2315,18 +2348,46 @@ var makers={
   zegHoud(x+" keer "+y);
  },
  procent:function(v,a){
-  var p=[10,25,50,75][rnd(0,3)],van=[20,40,80,100,200][rnd(0,4)];
-  window._les={soort:"procent",p:p,van:van};
-  v.innerHTML='<div class="big">'+p+"% van "+van+" = ?</div>";
-  antwoordTyp(a,van*p/100);
-  zegHoud(p+" procent van "+van);
+  var soort=rnd(0,2);
+  if(soort===0){var p=[10,25,50,75][rnd(0,3)],van=[20,40,80,100,200][rnd(0,4)];
+   window._les={soort:"procent",p:p,van:van};
+   v.innerHTML='<div class="big">'+p+"% van "+van+" = ?</div>";
+   antwoordTyp(a,van*p/100);
+   zegHoud(p+" procent van "+van);
+  }else if(soort===1){var prijs=[10,20,40,80][rnd(0,3)],kp=[10,25,50][rnd(0,2)];
+   var antw=prijs-prijs*kp/100;
+   window._les={soort:"procent",p:kp,van:prijs};
+   v.innerHTML='<div class="sub2">Een game kost €'+prijs+' — er is '+kp+'% korting. Wat betaal je?</div>';
+   antwoordTyp(a,antw);
+   zegHoud(kp+" procent korting van "+prijs+" euro");
+  }else{var deel=[10,20,25,50][rnd(0,3)],tot=deel*[2,4][rnd(0,1)]*1;
+   if(deel===25&&rnd(0,1))tot=100;if(deel===10)tot=[50,100][rnd(0,1)];if(deel===20)tot=[40,100,200][rnd(0,2)];
+   var pc=Math.round(deel/tot*100);
+   window._les={soort:"procent",p:pc,van:tot};
+   v.innerHTML='<div class="sub2">'+deel+" van de "+tot+" — hoeveel procent is dat?</div>";
+   antwoordTyp(a,pc);
+   zegHoud(deel+" van de "+tot+" is hoeveel procent?");
+  }
  },
  breuk:function(v,a){
-  var n=rnd(2,8);
-  window._les={soort:"breuk",n:n};
-  v.innerHTML='<div class="sub2">Een 🍕 in '+n+' stukken — je eet er 1. Hoeveel pizza heb je gehad?</div>';
-  var opties=["1/"+n,"1/"+(n+1),n+"/1"];
-  antwoordOpties(a,"1/"+n,opties,"breuk");
+  var soort=rnd(0,3),n;
+  if(soort===0){n=rnd(2,8);
+   window._les={soort:"breuk",n:n};
+   v.innerHTML='<div class="sub2">Een 🍕 in '+n+' stukken — je eet er 1. Hoeveel pizza heb je gehad?</div>';
+   antwoordOpties(a,"1/"+n,["1/"+n,"1/"+(n+1),n+"/1"],"breuk");
+  }else if(soort===1){n=rnd(3,8);var gegeten=rnd(2,Math.min(n-1,5));
+   window._les={soort:"breuk",n:n};
+   v.innerHTML='<div class="sub2">Een 🍕 in '+n+' stukken — je eet er '+gegeten+'. Welke breuk is dat?</div>';
+   antwoordOpties(a,gegeten+"/"+n,[gegeten+"/"+n,"1/"+n,n+"/"+gegeten],"breuk");
+  }else if(soort===2){n=[4,6,8][rnd(0,2)];var a1=rnd(1,n-2),b1=rnd(1,n-1-a1);
+   window._les={soort:"breuk",n:n};
+   v.innerHTML='<div class="big">'+a1+"/"+n+" + "+b1+"/"+n+" = ?</div>";
+   antwoordOpties(a,(a1+b1)+"/"+n,[(a1+b1)+"/"+n,(a1+b1)+"/"+(2*n),(a1)+"/"+(a1+b1)],"breuk");
+  }else{var bp=[["1/2","50%"],["1/4","25%"],["3/4","75%"],["1/1","100%"]][rnd(0,3)];
+   window._les={soort:"breuk",n:0};
+   v.innerHTML='<div class="sub2">Welke procent is hetzelfde als de breuk '+bp[0]+'?</div>';
+   antwoordOpties(a,bp[1],[bp[1],"10%","90%"],"breuk");
+  }
  },
  woorden:function(v,a){
   var key=huidigNiv+":"+huidigVak;
