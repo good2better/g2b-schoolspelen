@@ -1,4 +1,4 @@
-const CACHE="g2b-schoolspelen-v19";
+const CACHE="g2b-schoolspelen-v20";
 // Klein precache: de app zelf is meteen klaar. Clips & boekplaatjes
 // cachen lazy bij eerste gebruik (install bleef anders ~13 MB blokkeren).
 const ASSETS=["./","./index.html"];

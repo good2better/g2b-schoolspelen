@@ -1218,6 +1218,33 @@ var BOEKEN=[
    {vraag:"Waar bak je koekjes?",goed:"In de oven",opties:["In de oven","In de tuin","In de auto"]},
    {vraag:"Wat is leuker (of moet je) samen doen?",goed:"samen spelen",opties:["samen spelen","alleen zitten","niks doen"]},
    {vraag:"Kan een technicus ook doorstuderen?",goed:"Ja, zelfs tot master",opties:["Ja, zelfs tot master","Nee, nooit","Alleen op zondag"]}]}
+,{id:"geld",naam:"Geld leren met Spaarvarken Bas",ic:"🐷",
+  woorden:["geld","munt","euro","cent","briefje","spaarpot","wisselgeld","sparen","winkeltje","delen","klusje","spaarvarken"],
+  zinnen:[{zin:"Een hele euro is ___ cent.",goed:"100",opties:["100","10","1000"]},
+   {zin:"Geld op papier heet een ___.",goed:"briefje",opties:["briefje","muntje","sticker"]},
+   {zin:"In zijn ___ bewaart Bas zijn muntjes.",goed:"spaarpot",opties:["spaarpot","schoen","pet"]},
+   {zin:"Je betaalt 2 euro en het kost 1,50 — je krijgt ___ terug.",goed:"50 cent",opties:["50 cent","2 euro","niks"]},
+   {zin:"4 munten eerlijk delen met 2 vriendjes: ieder krijgt er ___.",goed:"2",opties:["2","4","1"]},
+   {zin:"Voor elke ___ in huis krijgt Bas een muntje.",goed:"klus",opties:["klus","dans","tv"]}],
+  verhaal:[
+   ["Dit is Spaarvarken Bas — een roze varkentje met een strik! Hij leert je vandaag alles over GELD. Kom mee!"],
+   ["DE MUNTEN: de kleine centen — 1, 2, 5, 10, 20 en 50 cent. Klein maar fijn, samen worden ze steeds meer."],
+   ["DE EURO'S: de grote munten van 1 en 2 euro. En wist je dat? Eén hele euro is precies 100 cent!"],
+   ["DE BRIEFJES: papiergeld — briefjes van 5, 10 en 20 euro. Licht en handig in je portemonnee."],
+   ["TELLEN MAAR: vijf munten van 1 euro samen... is een briefje van 5 euro! Geld tellen is gewoon rekenen."],
+   ["WISSELGELD: een appel kost €1,50 en jij geeft 2 euro — dan krijg je 50 cent terug. Eerlijk gerekend!"],
+   ["DE SPAARPOT: elke week stopt Bas één muntje in zijn spaarpot. Pling! Zo groeit het vanzelf."],
+   ["SPAREN VOOR JE DROOM: Bas spaart voor een bal én een cadeau — klein beetje elke keer, groot doel aan het einde."],
+   ["WINKELTJES SPELEN: Bas heeft een eigen winkeltje met prijskaartjes — koekje €1, appel €1,50, pakje drinken €0,75. Zo oefen je betalen alsof het echt is!"],
+   ["EERLIJK DELEN: 4 munten en 2 vriendjes? Ieder krijgt er 2 — dat is eerlijk, en delen is ook gezellig."],
+   ["GELD VERDIENEN: Bas helpt in huis — vegen, afruimen, de hond uitlaten. Voor elke klus een muntje van papa en mama."],
+   ["En nu weet jij het allemaal: munten, briefjes, tellen, wisselgeld, sparen en delen. Bas is trots op jou, slimme spaarder!"]],
+  vragen:[{vraag:"Hoeveel cent is één euro?",goed:"100 cent",opties:["100 cent","10 cent","5 cent"]},
+   {vraag:"Waar bewaart Bas zijn muntjes?",goed:"In zijn spaarpot",opties:["In zijn spaarpot","In zijn schoen","Onder zijn bed"]},
+   {vraag:"Een appel kost €1,50 en je betaalt met €2. Hoeveel krijg je terug?",goed:"50 cent",opties:["50 cent","€1","€2"]},
+   {vraag:"Hoe deel je 4 munten eerlijk met 2 vriendjes?",goed:"Ieder 2 munten",opties:["Ieder 2 munten","Ieder 4 munten","Alles voor jezelf"]},
+   {vraag:"Hoe verdient Bas een muntje?",goed:"Door klusjes in huis",opties:["Door klusjes in huis","Door tv te kijken","Door te slapen"]},
+   {vraag:"Wat is papiergeld?",goed:"Een briefje",opties:["Een briefje","Een munt","Een sticker"]}]}
 
 ];
 var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",zon:"☀️",ster:"⭐",
@@ -1246,7 +1273,8 @@ var EMOJI={kat:"🐱",hond:"🐶",beer:"🐻",vis:"🐟",aap:"🐵",kip:"🐔",z
  koreaans:"🇰🇷",hallo:"👋",dank:"🙏",ja:"✅",nee:"❌",panda:"🐼",mina:"🐼",korea:"🇰🇷",mama:"👩",land:"🗺️",
  planeet:"🪐",maan:"🌙",raket:"🚀",aarde:"🌍",mars:"🔴",astronaut:"👨‍🚀",melkweg:"🌌",komeet:"☄️",satelliet:"🛰️",ruimte:"🌌",
  groente:"🥦",fruit:"🍎",kok:"👨‍🍳",kokos:"🥥",wortel:"🥕",tomaat:"🍅",pan:"🍳",recept:"📋",slapen:"😴",opruimen:"🧹",gym:"🤸",vitamine:"💊",koekje:"🍪",
- arts:"🧑‍⚕️",bioloog:"🧑‍🔬",technicus:"🔧",oefening:"🤸",universiteit:"🎓",master:"🏅",vliegtuig:"✈️"};
+ arts:"🧑‍⚕️",bioloog:"🧑‍🔬",technicus:"🔧",oefening:"🤸",universiteit:"🎓",master:"🏅",vliegtuig:"✈️",
+geld:"💶",munt:"🪙",euro:"💶",cent:"🪙",briefje:"💶",spaarpot:"🐷",wisselgeld:"🪙",sparen:"🏦",winkeltje:"🏪",delen:"🤝",klusje:"🧹",spaarvarken:"🐷",portemonnee:"👛",betalen:"💳"};
 
 // ====== NAVIGATIE
 var huidigVak="",huidigNiv="",vraagNr=0,goedTeller=0,goedRij=0,RONDE=8,rondeMax=RONDE;
