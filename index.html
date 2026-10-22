@@ -248,6 +248,7 @@ padding:14px;margin-top:14px;text-align:center}
 
 <script src="stem/lijst.js"></script>
 <script src="stem/lijst_jet.js"></script>
+<script src="stem/lijst_eigen.js" onerror="this.remove()"></script>
 <script>
 // PWA — offline speelbaar + installeerbaar op tablet/telefoon
 // Auto-update: checkt bij start + elke 30 min of GitHub Pages nieuwere code heeft.
@@ -633,6 +634,15 @@ function zeg(t){
  try{speechSynthesis.cancel();}catch(e){}
  _stemStop(); // vorige server-audio stopt altijd bij nieuw zeg()
  if(typeof isEn==="function"&&isEn()){if(TAAL_EN[t])t=TAAL_EN[t];_zegBrowser(t);return;} // EN: geen NL-baked/server stem
+ // eigen gekloonde stem (ouders-opname): gebakken set gaat vóór
+ if(staat.juf==="eigen"&&typeof STEM_LIJST_EIGEN!=="undefined"&&STEM_LIJST_EIGEN[t]){
+  var gen0=_stemGen;
+  var a2=new Audio(STEM_LIJST_EIGEN[t]);
+  _stemAudio=a2;
+  a2.onerror=function(){if(gen0===_stemGen)_zegBrowser(t);};
+  a2.play().catch(function(){if(gen0===_stemGen)_zegBrowser(t);});
+  return;
+ }
  var SL=(typeof STEM_LIJST==="undefined")?null:((staat.juf==="mo"||typeof STEM_LIJST_JET==="undefined")?STEM_LIJST:STEM_LIJST_JET); // Mo=mannenstem, Jet=vrouwenstem
  if(SL&&SL[t]){ // gebakken NL-stem: geen server nodig
   var gen=_stemGen;
@@ -2611,9 +2621,61 @@ function jufKaart(el){
  var eg=document.createElement("div");eg.style.cssText="margin-top:8px;text-align:center";
  eg.innerHTML='<small>of een eigen naam (bijv. je échte juf/meester):</small><br>'+
   '<input class="invoer" id="jufnaam-in" style="width:170px" maxlength="24" placeholder="bijv. Juf Anita" value="'+(staat.jufNaamVrij||"")+'"> '+
-  '<button class="pill" onclick="kiesJufNaam()">opslaan</button>';
+  '<button class="pill" onclick="kiesJufNaam()">opslaan</button><br>'+
+  '<small style="display:inline-block;margin-top:8px">🎙️ stem van een ouder? </small>'+
+  '<button class="pill" onclick="stemKloonMenu()">🎙️ kloon een stem</button>'+
+  ((typeof STEM_LIJST_EIGEN!=="undefined")?'<br><button class="pill" style="margin-top:6px" onclick="kiesEigenStem()">🎧 gebruik de eigen stem</button>':"");
  el.appendChild(eg);
 }
+// ====== OUDERS-STEM-KLOON — neem ~15 sec op → download → de stem wordt ingebakken
+var STEM_OPNAME_TEKST="Hoi! Ik ben jouw juf of meester. Samen gaan we elke dag een beetje leren. Eerst lees ik het voor, dan probeer jij het — en bij elke fout leg ik het nog eens rustig uit. Goed zo, jij kan het!";
+function stemKloonMenu(){
+ document.getElementById("spel-titel").textContent="🎙️ Eigen stem (ouders-kloon)";
+ var inh=document.getElementById("spel-inhoud");
+ inh.innerHTML='<div class="card" style="max-width:460px;margin:0 auto;text-align:left">'+
+  '<b>Zo werkt het — in 3 stappen:</b><ol style="line-height:1.8;padding-left:20px">'+
+  '<li><b>Neem op</b> — lees het zinnetje hieronder rustig en duidelijk voor (~15 sec).</li>'+
+  '<li><b>Download</b> — het bestandje wordt opgeslagen op dit apparaat.</li>'+
+  '<li><b>Stuur op</b> — mail of app het bestandje naar de maker; binnen een dag praat '+jufNaam()+' met jouw stem!</li></ol>'+
+  '<div class="stijl-doos"><b>Lees dit hardop:</b><div class="stijl-regel">«'+STEM_OPNAME_TEKST+'»</div></div>'+
+  '<div class="acties" style="justify-content:center">'+
+  '<button class="pill" id="rec-knop" onclick="stemOpnameToggle()">⏺ start opname</button>'+
+  '<button class="pill grijs" id="rec-stop" style="display:none" onclick="stemOpnameToggle()">⏹ stop</button></div>'+
+  '<div id="rec-status" class="sub2" style="text-align:center;margin-top:8px">druk op start en lees het stukje rustig voor</div>'+
+  '<div id="rec-ui" style="text-align:center;margin-top:8px"></div>'+
+  '<div class="acties" style="justify-content:center;margin-top:10px"><button class="pill grijs" onclick="bouwHome();naarHome()">← terug</button></div></div>';
+ toon("scherm-spel");
+}
+var _rec=null,_recChunks=[];
+function stemOpnameToggle(){
+ var knop=document.getElementById("rec-knop"),stop=document.getElementById("rec-stop"),st=document.getElementById("rec-status"),ui=document.getElementById("rec-ui");
+ if(_rec&&_rec.state==="recording"){_rec.stop();return;}
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){st.textContent="Deze browser kan geen geluid opnemen — probeer Chrome op je telefoon.";return;}
+ navigator.mediaDevices.getUserMedia({audio:true}).then(function(str){
+  _recChunks=[];
+  _rec=new MediaRecorder(str);
+  _rec.ondataavailable=function(e){if(e.data.size)_recChunks.push(e.data);};
+  _rec.onstop=function(){
+   str.getTracks().forEach(function(t){t.stop();});
+   var blob=new Blob(_recChunks,{type:_rec.mimeType||"audio/webm"});
+   var url=URL.createObjectURL(blob);
+   knop.style.display="";stop.style.display="none";st.textContent="Klaar! Beluister 'm en download het bestandje.";
+   ui.innerHTML='<audio controls src="'+url+'"></audio><br>'+
+    '<a class="pill" download="ouders-stem.webm" href="'+url+'">⬇ download opname</a>'+
+    '<div class="sub2" style="margin-top:8px">Stuur dit bestandje naar de maker — jouw stem wordt dan Juf/Meester.</div>';
+   zeg("Opname klaar! Beluister hem even, en stuur het bestandje op.");
+  };
+  _rec.start();
+  knop.style.display="none";stop.style.display="";st.textContent="⏺ opname loopt… lees het stukje rustig voor";ui.innerHTML="";
+  zeg("Opname gestart — lees het stukje rustig voor.");
+ }).catch(function(){st.textContent="Geen microfoon-toestemming — sta microfoon toe in de browser en probeer opnieuw.";});
+}
+function kiesEigenStem(){
+ staat.juf="eigen";bewaar();
+ zeg("Vanaf nu praat ik met de eigen stem — wel zo gezellig!");
+ bouwHome();
+}
+
 // ====== VRAAG-HET-AAN-DE-JUF — privé-les: echte schoolvragen met antwoorden + vrije vraag
 var JUF_FAQ={
  "Rekenen & sommen":[["Hoe leer ik de tafels het beste?","Kleine stapjes: eerst 1-5, dan 6-10. Zeg ze hardop, schrijf ze over, en oefen elke dag 5 minuten — dat werkt beter dan een uur in één keer."],
