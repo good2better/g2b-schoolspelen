@@ -277,11 +277,11 @@ var NIVEAUS=[
  {id:"mb",naam:"Middelbaar 1–5",tag:"verder",vakken:["tafels","procent","spelling2","zin2","topo","engels"]},
  {id:"uni",naam:"Universiteit",tag:"hoog",vakken:["procent","breuk","zin2","topo","engels","logica"]},
  {id:"uni-beta",naam:"Uni 🔬 Bèta",tag:"richting",vakken:["procent","breuk","logica","wetenschap"]},
- {id:"uni-mens",naam:"Uni ⚖️ Mens&Maat.",tag:"richting",vakken:["zin2","topo","engels","geschied","logica"]},
- {id:"uni-econ",naam:"Uni 💶 Economie",tag:"richting",vakken:["procent","breuk","ondern","engels","topo"]},
+ {id:"uni-mens",naam:"Uni ⚖️ Mens&Maat.",tag:"richting",vakken:["zin2","topo","engels","geschied","logica","filos"]},
+ {id:"uni-econ",naam:"Uni 💶 Economie",tag:"richting",vakken:["procent","breuk","ondern","engels","topo","stat"]},
  {id:"uni-taal",naam:"Uni 📚 Taal",tag:"richting",vakken:["zin2","engels","gram","logica"]},
- {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica","engels","wetenschap","geschied"]},
- {id:"genius",naam:"Genius",tag:"🏆",vakken:["logica","breuk","zin2","wetenschap"]}
+ {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica","engels","wetenschap","geschied","stat","filos"]},
+ {id:"genius",naam:"Genius",tag:"🏆",vakken:["logica","breuk","zin2","wetenschap","stat"]}
 ];
 var VAKKEN={
  tellen:{ic:"🔢",naam:"Tellen",info:"tel de plaatjes"},
@@ -320,6 +320,8 @@ var VAKKEN={
  geschied:{ic:"🏛️",naam:"Geschiedenis",info:"NL & de wereld vroeger"},
  ondern:{ic:"💶",naam:"Ondernemen",info:"geld, winst & slim omgaan"},
  gram:{ic:"📖",naam:"Grammatica",info:"woordsoorten & zinnen"},
+ stat:{ic:"📊",naam:"Statistiek",info:"gemiddelden, kansen & spreiding"},
+ filos:{ic:"💭",naam:"Filosofie",info:"denken over grote vragen"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
  seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
  feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"},
@@ -552,6 +554,8 @@ var LESJES={
  geschied:"Geschiedenis = wat gebeurde er vroeger? Denk aan jaartallen en beroemde personen — welk verhaal ken je al?",
  ondern:"Ondernemen = slim met geld denken. Reken altijd eerst uit: wat kost het, wat levert het op?",
  gram:"Grammatica = hoe zinnen in elkaar zitten. Zoek eerst het werkwoord, dan wie het doet (onderwerp) en wat er gedaan wordt.",
+ stat:"Statistiek = getallen samenvatten en kansen begrijpen. Gemiddelde, mediaan en modus zijn drie manieren om 'het midden' te zeggen.",
+ filos:"Filosofie = doorvragen op grote vragen. Ken de denkers (Socrates, Plato, Kant) en let op drogredenen — een argument dat goed lijkt maar niet klopt.",
  klanken:"Luister goed naar het woord. Welke klank hoor je aan het BEGIN? Zeg het woord maar zachtjes na.",
  split:"Splitsen = het getal in twee stukjes verdelen. 10 splits je in 4 en 6: samen weer 10!",
  fouten:"Dit zijn jouw moeilijke stukjes — hier word je het allersterkst van!"
@@ -807,6 +811,42 @@ var GRAM=[
  {zin:"Welk woord is een voornaamwoord?",goed:"hij",opties:["hij","tafel","snel"]},
  {zin:"'onder, boven, naast' zijn…?",goed:"voorzetsels",opties:["voorzetsels","werkwoorden","lidwoorden"]},
  {zin:"Welke zin heeft een hoofd- én bijzin?",goed:"Omdat het regende, bleven we thuis.",opties:["Omdat het regende, bleven we thuis.","We bleven thuis.","Het regende hard."]}
+];
+// ====== STATISTIEK: getallen & kansen begrijpen voor master/economie (zelf geschreven)
+var STATISTIEK=[
+ {zin:"Wat is het gemiddelde van 2, 4 en 6?",goed:"4",opties:["4","3","6"]},
+ {zin:"Wat is de mediaan van 1, 3 en 9?",goed:"3",opties:["3","1","9"]},
+ {zin:"De modus is de waarde die…?",goed:"het vaakst voorkomt",opties:["het vaakst voorkomt","in het midden staat","het grootst is"]},
+ {zin:"De kans op een gebeurtenis die zeker gebeurt is…?",goed:"1 (100%)",opties:["1 (100%)","0","0,5"]},
+ {zin:"De kans op een onmogelijke gebeurtenis is…?",goed:"0",opties:["0","1","50%"]},
+ {zin:"Een steekproef is…?",goed:"een deel van de populatie dat je onderzoekt",opties:["een deel van de populatie dat je onderzoekt","de hele groep","een soort gemiddelde"]},
+ {zin:"Correlatie betekent dat twee dingen samenhangen. Betekent dat ook dat de een de ander veroorzaakt?",goed:"nee — correlatie is geen causaliteit",opties:["nee — correlatie is geen causaliteit","ja, altijd","alleen als de kans 1 is"]},
+ {zin:"Wat meet de standaardafwijking?",goed:"hoe ver getallen gemiddeld van het gemiddelde afwijken",opties:["hoe ver getallen gemiddeld van het gemiddelde afwijken","het hoogste getal","hoeveel getallen er zijn"]},
+ {zin:"Het bereik (range) van 2, 5, 9 is…?",goed:"9 − 2 = 7",opties:["9 − 2 = 7","9 + 2 = 11","9"]},
+ {zin:"Kwartiel Q2 is hetzelfde als…?",goed:"de mediaan",opties:["de mediaan","het gemiddelde","de modus"]},
+ {zin:"Hoe heet de beroemde klokvormige verdeling?",goed:"de normale verdeling",opties:["de normale verdeling","de uniforme verdeling","de scheve verdeling"]},
+ {zin:"Als je een eerlijke munt heel vaak gooit, nadert de relatieve frequentie van 'kop'…?",goed:"0,5",opties:["0,5","1","0"]},
+ {zin:"Bias in een onderzoek is…?",goed:"een systematische afwijking",opties:["een systematische afwijking","een toevallige fout","een soort grafiek"]},
+ {zin:"Een p-waarde kleiner dan 0,05 heet meestal…?",goed:"statistisch significant",opties:["statistisch significant","bewijs van causaliteit","een fout in de data"]},
+ {zin:"De variantie is het gemiddelde van…?",goed:"de gekwadrateerde afwijkingen van het gemiddelde",opties:["de gekwadrateerde afwijkingen van het gemiddelde","alle getallen","de mediaan"]}
+];
+// ====== FILOSOFIE: denken over grote vragen voor Mens/master (zelf geschreven)
+var FILOSOFIE=[
+ {zin:"'Ik denk, dus ik besta' (cogito ergo sum) is van…?",goed:"Descartes",opties:["Descartes","Kant","Aristoteles"]},
+ {zin:"De categorische imperatief — 'handel alleen zo dat je wilt dat het een wet wordt' — is van…?",goed:"Kant",opties:["Kant","Plato","Nietzsche"]},
+ {zin:"Socrates leerde door…?",goed:"steeds door te vragen (de maieutiek)",opties:["steeds door te vragen (de maieutiek)","boeken voor te lezen","opstand te maken"]},
+ {zin:"Plato's allegorie van de grot gaat over…?",goed:"schijn versus de echte werkelijkheid",opties:["schijn versus de echte werkelijkheid","een grot vol schatten","de ondergrondse wereld"]},
+ {zin:"Aristoteles was de leerling van…?",goed:"Plato",opties:["Plato","Socrates","Kant"]},
+ {zin:"Een 'stroman'-drogreden is…?",goed:"een verzwakt argument van de ander aanvallen",opties:["een verzwakt argument van de ander aanvallen","iemand met stro gooien","een sterk argument"]},
+ {zin:"Een ad hominem is…?",goed:"de persoon aanvallen in plaats van het argument",opties:["de persoon aanvallen in plaats van het argument","een goed argument","een welkom-groet"]},
+ {zin:"Ethiek is het nadenken over…?",goed:"goed en fout handelen",opties:["goed en fout handelen","de natuur","getallen"]},
+ {zin:"Het utilisme zegt: het beste is wat…?",goed:"het grootste geluk voor het grootste aantal brengt",opties:["het grootste geluk voor het grootste aantal brengt","de rijken rijker maakt","altijd de kortste weg is"]},
+ {zin:"Deductie redeneert van…?",goed:"algemeen naar bijzonder",opties:["algemeen naar bijzonder","bijzonder naar algemeen","steeds in kringetjes"]},
+ {zin:"Inductie redeneert van…?",goed:"bijzonder naar algemeen",opties:["bijzonder naar algemeen","algemeen naar bijzonder","achteruit"]},
+ {zin:"Een drogreden is…?",goed:"een schijnbaar goed maar fout argument",opties:["een schijnbaar goed maar fout argument","een bewijs","een grap"]},
+ {zin:"Het debat 'determinisme versus vrije wil' gaat over…?",goed:"of onze keuzes echt vrij zijn of al vastliggen",opties:["of onze keuzes echt vrij zijn of al vastliggen","wie de sterkste god is","hoe computers denken"]},
+ {zin:"Een paradox is…?",goed:"een schijnbare tegenstrijdigheid",opties:["een schijnbare tegenstrijdigheid","een snelle draak","een bijwoord"]},
+ {zin:"Hobbes schreef 'Leviathan' over…?",goed:"hoe een staat orde houdt",opties:["hoe een staat orde houdt","zee-monsters","planten"]}
 ];
 // ====== MIJN BOEKEN: jouw boeken worden oefeningen
 var BOEKEN=[
@@ -2620,6 +2660,20 @@ var makers={
   window._les={soort:"gram",zin:z.zin};
   v.innerHTML='<div class="sub2">📖 taal-denkvraag:</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
   antwoordOpties(a,z.goed,z.opties.slice(),"gram");
+  zegHoud(z.zin);
+ },
+ stat:function(v,a){
+  var z=STATISTIEK[rnd(0,STATISTIEK.length-1)];
+  window._les={soort:"stat",zin:z.zin};
+  v.innerHTML='<div class="sub2">📊 denk aan de getallen:</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
+  antwoordOpties(a,z.goed,z.opties.slice(),"stat");
+  zegHoud(z.zin);
+ },
+ filos:function(v,a){
+  var z=FILOSOFIE[rnd(0,FILOSOFIE.length-1)];
+  window._les={soort:"filos",zin:z.zin};
+  v.innerHTML='<div class="sub2">💭 grote-denker-vraag:</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
+  antwoordOpties(a,z.goed,z.opties.slice(),"filos");
   zegHoud(z.zin);
  },
  engels:function(v,a){
