@@ -770,7 +770,7 @@ function vertaalPagina(){
  var ni=document.getElementById("naam-in");if(ni)ni.placeholder="your name…";
 }
 try{new MutationObserver(function(){if(!isEn()||_vt)return;_vt=setTimeout(function(){_vt=null;vertaalPagina();},10);}).observe(document.body,{childList:true,subtree:true});}catch(e){}
-var AUDIO_BASE="https://good2better.github.io/g2b-winkel/schoolspelen/audio/";
+var AUDIO_BASE="audio/";
 function stopBoekAudio(){if(_boekAudio){try{_boekAudio.pause();_boekAudio.src="";}catch(e){}_boekAudio=null;}}
 function zegBoek(bk,pag){
  if(staat.geluid===false)return;
