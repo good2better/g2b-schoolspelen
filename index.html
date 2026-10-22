@@ -271,8 +271,12 @@ var NIVEAUS=[
  {id:"g78",naam:"Groep 7–8",tag:"gevorderd",vakken:["plus3","min3","tafels","spelling2","zin","topo","engels","puzzel"]},
  {id:"mb",naam:"Middelbaar 1–5",tag:"verder",vakken:["tafels","procent","spelling2","zin2","topo","engels"]},
  {id:"uni",naam:"Universiteit",tag:"hoog",vakken:["procent","breuk","zin2","topo","engels","logica"]},
- {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica","engels"]},
- {id:"genius",naam:"Genius",tag:"🏆",vakken:["logica","breuk","zin2"]}
+ {id:"uni-beta",naam:"Uni 🔬 Bèta",tag:"richting",vakken:["procent","breuk","logica","wetenschap"]},
+ {id:"uni-mens",naam:"Uni ⚖️ Mens&Maat.",tag:"richting",vakken:["zin2","topo","engels","logica"]},
+ {id:"uni-econ",naam:"Uni 💶 Economie",tag:"richting",vakken:["procent","breuk","topo","engels"]},
+ {id:"uni-taal",naam:"Uni 📚 Taal",tag:"richting",vakken:["zin2","engels","wetenschap","logica"]},
+ {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica","engels","wetenschap"]},
+ {id:"genius",naam:"Genius",tag:"🏆",vakken:["logica","breuk","zin2","wetenschap"]}
 ];
 var VAKKEN={
  tellen:{ic:"🔢",naam:"Tellen",info:"tel de plaatjes"},
@@ -307,6 +311,7 @@ var VAKKEN={
  letterwijs:{ic:"🔠",naam:"Letters zien",info:"welke letter is dit?"},
  topo:{ic:"🌍",naam:"Topografie",info:"de wereld en Nederland"},
  engels:{ic:"🇬🇧",naam:"Engels",info:"vertaal het woord"},
+ wetenschap:{ic:"🔬",naam:"Wetenschap",info:"natuur & scheikunde"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
  seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
  feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"},
@@ -675,6 +680,25 @@ var ENGELS=[{nl:"water",en:"water"},{nl:"huis",en:"house"},{nl:"school",en:"scho
  {nl:"rood",en:"red"},{nl:"blauw",en:"blue"},{nl:"groen",en:"green"},{nl:"geel",en:"yellow"},
  {nl:"groot",en:"big"},{nl:"klein",en:"small"},{nl:"snel",en:"fast"},{nl:"langzaam",en:"slow"},
  {nl:"wetenschap",en:"science"},{nl:"geschiedenis",en:"history"},{nl:"aardrijkskunde",en:"geography"},{nl:"taal",en:"language"}
+];
+// ====== WETENSCHAP: natuur & scheikunde-feiten voor uni/master (zelf geschreven)
+var WETENSCHAP=[
+ {zin:"Bij welke temperatuur kookt water (bij zeeniveau)?",goed:"100 °C",opties:["100 °C","90 °C","50 °C"]},
+ {zin:"Welke planeet staat het dichtst bij de zon?",goed:"Mercurius",opties:["Mercurius","Venus","Mars"]},
+ {zin:"Hoe heet het proces waarmee planten voedsel maken uit zonlicht?",goed:"fotosynthese",opties:["fotosynthese","verdamping","vergisting"]},
+ {zin:"Wat is het kleinste deeltje van een stof?",goed:"atoom",opties:["atoom","cel","molecuul"]},
+ {zin:"Welk gas ademen mensen in om te leven?",goed:"zuurstof",opties:["zuurstof","koolstofdioxide","stikstof"]},
+ {zin:"Hoe heet de kracht die alles naar de aarde trekt?",goed:"zwaartekracht",opties:["zwaartekracht","magnetisme","wrijving"]},
+ {zin:"Hoeveel botten heeft een volwassen mens ongeveer?",goed:"206",opties:["206","106","306"]},
+ {zin:"Welk orgaan pompt bloed door je lichaam?",goed:"het hart",opties:["het hart","de lever","de longen"]},
+ {zin:"Water bestaat uit waterstof en welk ander element?",goed:"zuurstof",opties:["zuurstof","koolstof","stikstof"]},
+ {zin:"Hoe heet de dichtstbevolkte planeet waar wij op wonen?",goed:"de aarde",opties:["de aarde","de maan","de zon"]},
+ {zin:"Welk deel van de cel bevat het DNA?",goed:"de celkern",opties:["de celkern","het celmembraan","de mitochondrie"]},
+ {zin:"Lichtplantjes in de klas groeien richting het raam. Hoe heet dat?",goed:"fototropie",opties:["fototropie","fotosynthese","verdamping"]},
+ {zin:"Welke staat van materie heeft een vaste vorm én vast volume?",goed:"vast",opties:["vast","vloeibaar","gas"]},
+ {zin:"Wat meet je met een thermometer?",goed:"temperatuur",opties:["temperatuur","luchtdruk","snelheid"]},
+ {zin:"Hoeveel chromosomen heeft een mens normaal?",goed:"46",opties:["46","23","92"]},
+ {zin:"Welke kleur krijgt lakmoespapier in zuur?",goed:"rood",opties:["rood","blauw","groen"]}
 ];
 // ====== MIJN BOEKEN: jouw boeken worden oefeningen
 var BOEKEN=[
@@ -2461,6 +2485,13 @@ var makers={
   antwoordOpties(a,z.goed,z.opties.slice(),"logica");
  },
  puzzel:function(v,a){puzzelBouw(v,a,WOORDEN1);},
+ wetenschap:function(v,a){
+  var z=WETENSCHAP[rnd(0,WETENSCHAP.length-1)];
+  window._les={soort:"wetenschap",zin:z.zin};
+  v.innerHTML='<div class="sub2">🔬 weet jij het?</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
+  antwoordOpties(a,z.goed,z.opties.slice(),"wetenschap");
+  zegHoud(z.zin);
+ },
  engels:function(v,a){
   var w=ENGELS[rnd(0,ENGELS.length-1)],naarEn=rnd(0,1)===0;
   window._les={soort:"engels"};
