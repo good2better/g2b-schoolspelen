@@ -2506,6 +2506,7 @@ function bouwHome(){
  avontuurKaart(el);
  heldKaart(el);
  jufKaart(el);
+ vraagKaart(el);
  slimmeKaarten(el);
  seizoensKaart(el);
  feestKaart(el);
@@ -2613,7 +2614,98 @@ function jufKaart(el){
   '<button class="pill" onclick="kiesJufNaam()">opslaan</button>';
  el.appendChild(eg);
 }
-// ====== SEIZOENS-KAART + groep-bewijs-kaart
+// ====== VRAAG-HET-AAN-DE-JUF — privé-les: echte schoolvragen met antwoorden + vrije vraag
+var JUF_FAQ={
+ "Rekenen & sommen":[["Hoe leer ik de tafels het beste?","Kleine stapjes: eerst 1-5, dan 6-10. Zeg ze hardop, schrijf ze over, en oefen elke dag 5 minuten — dat werkt beter dan een uur in één keer."],
+  ["Hoe reken ik breuken uit?","Kijk naar de noemer: in hoeveel stukjes is het geheel verdeeld? Dan tel je hoeveel stukjes je hebt. 3/8 = drie van de acht stukjes."],
+  ["Wat is een slimme truc voor 9-tafel?","Je vingers helpen: vouw de n-de vinger om en tel de vingers ervoor (tientallen) en erna (eenheden)."],
+  ["Hoe reken ik met geld?","Denk aan munten: 1 euro = 100 cent. Leg echte munten erbij als het kan — dan zie je het echt."],
+  ["Wat als een som te moeilijk is?","Maak hem kleiner: reken eerst met makkelijke getallen (10 in plaats van 97), snap de truc, pas dan toe op de grote."]],
+ "Taal & spelling":[["Hoe schrijf ik een goede zin?","Begin met een hoofdletter, eindig met een punt. Check altijd: wie doet wat? Dan klopt je zin."],
+  ["Ik vergeet altijd hoofdletters — wat nu?","Lees je tekst hardop na. Elke nieuwe zin = hoofdletter. Elke naam = hoofdletter. Oefening maakt het een automatisme."],
+  ["Hoe leer ik lastige woorden?","Schrijf het woord drie keer over, zeg de letters hardop, en maak er een gek zinnetje van — dat blijft hangen."],
+  ["Wanneer gebruik ik een komma?","Als je bij het hardop lezen even adem haalt — daar hoort meestal een komma."],
+  ["Hoe maak ik een verhaal spannend?","Begin rustig, laat iets misgaan in het midden, en los het pas aan het eind op — dat heet de verhaalboog."]],
+ "Lezen & boeken":[["Ik lees langzaam — is dat erg?","Helemaal niet. Elke dag een stukje maakt je steeds sneller. Kies een boek dat je leuk vindt — dan gaat het vanzelf."],
+  ["Hoe leer ik harder lezen?","Lees eerst zacht voor jezelf, dan steeds harder. Luister naar je eigen stem — dan hoor je meteen waar het hapert."],
+  ["Welk boek moet ik kiezen?","Kies iets waar je nieuwsgierig naar bent. Een boek dat je echt wilt weten lees je veel makkelijker dan een moet-boek."]],
+ "Nederland & de wereld":[["Hoe leer ik plaatsen en landen?","Kijk elke dag even naar de kaart, zeg de namen hardop, en verbind ze aan iets dat je kent (grote stad, hoofdstad, rivier)."],
+  ["Hoe onthoud ik jaartallen?","Maak er een verhaaltje van: 1945 = 'opa's verjaardag toen de oorlog stopte'. Verhalen blijven, losse getallen vergeten je."],
+  ["Wat is de Grondwet ook alweer?","De belangrijkste wet van Nederland — daarin staat dat iedereen vrij, gelijk en veilig is."]],
+ "Oefenen & leren":[["Hoe leer ik het allerbeste?","Kleine beetjes elke dag, niet alles in één keer. Uitleggen aan een ander (of je knuffel) is de allerbeste toets of je het snapt."],
+  ["Wat doe ik bij een fout?","Een fout is geen ramp — het is precies waar je nog moet oefenen. Ik laat je altijd de goede uitleg zien na een fout."],
+  ["Wanneer ben ik 'klaar' met een vak?","Als je bijna alles goed hebt — dan komt er nieuwe stof bij. Maar blijf het oude af en toe herhalen."],
+  ["Wat helpt als ik geen zin heb?","Doe maar één vraag. Nog één. Voor je het weet heb je een hele ronde gedaan — starten is het moeilijkste."],
+  ["Hoe word ik beter in toetsen?","Rustig ademhalen, lees de vraag twee keer, begin bij wat je weet — de rest komt daarna."]],
+ "Gevoel & school":[["Ik vind oefenen stom — wat nu?","Probeer het als spel te zien: sterren verdienen, badges halen, je held helpen. En vraag me om een makkelijke — daarna gaat het vanzelf."],
+  ["Ik ben bang voor de toets.","Blijf rustig ademhalen. Je hebt geoefend — je kunt meer dan je denkt. Fouten maken mag, dat is waar leren begint."],
+  ["Ik word gepest — wat moet ik doen?","Zeg het tegen een juf of ouder. Altijd. Dat is niet klikken — dat is jezelf goed verzorgen."],
+  ["Ik kan niet slapen van school.","Leg het boek weg, adem rustig, en denk aan één ding dat wél goed ging vandaag. Morgen is een nieuwe dag."]],
+ "Over deze app":[["Hoe krijg ik sterren?","Door vragen goed te beantwoorden. Sterren kun je in de winkel uitgeven aan huisdieren, stickers en meer."],
+  ["Wat zijn badges?","Speciale prijzen voor knappe dingen — eerste ronde, 10 sterren, een week op rij oefenen, en meer."],
+  ["Hoe kies ik een andere juf of meester?","Op de beginpagina staat 'Wie legt het jou uit?' — daar kies je Juf Jet, Meester Mo, of je eigen naam."],
+  ["Hoe werken de boeken?","Elke boek heeft pagina's om te lezen, woorden om te leren, zinnen om af te maken en een quiz om te testen."],
+  ["Kan ik ook op papier oefenen?","Ja — bij 'werkblad printen' maak je echte blaadjes van elk boek en elk vak voor je printer."]]
+};
+function vraagKaart(el){
+ var h=document.createElement("div");h.className="niveau";
+ h.innerHTML='💬 Vraag het aan '+jufNaam()+'<span class="tag">privé-les — echte antwoorden</span>';
+ el.appendChild(h);
+ var g=document.createElement("div");g.className="grid";
+ var c=document.createElement("div");c.className="card";
+ c.innerHTML='<img src="'+jufImg()+'" style="width:64px;height:64px;border-radius:50%"><b>Stel jouw vraag</b><small>'+jufNaam()+' helpt je — tikkie en antwoord!</small>';
+ c.onclick=function(){vraagMenu();};
+ g.appendChild(c);
+ el.appendChild(g);
+}
+function vraagMenu(){
+ document.getElementById("spel-titel").textContent="💬 Vraag het aan "+jufNaam();
+ var inh=document.getElementById("spel-inhoud");
+ inh.innerHTML='<p class="sub2">Kies een onderwerp — of typ hieronder je eigen vraag!</p><div class="acties" id="vraag-kies"></div>'+
+  '<div class="card" style="max-width:420px;margin:14px auto 0"><b>Jouw eigen vraag:</b><br>'+
+  '<input class="invoer" id="vraag-in" style="width:90%;max-width:320px;margin:8px 0" maxlength="120" placeholder="bijv. hoe leer ik breuken?">'+
+  '<button class="pill" onclick="vraagZelf()">vraag het!</button></div>'+
+  '<div id="vraag-antw"></div>'+
+  '<div class="acties" style="margin-top:12px"><button class="pill grijs" onclick="naarHome()">← terug</button></div>';
+ var zk=document.getElementById("vraag-kies");
+ Object.keys(JUF_FAQ).forEach(function(t){
+  var b=document.createElement("button");b.className="pill";b.textContent=t;
+  (function(tt){b.onclick=function(){vraagLijst(tt);};})(t);zk.appendChild(b);});
+ toon("scherm-spel");
+ zeg("Waar ben je nieuwsgierig naar"+(wie()?", "+wie():"")+"?");
+}
+function vraagLijst(t){
+ var az=document.getElementById("vraag-antw");
+ az.innerHTML='<div class="card" style="max-width:460px;margin:14px auto"><b>'+t+'</b><div class="acties" id="vraag-sub"></div></div>';
+ var sz=document.getElementById("vraag-sub");
+ JUF_FAQ[t].forEach(function(pa){
+  var b=document.createElement("button");b.className="pill";b.style.cssText="font-size:15px;padding:8px 14px";b.textContent=pa[0];
+  (function(v,a){b.onclick=function(){vraagAntwoord(v,a);};})(pa[0],pa[1]);sz.appendChild(b);});
+}
+function vraagAntwoord(v,a){
+ var az=document.getElementById("vraag-antw");
+ az.innerHTML='<div class="card" style="max-width:480px;margin:14px auto;text-align:left">'+
+  '<b>❓ '+v+"</b>"+
+  '<div class="lesje lesje-les aan" style="margin-top:10px"><img src="'+jufImg()+'" class="jufjet-av" alt="'+jufNaam()+'"><b>'+jufNaam()+":</b> "+a+"</div></div>"+
+  '<div class="acties" style="justify-content:center"><button class="pill" onclick="vraagMenu()">💬 nog een vraag</button></div>';
+ zeg(a);
+}
+function vraagZelf(){
+ var q=(document.getElementById("vraag-in").value||"").toLowerCase().trim();
+ if(!q){zeg("Typ eerst je vraag!");return;}
+ var best=null,score=0,onder="";
+ Object.keys(JUF_FAQ).forEach(function(t){
+  JUF_FAQ[t].forEach(function(pa){
+   var wo=(pa[0]+" "+pa[1]).toLowerCase().split(/[^a-zà-ë0-9]+/);
+   var s=0;q.split(/[^a-zà-ë0-9]+/).forEach(function(w){if(w.length>2&&wo.indexOf(w)>-1)s+=w.length;});
+   if(s>score){score=s;best=pa;onder=t;}
+  });
+ });
+ if(best&&score>4){vraagAntwoord(q,best[1]);}
+ else{vraagAntwoord(q,"Dat is een goede vraag"+(wie()?", "+wie():"")+"! Die weet ik nog niet precies — kijk eens bij '"
+  +Object.keys(JUF_FAQ)[0]+"' of probeer je vraag met andere woorden. En onthoud: elke vraag die je stelt, maakt je slimmer!");}
+}
+
 function seizoensKaart(el){
  var S=seizoensInfo();
  var h=document.createElement("div");h.className="niveau";
