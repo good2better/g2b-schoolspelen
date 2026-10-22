@@ -106,6 +106,7 @@ display:flex;align-items:center;justify-content:center}
 .uitdager{background:#f3e8ff;border:2px solid var(--roze);border-radius:12px;
 padding:14px;margin-top:14px;text-align:center}
 .juf{font-size:1.4rem;margin-right:6px}
+.jufjet-av{height:54px;width:54px;object-fit:cover;border-radius:50%;border:2px solid var(--goud,#e8b83a);vertical-align:middle;margin-right:8px;background:#ffe9b8}
 .gebouw{letter-spacing:12px;font-size:2rem;font-weight:700;color:var(--zeed);min-height:3rem}
 .clip-laag{position:fixed;inset:0;background:rgba(10,15,30,.82);display:none;align-items:center;justify-content:center;z-index:99}
 .clip-laag.aan{display:flex;animation:verschijn .3s}
@@ -2047,7 +2048,7 @@ function doeVraag(){
  document.getElementById("feedback").className="feedback";
  document.getElementById("slimme-tip").textContent="";
  var lj=document.getElementById("lesje");lj.className="lesje";lj.innerHTML="";
- if(vraagNr===0){var _L=lesVoor(huidigVak);if(_L){lj.className="lesje lesje-les aan";lj.innerHTML='💡 <b>Eerst leren:</b> '+_L;}}
+ if(vraagNr===0){var _L=lesVoor(huidigVak);if(_L){lj.className="lesje lesje-les aan";lj.innerHTML='<img src="jufjet.png" class="jufjet-av" alt="Juf Jet"><b>Juf Jet legt uit:</b> '+_L;zeg(_L);}}
  window._les=null;
  var v=document.getElementById("vraag-inhoud"),a=document.getElementById("antwoord-zone");
  v.innerHTML="";a.innerHTML="";laatsteZeg="";
@@ -2214,7 +2215,7 @@ function toonLesje(){
  staat.stijl.trucs++;bewaar();
  var l=window._les;if(!l){zeg("Bijna! Probeer het rustig nog eens — jij kan het.");return;}
  var lj=document.getElementById("lesje");lj.classList.add("aan");
- var kop='<span class="juf">👩‍🏫</span><b>'+AANMOEDIGING[rnd(0,AANMOEDIGING.length-1)]+'</b><br>';
+ var kop='<img src="jufjet.png" class="jufjet-av" alt="Juf Jet"><b>Juf Jet — '+AANMOEDIGING[rnd(0,AANMOEDIGING.length-1)]+'</b><br>';
  var t="",z="";
  if(l.soort==="tellen"){
   t="Tel met me mee — ik tel voor:<br><div class='teltot' id='teltot'></div>Klaar? <b>Nu jij — jij kan het!</b>";
