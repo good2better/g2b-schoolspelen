@@ -1,8 +1,8 @@
-const CACHE="g2b-schoolspelen-v24";
+const CACHE="g2b-schoolspelen-v25";
 // Klein precache: de app zelf is meteen klaar. Clips & boekplaatjes
 // cachen lazy bij eerste gebruik (install bleef anders ~13 MB blokkeren).
 const ASSETS=["./","./index.html","./jufjet.png","./meestermo.png"];
-const LAZY=/\.(mp4|jpg|jpeg|png|webp|gif)$/;
+const LAZY=/\.(mp4|jpg|jpeg|png|webp|gif|wav)$/;
 self.addEventListener("install",function(e){
  e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(ASSETS);}).then(function(){return self.skipWaiting();}));
 });

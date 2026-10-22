@@ -245,6 +245,7 @@ padding:14px;margin-top:14px;text-align:center}
 <div id="plakboek" title="Mijn helden-stickers"></div>
 <div id="maatje" title="Ziggy kijkt mee">🦓</div>
 
+<script src="stem/lijst.js"></script>
 <script>
 // PWA — offline speelbaar + installeerbaar op tablet/telefoon
 // Auto-update: checkt bij start + elke 30 min of GitHub Pages nieuwere code heeft.
@@ -617,6 +618,17 @@ function zeg(t){
  stopBoekAudio();
  try{speechSynthesis.cancel();}catch(e){}
  _stemStop(); // vorige server-audio stopt altijd bij nieuw zeg()
+ if(typeof STEM_LIJST!=="undefined"&&STEM_LIJST[t]){ // gebakken NL-stem: geen server nodig
+  var gen=_stemGen;
+  var a=new Audio(STEM_LIJST[t]);
+  _stemAudio=a;
+  a.onerror=function(){if(gen===_stemGen)_stemRoute(t);};
+  a.play().catch(function(){if(gen===_stemGen)_stemRoute(t);});
+  return;
+ }
+ _stemRoute(t);
+}
+function _stemRoute(t){
  if(_stemOk===false&&Date.now()>_stemRetryAt)_stemOk=null; // retry elke 30s
  if(_stemOk!==false){
   _stemServer(t).catch(function(){_stemOk=false;_stemRetryAt=Date.now()+30000;_zegBrowser(t);});
