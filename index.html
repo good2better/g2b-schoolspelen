@@ -103,6 +103,7 @@ padding:12px 14px;margin-top:10px;font-size:1rem;line-height:1.5;display:none}
 .teltot{font-size:1.6rem;font-weight:800;color:var(--roze);min-height:2rem}
 .leeft{display:inline-block;animation:dans 1s ease infinite alternate}
 @keyframes dans{25%{transform:rotate(-8deg) scale(1.2)}75%{transform:rotate(8deg) scale(1.2)}}
+#pauze.hidden{display:none !important}
 .pauze{position:fixed;inset:0;background:rgba(30,20,60,.85);z-index:98;
 display:flex;align-items:center;justify-content:center}
 .pauze .doos{background:#fff;border-radius:18px;padding:34px;text-align:center;max-width:320px}
@@ -579,6 +580,25 @@ function bewaar(){dagStreak();localStorage.setItem(staatKey(),JSON.stringify(sta
  document.getElementById("sterren").textContent="⭐ "+staat.sterren;}
 
 // ====== STEM (gratis, ingebouwd in de browser — spreekt NL)
+// Als de G2B stem-server draait (pocket-tts op localhost:8400, MIT/open source)
+// gebruiken we die natuurlijke NL-stem; anders de browser-stem.
+var _stemOk=null,_stemRetryAt=0,_stemAudio=null,_stemGen=0;
+function _stemStop(){
+ _stemGen++; // verlaat pendende responses: oud antwoord mag niet meer starten
+ try{if(_stemAudio){_stemAudio.pause();_stemAudio.src="";_stemAudio=null;}}catch(e){}
+}
+function _stemServer(t){
+ var gen=_stemGen;
+ var fd=new FormData();fd.append("text",t);
+ return fetch("http://localhost:8400/tts",{method:"POST",body:fd})
+  .then(function(r){if(!r.ok)throw 0;_stemOk=true;return r.blob();})
+  .then(function(b){
+   if(gen!==_stemGen)return; // al vervangen door nieuwer zeg()
+   var a=new Audio(URL.createObjectURL(b));
+   _stemAudio=a;
+   return a.play().catch(function(){});
+  });
+}
 // Kies de mooiste beschikbare stem per taal (kwaliteitsnamen eerst)
 var _stemmen={};
 function stemVoor(lang){
@@ -595,7 +615,16 @@ var _zegQ=[],_wbStil=false;
 function zeg(t){
  if(staat.geluid===false||_wbStil)return;
  stopBoekAudio();
- try{speechSynthesis.cancel();
+ try{speechSynthesis.cancel();}catch(e){}
+ _stemStop(); // vorige server-audio stopt altijd bij nieuw zeg()
+ if(_stemOk===false&&Date.now()>_stemRetryAt)_stemOk=null; // retry elke 30s
+ if(_stemOk!==false){
+  _stemServer(t).catch(function(){_stemOk=false;_stemRetryAt=Date.now()+30000;_zegBrowser(t);});
+  return;
+ }
+ _zegBrowser(t);
+}
+function _zegBrowser(t){
  _zegQ=[];
  // zinnetje voor zinnetje met korte pauzes = natuurlijkere vertel-stem
  var zinnen=String(t).match(/[^.!?]+[.!?]*/g)||[t];
@@ -607,7 +636,7 @@ function zeg(t){
   if(i===zinnen.length-1&&zinnen.length>1)u.rate=0.88;
   if(v)u.voice=v;
   _zegQ.push(u);speechSynthesis.speak(u);
- });}catch(e){}
+ });
 }
 function zegTaal(t,lang){if(staat.geluid===false)return;stopBoekAudio();try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.rate=0.85;var v=stemVoor(lang);if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}}
 var laatsteZeg="",_boekAudio=null;
