@@ -247,6 +247,7 @@ padding:14px;margin-top:14px;text-align:center}
 <div id="maatje" title="Ziggy kijkt mee">🦓</div>
 
 <script src="stem/lijst.js"></script>
+<script src="stem/lijst_jet.js"></script>
 <script>
 // PWA — offline speelbaar + installeerbaar op tablet/telefoon
 // Auto-update: checkt bij start + elke 30 min of GitHub Pages nieuwere code heeft.
@@ -624,9 +625,10 @@ function zeg(t){
  try{speechSynthesis.cancel();}catch(e){}
  _stemStop(); // vorige server-audio stopt altijd bij nieuw zeg()
  if(typeof isEn==="function"&&isEn()){if(TAAL_EN[t])t=TAAL_EN[t];_zegBrowser(t);return;} // EN: geen NL-baked/server stem
- if(typeof STEM_LIJST!=="undefined"&&STEM_LIJST[t]){ // gebakken NL-stem: geen server nodig
+ var SL=(typeof STEM_LIJST==="undefined")?null:((staat.juf==="mo"||typeof STEM_LIJST_JET==="undefined")?STEM_LIJST:STEM_LIJST_JET); // Mo=mannenstem, Jet=vrouwenstem
+ if(SL&&SL[t]){ // gebakken NL-stem: geen server nodig
   var gen=_stemGen;
-  var a=new Audio(STEM_LIJST[t]);
+  var a=new Audio(SL[t]);
   _stemAudio=a;
   a.onerror=function(){if(gen===_stemGen)_stemRoute(t);};
   a.play().catch(function(){if(gen===_stemGen)_stemRoute(t);});
