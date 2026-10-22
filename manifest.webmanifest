@@ -1,0 +1,21 @@
+{
+ "name": "G2B Schoolspelen",
+ "short_name": "Schoolspelen",
+ "description": "lezen & rekenen — van groep 1 tot genius",
+ "start_url": "./index.html",
+ "display": "standalone",
+ "background_color": "#0e4a2f",
+ "theme_color": "#1a7a4a",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  }
+ ]
+}
