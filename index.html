@@ -159,6 +159,7 @@ padding:14px;margin-top:14px;text-align:center}
 <header>
 <h1>🎓 G2B Schoolspelen</h1><span class="sub">lezen & rekenen — van groep 1 tot genius</span>
 <span id="geluid-knop" title="Geluid aan/uit" onclick="zetGeluid()" style="cursor:pointer;font-size:1.2rem">🔊</span>
+<span id="taal-knop" title="Taal kiezen / Choose language" onclick="wisselTaal()" style="cursor:pointer;font-size:.85rem;font-weight:700;margin-left:8px">EN</span>
 <div id="sterren" title="Verdiende sterren">⭐ 0</div>
 </header>
 <main>
@@ -622,6 +623,7 @@ function zeg(t){
  stopBoekAudio();
  try{speechSynthesis.cancel();}catch(e){}
  _stemStop(); // vorige server-audio stopt altijd bij nieuw zeg()
+ if(typeof isEn==="function"&&isEn()){if(TAAL_EN[t])t=TAAL_EN[t];_zegBrowser(t);return;} // EN: geen NL-baked/server stem
  if(typeof STEM_LIJST!=="undefined"&&STEM_LIJST[t]){ // gebakken NL-stem: geen server nodig
   var gen=_stemGen;
   var a=new Audio(STEM_LIJST[t]);
@@ -644,10 +646,11 @@ function _zegBrowser(t){
  _zegQ=[];
  // zinnetje voor zinnetje met korte pauzes = natuurlijkere vertel-stem
  var zinnen=String(t).match(/[^.!?]+[.!?]*/g)||[t];
- var v=stemVoor("nl");
+ var en=typeof isEn==="function"&&isEn();
+ var v=stemVoor(en?"en":"nl");
  zinnen.forEach(function(z,i){
   z=z.trim();if(!z)return;
-  var u=new SpeechSynthesisUtterance(z);u.lang="nl-NL";u.rate=0.92;u.pitch=(staat.juf==="mo"?0.85:1.06);
+  var u=new SpeechSynthesisUtterance(z);u.lang=en?"en-US":"nl-NL";u.rate=0.92;u.pitch=(staat.juf==="mo"?0.85:1.06);
   // kleine levendigheid: sloten iets langzamer uitspreken
   if(i===zinnen.length-1&&zinnen.length>1)u.rate=0.88;
   if(v)u.voice=v;
@@ -657,6 +660,95 @@ function _zegBrowser(t){
 function zegTaal(t,lang){if(staat.geluid===false)return;stopBoekAudio();try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang=lang;u.rate=0.85;var v=stemVoor(lang);if(v)u.voice=v;speechSynthesis.speak(u);}catch(e){}}
 var laatsteZeg="",_boekAudio=null;
 function zegHoud(t){laatsteZeg=t;zeg(t);}
+
+// ====== TAALSCHAKELAAR NL/EN: schil vertaalt, schoolstof blijft Nederlands
+staat.taal=staat.taal||"nl";
+function isEn(){return staat.taal==="en";}
+function wisselTaal(){staat.taal=isEn()?"nl":"en";bewaar();location.reload();}
+var TAAL_EN={
+"lezen & rekenen — van groep 1 tot genius":"reading & math — from grade 1 to genius",
+"Kies je niveau en oefen. De app kijkt mee: waar je fouten maakt, oefen je extra — met trucs erbij. 🔊 staat aan: Schoolspelen spreekt Nederlands.":"Choose your level and practice. The app watches: what you get wrong, you practice extra — with tips. 🔊 is on: Schoolspelen speaks Dutch.",
+"Peuter 3–4":"Toddler 3–4","Groep 1–2":"Grade 1–2","Groep 3–4":"Grade 3–4","Groep 5–6":"Grade 5–6","Groep 7–8":"Grade 7–8",
+"Middelbaar 1–5":"Secondary 1–5","Universiteit":"University","Uni 🔬 Bèta":"Uni 🔬 Science","Uni ⚖️ Mens&Maat.":"Uni ⚖️ People&Soc.","Uni 💶 Economie":"Uni 💶 Economics","Uni 📚 Taal":"Uni 📚 Language","Master 1-2-3":"Master 1-2-3","Genius":"Genius",
+"Tellen":"Counting","tel de plaatjes":"count the pictures",
+"Letters":"Letters","welke letter hoor je?":"which letter do you hear?",
+"Naspreken":"Repeat aloud","zeg het woord na — de app luistert mee":"say the word — the app listens",
+"Plus t/m 10":"Add up to 10","Plus t/m 100":"Add up to 100","Plus t/m 1000":"Add up to 1000",
+"Min t/m 100":"Subtract to 100","Min t/m 1000":"Subtract to 1000","rekenen":"math",
+"Tafels":"Times tables","keersommen":"multiplications",
+"Procenten":"Percentages","Breuken":"Fractions",
+"Woorden":"Words","wat staat hier?":"what does it say?",
+"Spelling":"Spelling","hoor & typ het woord":"hear & type the word",
+"Spelling+":"Spelling+","moeilijkere woorden":"harder words",
+"Zin lezen":"Read the sentence","kies het juiste woord":"pick the right word",
+"Begrijpend lezen":"Reading comprehension","denk mee":"think along",
+"Logica":"Logic","denkpuzzels":"thinking puzzles",
+"Woordpuzzel":"Word puzzle","letters in de goede volgorde — het plaatje leeft!":"letters in the right order — the picture comes alive!",
+"Boekwoorden":"Book words","woorden uit jouw boek":"words from your book",
+"Boekspelling":"Book spelling","typ het boekwoord":"type the book word",
+"Boekzinnen":"Book sentences","zinnen uit jouw boek":"sentences from your book",
+"Boekpuzzel":"Book puzzle","boekwoorden puzzelen":"puzzle the book words",
+"Klokkijken":"Telling time","hoe laat is het?":"what time is it?",
+"Klok gevorderd":"Advanced clock","kwartieren en hoe laat later?":"quarters and what time later?",
+"Eindklank":"Final sound","met welke klank eindigt het woord?":"which sound does the word end with?",
+"Klinkers":"Vowels","welke klinker hoor je in het woord?":"which vowel do you hear?",
+"Klanken":"Sounds","met welke klank begint het woord?":"which sound does the word start with?",
+"Splitsen":"Splitting","hoeveel mist er om het getal te maken?":"how many are missing to make the number?",
+"Vormen":"Shapes","welke vorm is dit?":"which shape is this?",
+"Gevoelens":"Feelings","welk gevoel past hier?":"which feeling fits here?",
+"Kleuren":"Colours","welke kleur is dit?":"which colour is this?",
+"Letters zien":"See letters","welke letter is dit?":"which letter is this?",
+"Topografie":"Geography","de wereld en Nederland":"the world and the Netherlands",
+"Engels":"English","vertaal het woord":"translate the word",
+"Wetenschap":"Science","natuur & scheikunde":"nature & chemistry",
+"Geschiedenis":"History","NL & de wereld vroeger":"NL & the world long ago",
+"Ondernemen":"Business","geld, winst & slim omgaan":"money, profit & smart choices",
+"Grammatica":"Grammar","woordsoorten & zinnen":"word types & sentences",
+"Statistiek":"Statistics","gemiddelden, kansen & spreiding":"averages, chance & spread",
+"Filosofie":"Philosophy","denken over grote vragen":"thinking about big questions",
+"Oefen je fouten":"Practice your mistakes","alleen de moeilijke stukjes":"only the tricky bits",
+"Seizoens-woorden":"Season words","woorden van nu":"words of the season",
+"Feest-woorden":"Holiday words","woorden van de feestdag":"holiday words",
+"mini":"mini","start":"start","basis":"basic","door":"next","gevorderd":"advanced","verder":"further","hoog":"high","richting":"track","top":"top",
+"Lees het verhaal":"Read the story","met plaatjes, stem en vragen":"with pictures, voice and questions",
+"Print het boek":"Print the book","jouw eigen A4-prentenboek":"your own A4 picture book",
+"Werkblad":"Worksheet","kleurplaat + woorden + opdracht op 1 A4":"colouring + words + task on 1 A4",
+"Spreek na":"Repeat after","zeg de boekwoorden na — de app luistert mee":"say the book words — the app listens",
+"Koop het echte boek":"Buy the real book",
+"De Schoolbibliotheek":"The School Library","elke school heeft er een — kies je boek":"every school has one — pick your book",
+"oefenen met dit boek":"practice with this book",
+"Schrijf je eigen boek":"Write your own book","jij bent de schrijver!":"you are the writer!",
+"Mijn heldenboek":"My hero book","maak een echt boek zelf":"make a real book yourself",
+"Kies je dier, zijn naam, het gevaar en hoe hij hielp — de app maakt er meteen een echt boek van. Voorlezen en printen kan ook!":"Choose your animal, its name, the danger and how it helped — the app turns it into a real book. Read aloud and print too!",
+"1. Kies je dier":"1. Choose your animal",
+"← terug":"← back","← alle niveaus":"← all levels","▶ start":"▶ start",
+"Wie legt het jou uit?":"Who explains it to you?","kies juf of meester":"pick teacher or master",
+"speel eilanden vrij":"free the islands","speel vorig eiland vrij":"free the previous island first",
+"beheerst — echt niveau!":"mastered — real level!","vakken beheerst":"subjects mastered",
+"kies wie je bent":"pick who you are","speelt met jou mee":"plays along with you",
+"Klaar om te spelen?":"Ready to play?","dagen op rij geoefend!":"days in a row practised!",
+"Hoe heet jij?":"What is your name?",
+"🖍️ Kleurplaten":"🖍️ Colouring pages","📝 Oefenblad per vak":"📝 Practice sheet per subject",
+"Sommenblad":"Sums sheet","werkbladen":"worksheets",
+"Jouw held":"Your hero","Dagopdracht":"Daily quest","Avontuur":"Adventure",
+"Hoi! Ik ben Juf Jet — samen gaan we leren!":"Hi! I'm Teacher Jet — let's learn together!",
+"Hoi! Ik ben Meester Mo — samen gaan we leren!":"Hi! I'm Master Mo — let's learn together!",
+"Ga jij een boek schrijven? Kies je dier en zijn naam! Je mag ook je held tekenen.":"Will you write a book? Choose your animal and its name! You may draw your hero too.",
+"De app praat dan met jouw naam!":"The app will talk using your name!",
+"Je hebt nog geen fouten — ga eerst lekker oefenen!":"No mistakes yet — go practice first!"
+};
+var _vt=null;
+function vertaalPagina(){
+ if(!isEn())return;
+ var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,null);
+ var n,hits=[];
+ while(n=w.nextNode()){var t=n.nodeValue;if(t&&t.trim()&&TAAL_EN[t.trim()])hits.push([n,TAAL_EN[t.trim()]]);}
+ hits.forEach(function(p){p[0].nodeValue=p[0].nodeValue.replace(p[0].nodeValue.trim(),p[1]);});
+ var tk=document.getElementById("taal-knop");if(tk)tk.textContent="NL";
+ var ph=document.getElementById("jufnaam-in");if(ph)ph.placeholder="e.g. Teacher Anna";
+ var ni=document.getElementById("naam-in");if(ni)ni.placeholder="your name…";
+}
+try{new MutationObserver(function(){if(!isEn()||_vt)return;_vt=setTimeout(function(){_vt=null;vertaalPagina();},10);}).observe(document.body,{childList:true,subtree:true});}catch(e){}
 var AUDIO_BASE="https://good2better.github.io/g2b-winkel/schoolspelen/audio/";
 function stopBoekAudio(){if(_boekAudio){try{_boekAudio.pause();_boekAudio.src="";}catch(e){}_boekAudio=null;}}
 function zegBoek(bk,pag){
