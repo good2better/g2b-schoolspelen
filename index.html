@@ -273,7 +273,7 @@ var NIVEAUS=[
  {id:"uni",naam:"Universiteit",tag:"hoog",vakken:["procent","breuk","zin2","topo","engels","logica"]},
  {id:"uni-beta",naam:"Uni 🔬 Bèta",tag:"richting",vakken:["procent","breuk","logica","wetenschap"]},
  {id:"uni-mens",naam:"Uni ⚖️ Mens&Maat.",tag:"richting",vakken:["zin2","topo","engels","geschied","logica"]},
- {id:"uni-econ",naam:"Uni 💶 Economie",tag:"richting",vakken:["procent","breuk","topo","engels"]},
+ {id:"uni-econ",naam:"Uni 💶 Economie",tag:"richting",vakken:["procent","breuk","ondern","engels","topo"]},
  {id:"uni-taal",naam:"Uni 📚 Taal",tag:"richting",vakken:["zin2","engels","wetenschap","logica"]},
  {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica","engels","wetenschap","geschied"]},
  {id:"genius",naam:"Genius",tag:"🏆",vakken:["logica","breuk","zin2","wetenschap"]}
@@ -313,6 +313,7 @@ var VAKKEN={
  engels:{ic:"🇬🇧",naam:"Engels",info:"vertaal het woord"},
  wetenschap:{ic:"🔬",naam:"Wetenschap",info:"natuur & scheikunde"},
  geschied:{ic:"🏛️",naam:"Geschiedenis",info:"NL & de wereld vroeger"},
+ ondern:{ic:"💶",naam:"Ondernemen",info:"geld, winst & slim omgaan"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
  seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
  feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"},
@@ -543,6 +544,7 @@ var LESJES={
  wetenschap:"Feiten over natuur en scheikunde. Twijfel je? Denk aan wat je in de natuur om je heen ziet — vaak klopt je eerste gedachte.",
  topo:"Topografie = waar ligt wat? Denk aan de kaart van Nederland en de wereld — landen, steden, zeeën.",
  geschied:"Geschiedenis = wat gebeurde er vroeger? Denk aan jaartallen en beroemde personen — welk verhaal ken je al?",
+ ondern:"Ondernemen = slim met geld denken. Reken altijd eerst uit: wat kost het, wat levert het op?",
  klanken:"Luister goed naar het woord. Welke klank hoor je aan het BEGIN? Zeg het woord maar zachtjes na.",
  split:"Splitsen = het getal in twee stukjes verdelen. 10 splits je in 4 en 6: samen weer 10!",
  fouten:"Dit zijn jouw moeilijke stukjes — hier word je het allersterkst van!"
@@ -723,6 +725,24 @@ var GESCHIED=[
  {zin:"Hoe heette de muur die Berlijn verdeelde tot 1989?",goed:"de Berlijnse Muur",opties:["de Berlijnse Muur","de IJzeren Muur","de Koude Muur"]},
  {zin:"Welke Nederlandse vrouw was een bekende verzetsheldin in WO II?",goed:"Hannie Schaft",opties:["Hannie Schaft","Anne Frank","Mata Hari"]},
  {zin:"Anne Frank schreef haar dagboek in welke oorlog?",goed:"de Tweede Wereldoorlog",opties:["de Tweede Wereldoorlog","de Eerste Wereldoorlog","de Vietnamoorlog"]}
+];
+// ====== ONDERNEMEN: geld & economie-begrippen voor Economie-richting (zelf geschreven)
+var ONDERNEEM=[
+ {zin:"Je verkoopt limonade voor €50. Je kosten waren €20. Wat is je winst?",goed:"€30",opties:["€30","€70","€50"]},
+ {zin:"Omzet = al het geld dat er binnenkomt. Kosten = wat je uitgeeft. Winst = ?",goed:"omzet − kosten",opties:["omzet − kosten","omzet + kosten","kosten − omzet"]},
+ {zin:"De bank geeft 2% rente op €100 per jaar. Hoeveel rente krijg je?",goed:"€2",opties:["€2","€20","€10"]},
+ {zin:"Sparen is geld apart zetten. Investeren is geld in iets steken om…?",goed:"er later méér van terug te krijgen",opties:["er later méér van terug te krijgen","het te verstoppen","het uit te geven"]},
+ {zin:"Btw is een belasting op dingen die je koopt. In Nederland is die meestal…?",goed:"21%",opties:["21%","5%","50%"]},
+ {zin:"Een ondernemer ziet een probleem en bedenkt…?",goed:"een oplossing die mensen willen kopen",opties:["een oplossing die mensen willen kopen","een spelletje","een baan bij de bank"]},
+ {zin:"Je koopt een spel voor €12 en verkoopt hem door voor €15. Je maakt…?",goed:"€3 winst",opties:["€3 winst","€3 verlies","€27 winst"]},
+ {zin:"Schuld betekent…?",goed:"geld dat je nog aan iemand moet betalen",opties:["geld dat je nog aan iemand moet betalen","geld dat je hebt gespaard","je zakgeld"]},
+ {zin:"Vraag en aanbod: er zijn weinig kaarten en iedereen wil ze. Wat gebeurt er met de prijs?",goed:"de prijs gaat omhoog",opties:["de prijs gaat omhoog","de prijs gaat omlaag","de prijs blijft gelijk"]},
+ {zin:"Een begroting (budget) is…?",goed:"een plan voor je geld: wat komt er in, wat gaat er uit",opties:["een plan voor je geld: wat komt er in, wat gaat er uit","een spaarpot","een soort belasting"]},
+ {zin:"Koop je op afbetaling (nu krijgen, later betalen), dan betaal je meestal…?",goed:"méér dan de normale prijs",opties:["méér dan de normale prijs","minder dan de normale prijs","precies dezelfde prijs"]},
+ {zin:"Wat is inflatie?",goed:"prijzen gaan gemiddeld omhoog — je geld wordt minder waard",opties:["prijzen gaan gemiddeld omhoog — je geld wordt minder waard","geld wordt meer waard","de bank sluit"]},
+ {zin:"Een goede ondernemer rekent eerst uit: wat kost het mij vs. wat levert het op. Dat heet…?",goed:"kosten-baten-analyse",opties:["kosten-baten-analyse","een goocheltruc","een spaarplan"]},
+ {zin:"€10 per week sparen — na 10 weken heb je…?",goed:"€100",opties:["€100","€10","€1000"]},
+ {zin:"Waarom kopen winkels spullen in grote hoeveelheden in?",goed:"dan is de prijs per stuk lager — meer winst per verkoop",opties:["dan is de prijs per stuk lager — meer winst per verkoop","omdat het er mooi uitziet","omdat het moet van de wet"]}
 ];
 // ====== MIJN BOEKEN: jouw boeken worden oefeningen
 var BOEKEN=[
@@ -2522,6 +2542,14 @@ var makers={
   v.innerHTML='<div class="sub2">🏛️ uit het verleden:</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
   antwoordOpties(a,z.goed,z.opties.slice(),"geschied");
   zegHoud(z.zin);
+ },
+ ondern:function(v,a){
+  var z=ONDERNEEM;
+  var w=z[rnd(0,z.length-1)];
+  window._les={soort:"ondern",zin:w.zin};
+  v.innerHTML='<div class="sub2">💶 ondernemer-vraag:</div><div class="big" style="font-size:1.4rem">'+w.zin+"</div>";
+  antwoordOpties(a,w.goed,w.opties.slice(),"ondern");
+  zegHoud(w.zin);
  },
  engels:function(v,a){
   var w=ENGELS[rnd(0,ENGELS.length-1)],naarEn=rnd(0,1)===0;
