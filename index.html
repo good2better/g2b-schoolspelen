@@ -372,6 +372,8 @@ staat.zwak=staat.zwak||{};       // specifieke sommen/woorden die moeilijk zijn
 staat.stijl=staat.stijl||{luister:0,beeld:0,doen:0,lezen:0,tempoN:0,tempoTot:0,trucs:0}; // hoe het kind leert
 staat.bewijs=staat.bewijs||{};   // groep -> true als ALLE vakken >=80% beheerst
 function wie(){return staat.naam||"";}
+function jufImg(){return (staat.juf==="mo")?"meestermo.png":"jufjet.png";}
+function jufNaam(){return (staat.juf==="mo")?"Meester Mo":"Juf Jet";}
 
 // ====== JIJ BENT DE HELD: kies je eigen speelfiguur (jongen/meisje/dier)
 var HELDEN=[{ic:"\ud83e\uddd2",naam:"jongen-held"},{ic:"\ud83d\udc67",naam:"meisje-held"},{ic:"\ud83e\udd8a",naam:"vos"},
@@ -582,7 +584,7 @@ function zeg(t){
  var v=stemVoor("nl");
  zinnen.forEach(function(z,i){
   z=z.trim();if(!z)return;
-  var u=new SpeechSynthesisUtterance(z);u.lang="nl-NL";u.rate=0.92;u.pitch=1.06;
+  var u=new SpeechSynthesisUtterance(z);u.lang="nl-NL";u.rate=0.92;u.pitch=(staat.juf==="mo"?0.85:1.06);
   // kleine levendigheid: sloten iets langzamer uitspreken
   if(i===zinnen.length-1&&zinnen.length>1)u.rate=0.88;
   if(v)u.voice=v;
@@ -1662,6 +1664,7 @@ function bouwHome(){
  dagopKaart(el);
  avontuurKaart(el);
  heldKaart(el);
+ jufKaart(el);
  slimmeKaarten(el);
  seizoensKaart(el);
  feestKaart(el);
@@ -1747,6 +1750,21 @@ function heldKaart(el){
   c.innerHTML='<span class="ic">'+hh.ic+"</span><b>"+hh.naam+"</b>"+(gk?'<small>✔ jouw held!</small>':"<small>kies mij!</small>");
   if(gk)c.style.borderColor="var(--goud)";
   c.onclick=function(){kiesHeld(hh.ic);};g.appendChild(c);});
+ el.appendChild(g);
+}
+// ====== JUF-OF-MEESTER-KAART: kies wie je lessen uitlegt
+function jufKaart(el){
+ var h=document.createElement("div");h.className="niveau";
+ h.innerHTML='👩‍🏫 Wie legt het jou uit?<span class="tag">kies juf of meester</span>';
+ el.appendChild(h);
+ var g=document.createElement("div");g.className="grid";
+ [{id:"jet",img:"jufjet.png",naam:"Juf Jet"},{id:"mo",img:"meestermo.png",naam:"Meester Mo"}].forEach(function(j){
+  var c=document.createElement("div");c.className="card";
+  var gk=(staat.juf||"jet")===j.id;
+  c.innerHTML='<img src="'+j.img+'" style="width:64px;height:64px;border-radius:50%;border:3px solid '+(gk?"var(--goud)":"transparent")+'"><b>'+j.naam+"</b>"+(gk?'<small>✔ legt jou uit!</small>':"<small>kies mij!</small>");
+  if(gk)c.style.borderColor="var(--goud)";
+  c.onclick=function(){staat.juf=j.id;bewaar();zeg(j.id==="mo"?"Hoi! Ik ben Meester Mo — samen gaan we leren!":"Hoi! Ik ben Juf Jet — samen gaan we leren!");bouwHome();};
+  g.appendChild(c);});
  el.appendChild(g);
 }
 // ====== SEIZOENS-KAART + groep-bewijs-kaart
@@ -2060,7 +2078,7 @@ function doeVraag(){
  document.getElementById("feedback").className="feedback";
  document.getElementById("slimme-tip").textContent="";
  var lj=document.getElementById("lesje");lj.className="lesje";lj.innerHTML="";
- if(vraagNr===0){var _L=lesVoor(huidigVak);if(_L){lj.className="lesje lesje-les aan";lj.innerHTML='<img src="jufjet.png" class="jufjet-av" alt="Juf Jet"><b>Juf Jet legt uit:</b> '+_L;zeg(_L);}}
+ if(vraagNr===0){var _L=lesVoor(huidigVak);if(_L){lj.className="lesje lesje-les aan";lj.innerHTML='<img src="'+jufImg()+'" class="jufjet-av" alt="'+jufNaam()+'"><b>'+jufNaam()+' legt uit:</b> '+_L;zeg(_L);}}
  window._les=null;
  var v=document.getElementById("vraag-inhoud"),a=document.getElementById("antwoord-zone");
  v.innerHTML="";a.innerHTML="";laatsteZeg="";
@@ -2228,7 +2246,7 @@ function toonLesje(){
  staat.stijl.trucs++;bewaar();
  var l=window._les;if(!l){zeg("Bijna! Probeer het rustig nog eens — jij kan het.");return;}
  var lj=document.getElementById("lesje");lj.classList.add("aan");
- var kop='<img src="jufjet.png" class="jufjet-av" alt="Juf Jet"><b>Juf Jet — '+AANMOEDIGING[rnd(0,AANMOEDIGING.length-1)]+'</b><br>';
+ var kop='<img src="'+jufImg()+'" class="jufjet-av" alt="'+jufNaam()+'"><b>'+jufNaam()+' — '+AANMOEDIGING[rnd(0,AANMOEDIGING.length-1)]+'</b><br>';
  var t="",z="";
  if(l.soort==="tellen"){
   t="Tel met me mee — ik tel voor:<br><div class='teltot' id='teltot'></div>Klaar? <b>Nu jij — jij kan het!</b>";
