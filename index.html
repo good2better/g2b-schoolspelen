@@ -268,10 +268,10 @@ var NIVEAUS=[
  {id:"g12",naam:"Groep 1–2",tag:"start",vakken:["tellen","letters","klanken","eindklank","vormen","gevoelens","kleuren","letterwijs"]},
  {id:"g34",naam:"Groep 3–4",tag:"basis",vakken:["tellen","plus1","split","woorden","spelling","klok","klinker","vormen","gevoelens","kleuren","puzzel"]},
  {id:"g56",naam:"Groep 5–6",tag:"door",vakken:["plus2","min2","tafels","spelling","klok","klok2","zin","topo","puzzel"]},
- {id:"g78",naam:"Groep 7–8",tag:"gevorderd",vakken:["plus3","min3","tafels","spelling2","zin","topo","puzzel"]},
- {id:"mb",naam:"Middelbaar 1–5",tag:"verder",vakken:["tafels","procent","spelling2","zin2","topo"]},
- {id:"uni",naam:"Universiteit",tag:"hoog",vakken:["procent","breuk","zin2","topo"]},
- {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica"]},
+ {id:"g78",naam:"Groep 7–8",tag:"gevorderd",vakken:["plus3","min3","tafels","spelling2","zin","topo","engels","puzzel"]},
+ {id:"mb",naam:"Middelbaar 1–5",tag:"verder",vakken:["tafels","procent","spelling2","zin2","topo","engels"]},
+ {id:"uni",naam:"Universiteit",tag:"hoog",vakken:["procent","breuk","zin2","topo","engels","logica"]},
+ {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica","engels"]},
  {id:"genius",naam:"Genius",tag:"🏆",vakken:["logica","breuk","zin2"]}
 ];
 var VAKKEN={
@@ -306,6 +306,7 @@ var VAKKEN={
  kleuren:{ic:"🎨",naam:"Kleuren",info:"welke kleur is dit?"},
  letterwijs:{ic:"🔠",naam:"Letters zien",info:"welke letter is dit?"},
  topo:{ic:"🌍",naam:"Topografie",info:"de wereld en Nederland"},
+ engels:{ic:"🇬🇧",naam:"Engels",info:"vertaal het woord"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
  seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
  feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"},
@@ -660,6 +661,17 @@ var LOGICA=[
  {zin:"Boek hoort bij lezen, zoals vork hoort bij ___.",goed:"eten",opties:["eten","snijden","koken"]},
  {zin:"3, 6, 12, 24, ___ ?",goed:"48",opties:["48","36","30"]},
  {zin:"Als BOOM omgedraaid MOOB wordt, dan wordt ZON omgedraaid ___.",goed:"NOZ",opties:["NOZ","ONZ","ZON"]}
+];
+// ====== ENGELS: woordjes NL<->EN voor de hogere niveaus
+var ENGELS=[{nl:"water",en:"water"},{nl:"huis",en:"house"},{nl:"school",en:"school"},{nl:"boek",en:"book"},
+ {nl:"hond",en:"dog"},{nl:"kat",en:"cat"},{nl:"vogel",en:"bird"},{nl:"paard",en:"horse"},
+ {nl:"appel",en:"apple"},{nl:"brood",en:"bread"},{nl:"melk",en:"milk"},{nl:"kaas",en:"cheese"},
+ {nl:"zon",en:"sun"},{nl:"maan",en:"moon"},{nl:"ster",en:"star"},{nl:"regen",en:"rain"},
+ {nl:"vriend",en:"friend"},{nl:"familie",en:"family"},{nl:"moeder",en:"mother"},{nl:"vader",en:"father"},
+ {nl:"leren",en:"to learn"},{nl:"lezen",en:"to read"},{nl:"schrijven",en:"to write"},{nl:"rekenen",en:"maths"},
+ {nl:"rood",en:"red"},{nl:"blauw",en:"blue"},{nl:"groen",en:"green"},{nl:"geel",en:"yellow"},
+ {nl:"groot",en:"big"},{nl:"klein",en:"small"},{nl:"snel",en:"fast"},{nl:"langzaam",en:"slow"},
+ {nl:"wetenschap",en:"science"},{nl:"geschiedenis",en:"history"},{nl:"aardrijkskunde",en:"geography"},{nl:"taal",en:"language"}
 ];
 // ====== MIJN BOEKEN: jouw boeken worden oefeningen
 var BOEKEN=[
@@ -2425,6 +2437,17 @@ var makers={
   antwoordOpties(a,z.goed,z.opties.slice(),"logica");
  },
  puzzel:function(v,a){puzzelBouw(v,a,WOORDEN1);},
+ engels:function(v,a){
+  var w=ENGELS[rnd(0,ENGELS.length-1)],naarEn=rnd(0,1)===0;
+  window._les={soort:"engels"};
+  var goed=naarEn?w.en:w.nl,vraag=naarEn?w.nl:w.en;
+  var opties=[goed];
+  while(opties.length<3){var x=ENGELS[rnd(0,ENGELS.length-1)],o=naarEn?x.en:x.nl;if(o!==goed&&opties.indexOf(o)<0)opties.push(o);}
+  opties.sort(function(){return Math.random()-.5;});
+  v.innerHTML='<div class="sub2">Vertaal naar '+(naarEn?"Engels":"Nederlands")+':</div><div class="big">'+vraag+"</div>";
+  antwoordOpties(a,goed,opties,"engels");
+  zegHoud("Wat betekent "+vraag+" in het "+(naarEn?"Engels":"Nederlands")+"?");
+ },
  klok:function(v,a){
   var uur=rnd(1,12),half=rnd(0,1);
   var goed=half?("half "+(uur===12?1:uur+1)):(uur+" uur");
