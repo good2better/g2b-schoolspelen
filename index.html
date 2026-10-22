@@ -180,9 +180,29 @@ function bewaar(){localStorage.setItem("g2b_playlearn",JSON.stringify(staat));
  document.getElementById("sterren").textContent="⭐ "+staat.sterren;}
 
 // ====== STEM (gratis, ingebouwd in de browser — spreekt NL)
+// Als de G2B stem-server draait (pocket-tts op localhost:8400, MIT/open source)
+// gebruiken we die natuurlijke NL-stem; anders de browser-stem.
+var _stemOk=null;
+function _stemServer(t){
+ if(_stemOk===false)return Promise.reject();
+ var fd=new FormData();fd.append("text",t);
+ return fetch("http://localhost:8400/tts",{method:"POST",body:fd})
+  .then(function(r){if(!r.ok)throw 0;_stemOk=true;return r.blob();})
+  .then(function(b){
+   var a=new Audio(URL.createObjectURL(b));
+   return a.play().catch(function(){});
+  });
+}
 function zeg(t){
- try{speechSynthesis.cancel();
- var u=new SpeechSynthesisUtterance(t);u.lang="nl-NL";u.rate=0.92;
+ try{speechSynthesis.cancel();}catch(e){}
+ if(_stemOk!==false){
+  _stemServer(t).catch(function(){_stemOk=false;_zegBrowser(t);});
+  return;
+ }
+ _zegBrowser(t);
+}
+function _zegBrowser(t){
+ try{var u=new SpeechSynthesisUtterance(t);u.lang="nl-NL";u.rate=0.92;
  speechSynthesis.speak(u);}catch(e){}
 }
 var laatsteZeg="";
