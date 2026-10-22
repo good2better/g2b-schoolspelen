@@ -278,11 +278,11 @@ var NIVEAUS=[
  {id:"g78",naam:"Groep 7–8",tag:"gevorderd",vakken:["plus3","min3","tafels","spelling2","zin","topo","engels","puzzel"]},
  {id:"mb",naam:"Middelbaar 1–5",tag:"verder",vakken:["tafels","procent","spelling2","zin2","topo","engels"]},
  {id:"uni",naam:"Universiteit",tag:"hoog",vakken:["procent","breuk","zin2","topo","engels","logica"]},
- {id:"uni-beta",naam:"Uni 🔬 Bèta",tag:"richting",vakken:["procent","breuk","logica","wetenschap"]},
+ {id:"uni-beta",naam:"Uni 🔬 Bèta",tag:"richting",vakken:["procent","breuk","logica","wetenschap","bio"]},
  {id:"uni-mens",naam:"Uni ⚖️ Mens&Maat.",tag:"richting",vakken:["zin2","topo","engels","geschied","logica","filos"]},
  {id:"uni-econ",naam:"Uni 💶 Economie",tag:"richting",vakken:["procent","breuk","ondern","engels","topo","stat"]},
  {id:"uni-taal",naam:"Uni 📚 Taal",tag:"richting",vakken:["zin2","engels","gram","logica"]},
- {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica","engels","wetenschap","geschied","stat","filos"]},
+ {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica","engels","wetenschap","geschied","stat","filos","bio"]},
  {id:"genius",naam:"Genius",tag:"🏆",vakken:["logica","breuk","zin2","wetenschap","stat"]}
 ];
 var VAKKEN={
@@ -324,6 +324,7 @@ var VAKKEN={
  gram:{ic:"📖",naam:"Grammatica",info:"woordsoorten & zinnen"},
  stat:{ic:"📊",naam:"Statistiek",info:"gemiddelden, kansen & spreiding"},
  filos:{ic:"💭",naam:"Filosofie",info:"denken over grote vragen"},
+ bio:{ic:"🧬",naam:"Biologie",info:"cellen, DNA & het leven zelf"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
  seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
  feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"},
@@ -558,6 +559,7 @@ var LESJES={
  gram:"Grammatica = hoe zinnen in elkaar zitten. Zoek eerst het werkwoord, dan wie het doet (onderwerp) en wat er gedaan wordt.",
  stat:"Statistiek = getallen samenvatten en kansen begrijpen. Gemiddelde, mediaan en modus zijn drie manieren om 'het midden' te zeggen.",
  filos:"Filosofie = doorvragen op grote vragen. Ken de denkers (Socrates, Plato, Kant) en let op drogredenen — een argument dat goed lijkt maar niet klopt.",
+ bio:"Biologie = het leven snappen: cellen bouwen lichamen, DNA is de handleiding van de cel, planten maken zuurstof via fotosynthese.",
  klanken:"Luister goed naar het woord. Welke klank hoor je aan het BEGIN? Zeg het woord maar zachtjes na.",
  split:"Splitsen = het getal in twee stukjes verdelen. 10 splits je in 4 en 6: samen weer 10!",
  fouten:"Dit zijn jouw moeilijke stukjes — hier word je het allersterkst van!"
@@ -942,7 +944,25 @@ var FILOSOFIE=[
  {zin:"Een paradox is…?",goed:"een schijnbare tegenstrijdigheid",opties:["een schijnbare tegenstrijdigheid","een snelle draak","een bijwoord"]},
  {zin:"Hobbes schreef 'Leviathan' over…?",goed:"hoe een staat orde houdt",opties:["hoe een staat orde houdt","zee-monsters","planten"]}
 ];
-// ====== MIJN BOEKEN: jouw boeken worden oefeningen
+var BIOLOGIE=[
+ {zin:"De kleinste bouwsteen van het leven is de…?",goed:"cel",opties:["cel","atoom","organisme"]},
+ {zin:"Fotosynthese is het proces waarbij planten…?",goed:"licht omzetten in voeding",opties:["licht omzetten in voeding","water drinken","nacht maken"]},
+ {zin:"Bij fotosynthese komt er… vrij?",goed:"zuurstof",opties:["zuurstof","koolstofdioxide","stikstof"]},
+ {zin:"Het menselijk hart heeft hoeveel kamers?",goed:"4",opties:["4","2","6"]},
+ {zin:"DNA staat in…?",goed:"de celkern van (bijna) elke cel",opties:["de celkern van (bijna) elke cel","alleen in het bloed","alleen in botten"]},
+ {zin:"De grootste organ van het menselijk lichaam is…?",goed:"de huid",opties:["de huid","de lever","de longen"]},
+ {zin:"Mensen hebben hoeveel paar chromosomen?",goed:"23",opties:["23","46","12"]},
+ {zin:"Bloedcellen worden gemaakt in…?",goed:"het beenmerg",opties:["het beenmerg","de spieren","de huid"]},
+ {zin:"Charles Darwin staat bekend om…?",goed:"de evolutietheorie (natuurlijke selectie)",opties:["de evolutietheorie (natuurlijke selectie)","de zwaartekracht","de telefoon"]},
+ {zin:"Een organisme dat zijn eigen voedsel maakt heet…?",goed:"producent",opties:["producent","consument","afbreker"]},
+ {zin:"Paddestoelen horen bij de groep…?",goed:"schimmels",opties:["schimmels","planten","dieren"]},
+ {zin:"Het onderdeel van de cel dat energie maakt is…?",goed:"het mitochondrion",opties:["het mitochondrion","de ribosoom","de vacuole"]},
+ {zin:"De voedselketen begint altijd bij…?",goed:"de zon / planten",opties:["de zon / planten","roofdieren","mensen"]},
+ {zin:"Homo sapiens is…?",goed:"de mens",opties:["de mens","een dino","een bacterie"]},
+ {zin:"Bacteriën zijn…?",goed:"eencellige organismen",opties:["eencellige organismen","virussen","schimmels"]},
+ {zin:"Een vaccin helpt het lichaam door…?",goed:"het immuunsysteem voor te bereiden op ziekte",opties:["het immuunsysteem voor te bereiden op ziekte","bacteriën te voeren","het bloed blauw te maken"]},
+ {zin:"De grootste levende structuur op aarde is…?",goed:"het Great Barrier Reef",opties:["het Great Barrier Reef","de Amazone","een blauwe vinvis"]}
+];
 var BOEKEN=[
  {id:"sunny",naam:"Sunny's Sailing Adventures",ic:"⛵",
   woorden:["sunny","zeilen","boot","water","zon","wind","walvis","dolfijn","eiland","anker","golven","haven"],
@@ -2768,6 +2788,13 @@ var makers={
   window._les={soort:"filos",zin:z.zin};
   v.innerHTML='<div class="sub2">💭 grote-denker-vraag:</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
   antwoordOpties(a,z.goed,z.opties.slice(),"filos");
+  zegHoud(z.zin);
+ },
+ bio:function(v,a){
+  var z=BIOLOGIE[rnd(0,BIOLOGIE.length-1)];
+  window._les={soort:"bio",zin:z.zin};
+  v.innerHTML='<div class="sub2">🧬 leven-vraag:</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
+  antwoordOpties(a,z.goed,z.opties.slice(),"bio");
   zegHoud(z.zin);
  },
  engels:function(v,a){
