@@ -373,7 +373,8 @@ staat.stijl=staat.stijl||{luister:0,beeld:0,doen:0,lezen:0,tempoN:0,tempoTot:0,t
 staat.bewijs=staat.bewijs||{};   // groep -> true als ALLE vakken >=80% beheerst
 function wie(){return staat.naam||"";}
 function jufImg(){return (staat.juf==="mo")?"meestermo.png":"jufjet.png";}
-function jufNaam(){return (staat.juf==="mo")?"Meester Mo":"Juf Jet";}
+function jufNaam(){return staat.jufNaamVrij||((staat.juf==="mo")?"Meester Mo":"Juf Jet");}
+function kiesJufNaam(){var v=document.getElementById("jufnaam-in").value.trim().replace(/[<>"'&]/g,"");staat.jufNaamVrij=v;bewaar();if(v)zeg("Hoi! Ik ben "+v+" — samen gaan we leren!");bouwHome();}
 
 // ====== JIJ BENT DE HELD: kies je eigen speelfiguur (jongen/meisje/dier)
 var HELDEN=[{ic:"\ud83e\uddd2",naam:"jongen-held"},{ic:"\ud83d\udc67",naam:"meisje-held"},{ic:"\ud83e\udd8a",naam:"vos"},
@@ -1763,9 +1764,14 @@ function jufKaart(el){
   var gk=(staat.juf||"jet")===j.id;
   c.innerHTML='<img src="'+j.img+'" style="width:64px;height:64px;border-radius:50%;border:3px solid '+(gk?"var(--goud)":"transparent")+'"><b>'+j.naam+"</b>"+(gk?'<small>✔ legt jou uit!</small>':"<small>kies mij!</small>");
   if(gk)c.style.borderColor="var(--goud)";
-  c.onclick=function(){staat.juf=j.id;bewaar();zeg(j.id==="mo"?"Hoi! Ik ben Meester Mo — samen gaan we leren!":"Hoi! Ik ben Juf Jet — samen gaan we leren!");bouwHome();};
+  c.onclick=function(){staat.juf=j.id;staat.jufNaamVrij="";bewaar();zeg(j.id==="mo"?"Hoi! Ik ben Meester Mo — samen gaan we leren!":"Hoi! Ik ben Juf Jet — samen gaan we leren!");bouwHome();};
   g.appendChild(c);});
  el.appendChild(g);
+ var eg=document.createElement("div");eg.style.cssText="margin-top:8px;text-align:center";
+ eg.innerHTML='<small>of een eigen naam (bijv. je échte juf/meester):</small><br>'+
+  '<input class="invoer" id="jufnaam-in" style="width:170px" maxlength="24" placeholder="bijv. Juf Anita" value="'+(staat.jufNaamVrij||"")+'"> '+
+  '<button class="pill" onclick="kiesJufNaam()">opslaan</button>';
+ el.appendChild(eg);
 }
 // ====== SEIZOENS-KAART + groep-bewijs-kaart
 function seizoensKaart(el){
