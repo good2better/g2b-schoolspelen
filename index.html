@@ -368,7 +368,7 @@ staat.sterren=staat.sterren||0;
 staat.fouten=staat.fouten||{};   // vak -> aantal fouten
 staat.goed=staat.goed||{};       // vak -> aantal goed
 staat.zwak=staat.zwak||{};       // specifieke sommen/woorden die moeilijk zijn
-staat.stijl=staat.stijl||{luister:0,beeld:0,tempoN:0,tempoTot:0,trucs:0}; // hoe het kind leert
+staat.stijl=staat.stijl||{luister:0,beeld:0,doen:0,lezen:0,tempoN:0,tempoTot:0,trucs:0}; // hoe het kind leert
 staat.bewijs=staat.bewijs||{};   // groep -> true als ALLE vakken >=80% beheerst
 function wie(){return staat.naam||"";}
 
@@ -2084,6 +2084,7 @@ function check(goed,knop,a,laatOK){
  var fb=document.getElementById("feedback");
  if(window._vraagT0){staat.stijl.tempoN++;staat.stijl.tempoTot+=Date.now()-window._vraagT0;window._vraagT0=0;}
  if(goed){
+  staat.stijl.doen=(staat.stijl.doen||0)+1;
   if(window._beeld)staat.stijl.beeld++;
   var wasZwak=window._huidigItem&&((staat.zwak[key]||{})[window._huidigItem]||0)>0;
   knop.classList.add("goed");
@@ -2977,6 +2978,7 @@ function verhaalLezer(bk){
   document.getElementById("vh-hoor").onclick=function(){staat.stijl.luister++;bewaar();zegBoek(bk,pag);};
   document.getElementById("vh-volgende").onclick=function(){pag++;pagina();};
   var vp=document.getElementById("vh-vorige");if(vp)vp.onclick=function(){pag--;pagina();};
+  staat.stijl.lezen=(staat.stijl.lezen||0)+1;bewaar();
   zegBoek(bk,pag);
  }
  pagina();toon("scherm-spel");
@@ -3404,14 +3406,21 @@ function boekMeester(bk){
 // ====== SPEELSTIJL: de app leert hoe het kind leert
 function speelstijlTekst(){
  var s=staat.stijl,tips=[];
- var luister=s.luister||0,beeld=s.beeld||0,trucs=s.trucs||0;
+ var luister=s.luister||0,beeld=s.beeld||0,doen=s.doen||0;
+ var lezen=s.lezen||0,trucs=s.trucs||0;
  var tempoMs=s.tempoN?(s.tempoTot/s.tempoN):0;
- if(luister>=3)tips.push("luistert graag (tikte "+luister+"× op 🔊) — auditieve uitleg werkt");
- if(beeld>=5)tips.push("denkt in plaatjes ("+beeld+"× goed bij beeld-vragen)");
+ var vormen=[{k:"kijken",n:beeld,t:"denkt in plaatjes ("+beeld+"× goed bij beeld-vragen)"},
+  {k:"luisteren",n:luister,t:"luistert graag (tikte "+luister+"× op 🔊) — auditieve uitleg werkt"},
+  {k:"doen",n:doen,t:"leert door te doen ("+doen+"× een oefening goed gemaakt)"},
+  {k:"lezen",n:lezen,t:"leest graag ("+lezen+"× een boekpagina bekeken)"}];
+ vormen.sort(function(a,b){return b.n-a.n;});
+ var best=vormen[0],tot=vormen.reduce(function(t,v){return t+v.n;},0);
+ if(tot>=8&&best.n>=3)tips.push("<b>👑 Beste leer-manier tot nu toe: "+best.k.toUpperCase()+"</b> — bied extra "+best.k+"-oefeningen aan");
+ vormen.forEach(function(v){if(v.n>=3)tips.push(v.t);});
  if(trucs>=3)tips.push("gebruikt slimme trucs ("+trucs+"× de 💡-truc geopend) — stap-voor-stap helpt");
  if(tempoMs&&tempoMs<4000)tips.push("werkt in een snel tempo — korte rondjes passen");
  if(tempoMs>=4000)tips.push("neemt rustig de tijd — bedachtzaam werken");
- if(!tips.length)tips.push("nog aan het meten — speel een paar rondjes met 🔊, 💡 en plaatjes erbij");
+ if(!tips.length)tips.push("nog aan het meten — speel een paar rondjes met 🔊, 💡, plaatjes en boeken erbij");
  return tips.map(function(t){return '<div class="stijl-regel">• '+t+"</div>";}).join("");
 }
 
