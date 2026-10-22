@@ -281,7 +281,7 @@ var NIVEAUS=[
  {id:"uni-beta",naam:"Uni 🔬 Bèta",tag:"richting",vakken:["procent","breuk","logica","wetenschap","bio","info2"]},
  {id:"uni-mens",naam:"Uni ⚖️ Mens&Maat.",tag:"richting",vakken:["zin2","topo","engels","geschied","logica","filos","recht"]},
  {id:"uni-econ",naam:"Uni 💶 Economie",tag:"richting",vakken:["procent","breuk","ondern","engels","topo","stat"]},
- {id:"uni-taal",naam:"Uni 📚 Taal",tag:"richting",vakken:["zin2","engels","gram","logica"]},
+ {id:"uni-taal",naam:"Uni 📚 Taal",tag:"richting",vakken:["zin2","engels","gram","logica","stijl"]},
  {id:"master",naam:"Master 1-2-3",tag:"top",vakken:["breuk","zin2","logica","engels","wetenschap","geschied","stat","filos","bio"]},
  {id:"genius",naam:"Genius",tag:"🏆",vakken:["logica","breuk","zin2","wetenschap","stat","info2"]}
 ];
@@ -327,6 +327,7 @@ var VAKKEN={
  bio:{ic:"🧬",naam:"Biologie",info:"cellen, DNA & het leven zelf"},
  info2:{ic:"💻",naam:"Informatica",info:"computers, code & hoe het web werkt"},
  recht:{ic:"⚖️",naam:"Recht",info:"Grondwet, Kamer & de rechtbank"},
+ stijl:{ic:"✒️",naam:"Stijl & Woorden",info:"synoniemen, antoniemen & toon"},
  fouten:{ic:"🎯",naam:"Oefen je fouten",info:"alleen de moeilijke stukjes"},
  seizoen:{ic:"🍂",naam:"Seizoens-woorden",info:"woorden van nu"},
  feest:{ic:"🎉",naam:"Feest-woorden",info:"woorden van de feestdag"},
@@ -564,6 +565,7 @@ var LESJES={
  bio:"Biologie = het leven snappen: cellen bouwen lichamen, DNA is de handleiding van de cel, planten maken zuurstof via fotosynthese.",
  info2:"Informatica = computers begrijpen: bits en bytes, algoritmes (stappenplannen) en hoe het web werkt.",
  recht:"Recht = de regels van het land: Grondwet, Tweede Kamer, rechtbank — en wie wat mag beslissen.",
+ stijl:"Stijl = woorden rijker maken: synoniemen (woorden die hetzelfde betekenen) en antoniemen (tegenovergestelden).",
  klanken:"Luister goed naar het woord. Welke klank hoor je aan het BEGIN? Zeg het woord maar zachtjes na.",
  split:"Splitsen = het getal in twee stukjes verdelen. 10 splits je in 4 en 6: samen weer 10!",
  fouten:"Dit zijn jouw moeilijke stukjes — hier word je het allersterkst van!"
@@ -1000,6 +1002,23 @@ var RECHT=[
  {zin:"Habeas corpus betekent…?",goed:"je mag niet zonder rechter vastgehouden worden",opties:["je mag niet zonder rechter vastgehouden worden","je hebt gelijk","het recht om te spreken"]},
  {zin:"De ministerraad is…?",goed:"de vergadering van alle ministers met de minister-president",opties:["de vergadering van alle ministers met de minister-president","het parlement","de rechterlijke macht"]},
  {zin:"Privacy wet in Europa heet…?",goed:"AVG / GDPR",opties:["AVG / GDPR","WOB","UWV"]}
+];
+var STIJL=[
+ {zin:"Een synoniem van 'mooi' is…?",goed:"fraai",opties:["fraai","lelijk","groot"]},
+ {zin:"Een synoniem van 'beginnen' is…?",goed:"aanvangen",opties:["aanvangen","eindigen","stoppen"]},
+ {zin:"Een synoniem van 'snel' is…?",goed:"vlug",opties:["vlug","traag","zaai"]},
+ {zin:"Een antoniem (tegenovergestelde) van 'ruim' is…?",goed:"krap",opties:["krap","wijd","groot"]},
+ {zin:"Een antoniem van 'oud' is…?",goed:"nieuw",opties:["nieuw","verweerd","klassiek"]},
+ {zin:"Een synoniem van 'blij' is…?",goed:"verheugd",opties:["verheugd","verdrietig","boos"]},
+ {zin:"Formeel spreken betekent…?",goed:"beleefd en correct (bijv. 'u' in plaats van 'jij')",opties:["beleefd en correct (bijv. 'u' in plaats van 'jij')","een grap maken","fluisteren"]},
+ {zin:"Informeel taalgebruik is…?",goed:"ontspannen en persoonlijk (bijv. 'jij' in plaats van 'u')",opties:["ontspannen en persoonlijk (bijv. 'jij' in plaats van 'u')","heel netjes","een formule"]},
+ {zin:"Een synoniem van 'kijken' is…?",goed:"bekijken",opties:["bekijken","lopen","denken"]},
+ {zin:"Een synoniem van 'groot' is…?",goed:"enorm",opties:["enorm","klein","dun"]},
+ {zin:"Een antoniem van 'licht' (gewicht) is…?",goed:"zwaar",opties:["zwaar","donker","fel"]},
+ {zin:"Een synoniem van 'spreken' is…?",goed:"praten",opties:["praten","zwijgen","horen"]},
+ {zin:"Een moeilijk woord voor 'eten' is…?",goed:"nuttigen",opties:["nuttigen","smullen","vuren"]},
+ {zin:"Een synoniem van 'huis' is…?",goed:"woning",opties:["woning","tuin","straat"]},
+ {zin:"Een antoniem van 'vroeg' is…?",goed:"laat",opties:["laat","vroeg","nu"]}
 ];
 var BOEKEN=[
  {id:"sunny",naam:"Sunny's Sailing Adventures",ic:"⛵",
@@ -2847,6 +2866,13 @@ var makers={
   window._les={soort:"recht",zin:z.zin};
   v.innerHTML='<div class="sub2">⚖️ rechts-vraag:</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
   antwoordOpties(a,z.goed,z.opties.slice(),"recht");
+  zegHoud(z.zin);
+ },
+ stijl:function(v,a){
+  var z=STIJL[rnd(0,STIJL.length-1)];
+  window._les={soort:"stijl",zin:z.zin};
+  v.innerHTML='<div class="sub2">✒️ stijl-vraag:</div><div class="big" style="font-size:1.4rem">'+z.zin+"</div>";
+  antwoordOpties(a,z.goed,z.opties.slice(),"stijl");
   zegHoud(z.zin);
  },
  engels:function(v,a){
