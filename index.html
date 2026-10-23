@@ -2983,7 +2983,7 @@ function boekIndex(){
 function _vraagZelfOffline(q){
  if(_vraagZelfServer.__miss!==true&&_vraagZelfServer(q))return;
  var qraw=q;
- var woorden=_normWoord(q).split(/[^a-z0-9]+/);
+ var woorden=_normWoord(q).split(/[^a-z0-9]+/).filter(function(w){return !(typeof _VRAAG_STOP!=="undefined"&&_VRAAG_STOP[w]);});
  var qx=woorden.slice();
  woorden.forEach(function(w){if(_VRAAG_SYN[w])qx=qx.concat(_VRAAG_SYN[w]);});
  var best=null,score=0;
@@ -3002,9 +3002,72 @@ function _vraagZelfOffline(q){
  });
  if(bb&&bs>score&&bs>6){vraagAntwoord(qraw,(isEn()?"In the book '"+bb.b+"' it says: ":"In het boek '"+bb.b+"' staat dit: ")+bb.z);}
  else if(best&&score>4){vraagAntwoord(qraw,best[1]);}
- else{vraagAntwoord(q,isEn()?("That's a good question"+(wie()?", "+wie():"")+"! I don't know that one exactly yet — check '"
-  +Object.keys(FAQ())[0]+"' or try your question in other words. And remember: every question you ask makes you smarter!"):("Dat is een goede vraag"+(wie()?", "+wie():"")+"! Die weet ik nog niet precies — kijk eens bij '"
-  +Object.keys(FAQ())[0]+"' of probeer je vraag met andere woorden. En onthoud: elke vraag die je stelt, maakt je slimmer!"));}
+ else{_wikiZoek(qraw);}
+}
+var _VRAAG_STOP={hoe:1,wat:1,waar:1,waarom:1,wanneer:1,wie:1,welk:1,welke:1,zijn:1,was:1,waren:1,een:1,het:1,de:1,van:1,voor:1,met:1,dat:1,die:1,kun:1,kunt:1,moet:1,doe:1,doet:1,heb:1,heeft:1,jij:1,mij:1,ook:1,als:1,dan:1,nog:1,uit:1,aan:1,bij:1,tot:1,maar:1,niet:1,geen:1,word:1,wordt:1,worden:1,deze:1,dit:1,daar:1,hier:1,veel:1,meer:1,alle:1,alles:1,over:1,om:1,zelf:1,zou:1,zullen:1,wil:1,wilt:1,willen:1,gaan:1,gaat:1,kom:1,komen:1,komt:1,zeg:1,zegt:1,vertel:1,they:1,them:1,their:1,this:1,that:1,these:1,those:1,there:1,here:1,too:1,very:1,could:1,should:1,would:1,will:1,does:1,did:1,been:1,are:1,were:1,have:1,has:1,had:1,get:1,going:1,come:1,said:1,tell:1,told:1,know:1,make:1,made:1,what:1,how:1,why:1,when:1,who:1,which:1,the:1,and:1,but:1,not:1,yes:1,you:1,your:1,our:1,its:1,so:1,can:1,do:1,be:1,is:1,was:1,go:1,say:1,it:1,we:1,me:1,my:1,an:1,a:1,of:1,to:1,in:1,on:1,at:1,or:1,for:1,with:1,about:1,from:1,into:1,like:1,just:1,all:1,any:1,some:1,no:1,
+ bestaat:1,bestaan:1,heten:1,heet:1,betekenen:1,betekent:1,betekenis:1,gemaakt:1,werkt:1,werken:1,gebruikt:1,gebruiken:1,doen:1,krijgen:1,krijgt:1,houden:1,houdt:1,nemen:1,neemt:1,zien:1,ziet:1,vinden:1,vindt:1,geven:1,geeft:1,laten:1,laat:1,staan:1,staat:1,liggen:1,ligt:1,kunnen:1,mogen:1,mag:1,moeten:1,zouden:1,blijven:1,blijft:1,leven:1,leeft:1,woont:1,wonen:1,spelen:1,speelt:1,luisteren:1,kijken:1,kijkt:1,voelen:1,voelt:1,denken:1,denkt:1,weten:1,weet:1,zitten:1,zit:1,leert:1,oefenen:1,oefent:1,bestond:1,ging:1,kwam:1,kwamen:1,eten:1,eet:1,at:1,ate:1,eat:1,eating:1,drink:1,drinkt:1,drank:1,dranken:1,
+ exists:1,exist:1,means:1,mean:1,meaning:1,works:1,work:1,working:1,uses:1,used:1,gets:1,getting:1,takes:1,take:1,sees:1,see:1,find:1,finds:1,gives:1,give:1,lets:1,let:1,stands:1,stand:1,lies:1,lie:1,live:1,lives:1,living:1,play:1,plays:1,playing:1,listen:1,look:1,looks:1,looking:1,feel:1,feels:1,think:1,thinks:1,sit:1,sits:1,learn:1,learns:1,learning:1,practice:1,stay:1,stays:1,keep:1,keeps:1,happen:1,happens:1,happened:1,become:1,becomes:1,called:1,thing:1,things:1,stuff:1,way:1,ways:1};
+var _VRAAG_NSFT=["seks","sex","sexy","porno","porn","naakt","naked","moord","murder","kill","dood","doden","wapen","gun","wapens","knife","drugs","drug","alcohol","bier","beer","wijn","wine","roken","smoke","smoking","sigaret","cigarette","blood","bloed","zelfmoord","suicide","horror","gok","gokken","gambl","terror","bomb"];
+function _vraagFallback(qraw){vraagAntwoord(qraw,isEn()?("That's a good question"+(wie()?", "+wie():"")+"! I don't know that one exactly yet — check '"
+ +Object.keys(FAQ())[0]+"' or try your question in other words. And remember: every question you ask makes you smarter!"):("Dat is een goede vraag"+(wie()?", "+wie():"")+"! Die weet ik nog niet precies — kijk eens bij '"
+ +Object.keys(FAQ())[0]+"' of probeer je vraag met andere woorden. En onthoud: elke vraag die je stelt, maakt je slimmer!"));}
+function _wikiTermen(qraw){
+ var ws=_normWoord(qraw).split(/[^a-z0-9]+/),uit=[],seen={};
+ ws.forEach(function(w){if(w.length>3&&!_VRAAG_STOP[w]&&!seen[w]){seen[w]=1;uit.push(w);}});
+ return uit;
+}
+function _wikiHaal(host,term,done){
+ var ctl=new AbortController();var tid=setTimeout(function(){ctl.abort();},6000);
+ fetch("https://"+host+"/w/api.php?action=opensearch&format=json&origin=*&limit=3&namespace=0&search="+encodeURIComponent(term),{signal:ctl.signal})
+ .then(function(r){return r.json()})
+ .then(function(j){if(!(j&&j[1]&&j[1][0]))throw 0;
+  var titels=j[1].slice(0,3);
+  (function kand(){
+   var titel=titels.shift();
+   if(!titel){done(null);return;}
+   fetch("https://"+host+"/api/rest_v1/page/summary/"+encodeURIComponent(titel),{signal:ctl.signal})
+   .then(function(r){return r.json()})
+   .then(function(s){
+    if(s&&s.type==="disambiguation")kand();
+    else done({title:titel,ext:(s&&s.extract)||"",type:(s&&s.type)||""});
+   })
+   .catch(function(){done(null);});
+  })();})
+ .catch(function(){clearTimeout(tid);done(null);});
+}
+function _woordGelijk(a,b){if(a===b)return true;var l=a.length<b.length?a:b,h=a.length<b.length?b:a;return l.length>3&&h.indexOf(l)===0&&h.length-l.length<=3;}
+function _wikiZoek(qraw){
+ var az=document.getElementById("vraag-antw");
+ if(az)az.innerHTML='<div class="card" style="max-width:480px;margin:14px auto;text-align:left"><b>❓ '+qraw+'</b>'+
+  '<div class="lesje lesje-les aan" style="margin-top:10px"><img src="'+jufImg()+'" class="jufjet-av"><b>'+jufNaam()+':</b> '+
+  (isEn()?"let me look that up for you…":"even opzoeken voor je…")+"</div></div>";
+ var ql=_normWoord(qraw);
+ var nsft=_VRAAG_NSFT.some(function(w){return ql.indexOf(w)>-1;});
+ if(nsft){vraagAntwoord(qraw,isEn()?"That's a question for your parents or a real teacher — not for me.":"Dat is een vraag voor je ouders of een echte juf — niet voor mij.");return;}
+ var termen=_wikiTermen(qraw);
+ if(!termen.length||typeof navigator!=="undefined"&&navigator.onLine===false){_vraagFallback(qraw);return;}
+ var host=isEn()?"en.wikipedia.org":"nl.wikipedia.org";
+ var chain=termen.slice(0,4),best=null,bs=0;
+ (function probeer(){
+  var t=chain.shift();
+  if(!t){
+   if(best)vraagAntwoord(qraw,(isEn()?"I looked it up for you (from Wikipedia): ":"Dat zocht ik even voor je op (uit Wikipedia): ")+best+" — "+(isEn()?"source":"bron")+": wikipedia.org");
+   else _vraagFallback(qraw);
+   return;
+  }
+  _wikiHaal(host,t,function(res){
+   if(res&&res.ext&&res.ext.length>40&&res.type!=="disambiguation"){
+    var ext=_normWoord(res.ext).split(/[^a-z0-9]+/);
+    var tit=_normWoord(res.title).split(/[^a-z0-9]+/);
+    var s=0;termen.forEach(function(w){
+     if(tit.some(function(x){return _woordGelijk(x,w);}))s+=3;
+     if(ext.indexOf(w)>-1)s+=1;
+    });
+    if(s>=3&&s>=bs){bs=s;var d=res.ext.split(/\.\s/).slice(0,2).join(". ");best=/\.$/.test(d)?d:d+".";}
+   }
+   probeer();
+  });
+ })();
 }
 
 function seizoensKaart(el){
