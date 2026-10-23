@@ -2970,6 +2970,16 @@ var _VRAAG_SYN={sommen:["rekenen","tafels","optellen","aftrekken","delen","breuk
  english:["english","spelling","words"],dutch:["dutch","netherlands","places","holland"],
  country:["countries","world","places"],countries:["world","places","map"]};
 function _normWoord(s){return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");}
+var _boekIdx=null;
+function boekIndex(){
+ if(_boekIdx)return _boekIdx;
+ _boekIdx=[];
+ (typeof BOEKEN!=="undefined"?BOEKEN:[]).forEach(function(b){
+  (b.verhaal||[]).forEach(function(p){(p||[]).forEach(function(z){
+   if(z&&z.length>8)_boekIdx.push({b:b.naam,z:z});});});
+ });
+ return _boekIdx;
+}
 function _vraagZelfOffline(q){
  if(_vraagZelfServer.__miss!==true&&_vraagZelfServer(q))return;
  var qraw=q;
@@ -2984,7 +2994,14 @@ function _vraagZelfOffline(q){
    if(s>score){score=s;best=pa;}
   });
  });
- if(best&&score>4){vraagAntwoord(qraw,best[1]);}
+ var bb=null,bs=0;
+ boekIndex().forEach(function(r){
+  var wo=_normWoord(r.z+" "+r.b).split(/[^a-z0-9]+/);
+  var s=0;qx.forEach(function(w){if(w.length>2&&wo.indexOf(w)>-1)s+=w.length;});
+  if(s>bs){bs=s;bb=r;}
+ });
+ if(bb&&bs>score&&bs>6){vraagAntwoord(qraw,(isEn()?"In the book '"+bb.b+"' it says: ":"In het boek '"+bb.b+"' staat dit: ")+bb.z);}
+ else if(best&&score>4){vraagAntwoord(qraw,best[1]);}
  else{vraagAntwoord(q,isEn()?("That's a good question"+(wie()?", "+wie():"")+"! I don't know that one exactly yet — check '"
   +Object.keys(FAQ())[0]+"' or try your question in other words. And remember: every question you ask makes you smarter!"):("Dat is een goede vraag"+(wie()?", "+wie():"")+"! Die weet ik nog niet precies — kijk eens bij '"
   +Object.keys(FAQ())[0]+"' of probeer je vraag met andere woorden. En onthoud: elke vraag die je stelt, maakt je slimmer!"));}
